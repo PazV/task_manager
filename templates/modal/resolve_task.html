@@ -1,0 +1,35 @@
+<div class="modal fade" id="win_resolve_task" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header user-header header-win-title">
+                    <span>Resolver tarea</span>
+                    <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info alert-dismissible" id="alertRTForm" style="display:none;" role="alert">
+                        <p>Ocurrió un error.</p>
+                        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                    </div>
+                    <div style="margin:15px;">
+                        <span id="RTtask_info"></span>
+                    </div>
+                    <div class="row form-group" style="margin:1px;">
+                        <label for="RTcomments" class="col-md-3 col-form-label">Comentarios:</label>
+                        <div class="col-md-9">
+                            <textarea id="RTcomments" type="text" name="comments" class="form-control" style="width:100%;" placeholder="Agregar comentario"></textarea>
+                        </div>
+                    </div>
+                    <form id="RTfrmevidences" style="margin:8px 15px;" method="POST">
+                    </form>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnPauseResolveTask" data-toggle="tooltip" title="Guardar cambios y continuar en otro momento">En proceso <i class="fa fa-pause-circle-o" style="color:#006bb3;"></i></button>
+                    <button type="button" class="btn btn-light" id="btnResolveTask" data-toggle="tooltip" title="Resolver tarea (una vez resuelta no podrá realizar cambios)">Resolver <i class="fa fa-check" style="color:#009900;"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCloseResolveTask" data-toggle="tooltip" title="Salir sin guardar cambios">Salir <i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

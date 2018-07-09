@@ -1,0 +1,46 @@
+<div class="modal fade" id="win_register_company" data-keyboard="false" data-backdrop="static">
+  <div class="vertical-alignment-helper">
+      <div class="modal-dialog vertical-align-center" style="overflow-y:initial !important">
+        <div class="modal-content">
+          <div class="modal-header user-header header-win-title">
+              <span>Registro empresa</span>
+              <button type="button" class="btn-close-modal" data-dismiss="modal"><i class="fa fa-close"></i></button>
+          </div>
+          <div class="modal-body">
+            <!-- <form method="POST" action="{{ url_for('register.new_company')}}" id="frmRegisterCompany"> -->
+
+            <div class="alert alert-info alert-dismissible" id="alertRCForm" style="display:none;" role="alert">
+                <p>Ocurrió un error.</p>
+                <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+            </div>
+            <form method="POST" action="" id="frmRegisterCompany">
+                <div class="form-group">
+                    <label for="RCbusiness_name">Razón Social:</label>
+                    <input id="RCbusiness_name" name="business_name" type="text" value="" class="form-control">
+                    <span class="error-msg" id="spnRCbusiness_name">Error</span>
+                </div>
+                <div class="form-group">
+                    <label for="RCname">Nombre de la empresa:</label>
+                    <input id="RCname" name="name" type="text" value="" class="form-control">
+                    <span class="error-msg" id="spnRCname">Error</span>
+                </div>
+                <div class="form-group">
+                    <label for="RCaddress">Dirección:</label>
+                    <input id="RCaddress" name="address" type="text" value="" class="form-control">
+                    <span class="error-msg" id="spnRCaddress">Error</span>
+                </div>
+                <div class="form-group">
+                    <label for="RCphone">Teléfono:</label>
+                    <input id="RCphone" name="phone" type="text" value="" class="form-control">
+                    <span class="error-msg" id="spnRCphone">Error</span>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer user-footer">
+              <button type="button" class="btn btn-light" id="btnSaveRegisterCompany">Guardar <i class="fa fa-save"></i></button>
+              <button type="button" class="btn btn-light" id="btnCloseRegisterCompany">Salir <i class="fa fa-window-close"></i></button>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>

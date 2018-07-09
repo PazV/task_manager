@@ -1,0 +1,82 @@
+<div class="modal fade" id="win_new_admin_user" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header user-header header-win-title">
+                    <span>Nuevo usuario administrador</span>
+                    <button type="button" class="btn-close-modal" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info alert-dismissible" id="alertNAUForm" style="display:none;" role="alert">
+                        <p>Ocurrió un error.</p>
+                        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                    </div>
+                    <form method="POST" id="frmNewAdminUser" style="padding:8px;">
+                        <div class="form-group row row-w-span">
+                            <label for="NAUname" class="col-md-3 col-form-label">Nombre:</label>
+                            <input id="NAUname" name="name" type="text" value="" class="form-control col-md-9" placeholder="Ej. Ana Alvarado">
+                        </div>
+                        <div class="row">
+                            <span class="col-md-3"></span>
+                            <span class="error-msg col-md-9" id="spnNAUname">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NAUlogin" class="col-md-4 col-form-label">Usuario (login):</label>
+                            <input id="NAUlogin" name="login" type="text" value="" class="form-control col-md-8" placeholder="Ej. aalvarado51">
+                        </div>
+                        <div class="row">
+                            <span class="col-md-4"></span>
+                            <span class="error-msg col-md-8" id="spnNAUlogin">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span" style="margin-bottom: 3px;">
+                            <label for="NAUcompany_id" class="col-md-3 col-form-label">Empresa:</label>
+                            <select class="form-control col-md-9" style="border-radius:5px;" name="company_id" id="NAUcompany_id" placeholder="Seleccione empresa"></select>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-3"></span>
+                            <span id="spnNAUcompany_id" class="error-msg col-md-9">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NAUemail" class="col-md-3 col-form-label">Correo:</label>
+                            <input id="NAUemail" name="email" type="email" value="" class="form-control col-md-9" placeholder="Ej. aalvarado@gmail.com">
+                        </div>
+                        <div class="row">
+                            <span class="col-md-3"></span>
+                            <span class="error-msg col-md-9" id="spnNAUemail">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NAUuser_type_id" class="col-md-3 col-form-label">Perfil:</label>
+                            <select class="form-control col-md-9" style="border-radius:5px;" name="user_type_id" id="NAUuser_type_id"></select>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-3"></span>
+                            <span id="spnNAUuser_type_id" class="error-msg col-md-9">Error</span>
+                        </div>
+                        <!-- <div class="form-group row row-w-span">
+                            <label for="NAUpassword" class="col-form-label col-md-3">Contraseña:</label>
+                            <input type="password" id="NAUpassword" class="form-control col-md-8" value="" name="password"/>
+                            <input type="checkbox" class="col-md-1" id="chkNAUshow_password" data-toggle="tooltip" title="Mostrar constraseña" style="margin-top: 0.75rem;"/>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-3"></span>
+                            <span class="error-msg col-md-9" id="spnNAUpassword"></span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NAUconfirm_password" class="col-md-5 col-form-label">Confirmar contraseña:</label>
+                            <input class="form-control col-md-6" type="password" id="NAUconfirm_password" name="confirm_password" value=""/>
+                            <input type="checkbox" class="col-md-1" id="chkNAUshow_confirm_password" data-toggle="tooltip" title="Mostrar constraseña" style="margin-top: 0.75rem;"/>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-5"></span>
+                            <span id="spnNAUconfirm_password" class="error-msg col-md-7">Error</span>
+                        </div> -->
+                    </form>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnSaveRegAdminUser">Guardar <i class="fa fa-save"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCloseRegAdminUser">Salir <i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

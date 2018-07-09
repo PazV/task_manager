@@ -1,0 +1,59 @@
+.error-msg{
+    display: none;
+    font-size: small;
+}
+
+.show-error-msg{
+    color:red;
+    display:initial;
+    font-size: small;
+}
+
+.error-msg-row{
+    visibility:hidden;
+    font-size: small;
+}
+
+.show-error-msg-row{
+    color:red;
+    visibility:visible;
+    font-size: small;
+}
+
+.valid-field{
+    border-color: #00b359;
+}
+.invalid-field{
+    border-color: #ff6633;
+}
+
+.valid-file-field{
+    border:2px solid #00b359;
+    width:100%;
+    border-radius: 5px;
+}
+
+.invalid-file-field{
+    border:2px solid #ff6633;
+    width:100%;
+    border-radius:5px;
+}
+
+.file-input{
+    border:1px solid #ced4da;
+    width:100%;
+    border-radius:5px;
+}
+
+.file-input-label{
+    margin-bottom: 0px;
+    margin-top:5px;
+}
+
+.row-w-span{
+    margin-bottom: 6px;
+}
+
+.fa-window-close{
+    color:red;
+}

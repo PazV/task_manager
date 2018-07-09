@@ -1,0 +1,34 @@
+<div class="modal fade" id="win_check_task" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+             <div class="modal-content">
+                 <div class="modal-header user-header header-win-title">
+                     <span>Revisar tarea</span>
+                     <button class="btn-close-modal pull-right" data-dismiss="modal" type="button"><i class="fa fa-close"></i></button>
+                 </div>
+                 <div class="modal-body">
+                     <div class="alert alert-info alert-dismissible" id="alertCHTask" style="display:none;" role="alert">
+                         <p>Ocurrió un error</p>
+                         <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                     </div>
+                     <div class="jumbotron" style="margin:15px; padding:20px;">
+                         <span id="CHTtask_info"></span>
+                     </div>
+                     <div id="CHTevidences" style="margin:15px; padding:10px;">
+                     </div>
+                     <div class="row form-group" style="margin:1px;">
+                         <label for="CHTcomments" class="col-md-3 col-form-label">Comentarios:</label>
+                         <div class="col-md-9">
+                             <textarea id="CHTcomments" type="text" name="comments" class="form-control" style="width:100%;" placeholder="Agregar comentario"></textarea>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="modal-footer user-footer">
+                     <button type="button" class="btn btn-light" id="btnCheckTaskComplete">Correcta <i class="fa fa-check-square-o"></i></button>
+                     <button type="button" class="btn btn-light" id="btnCheckTaskIncomplete">Incompleta <i class="fa fa-remove"></i></button>
+                     <button type="button" class="btn btn-light" id="btnCloseCheckTask">Salir <i class="fa fa-window-close"></i></button>
+                 </div>
+             </div>
+        </div>
+    </div>
+</div>

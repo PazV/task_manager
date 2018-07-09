@@ -1,0 +1,54 @@
+
+<div class="modal fade" id="win_change_pass" data-keyboard="false" data-backdrop="static">
+  <div class="vertical-alignment-helper">
+      <div class="modal-dialog vertical-align-center">
+        <div class="modal-content">
+          <div class="modal-header user-header header-win-title">
+            <span>Cambiar contraseña</span>
+            <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+          </div>
+          <div class="modal-body" style="min-height:150px; width:auto;">
+              <div class="alert alert-info alert-dismissible" id="alertChPwForm" style="display:none;" role="alert">
+                  <p>Ocurrió un error.</p>
+                  <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+              </div>
+              <form method="POST" id="frmChangePassword" style="padding:8px; margin:.1rem .25rem;">
+                  <div class="form-group">
+                      <label for="ChPwold_pass" class="row">Contraseña anterior:</label>
+                      <div class="form-group row row-w-span">
+                          <input type="password" id="ChPwold_pass" class="form-control col-md-10" name="old_password" placeholder="Contraseña anterior"/>
+                          <input type="checkbox" class="col-md-1" id="chkChPwshow_old_pass" data-toggle="tooltip" title="Mostrar constraseña" style="margin-top: 0.75rem;"/>
+                          <i class="fa fa-eye" style="margin-top: 0.65rem;"></i>
+                      </div>
+                      <span class="error-msg" id="spnChPwold_pass">Error</span>
+                  </div>
+                  <div class="form-group">
+                      <label for="ChPwnew_pass" class="row">Nueva contraseña:</label>
+                      <div class="form-group row row-w-span">
+                          <input type="password" id="ChPwnew_pass" name="new_password" placeholder="Nueva contraseña" class="form-control col-md-10" />
+                          <input type="checkbox" class="col-md-1" id="chkChPwshow_new_pass" data-toggle="tooltip" title="Mostrar constraseña" style="margin-top: 0.75rem;"/>
+                          <i class="fa fa-eye" style="margin-top: 0.65rem;"></i>
+                      </div>
+                      <span class="error-msg" id="spnChPwnew_pass">Error</span>
+                  </div>
+                  <div class="form-group">
+                      <label for="ChPwconfirm_new_pass" class="row">Confirmar contraseña:</label>
+                      <div class="form-group row row-w-span">
+                          <input type="password" id="ChPwconfirm_new_pass" name="confirm_password" class="form-control col-md-10" placeholder="Confirmar contraseña"/>
+                          <input type="checkbox" class="col-md-1" id="chkChPwshow_confirm_pass" data-toggle="tooltip" title="Mostrar constraseña" style="margin-top: 0.75rem;"/>
+                          <i class="fa fa-eye" style="margin-top: 0.65rem;"></i>
+                      </div>
+                      <span class="error-msg" id="spnChPwconfirm_new_pass">Error</span>
+                  </div>
+              </form>
+
+
+          </div>
+          <div class="modal-footer user-footer">
+            <button type="button" class="btn btn-light" data-toggle="tooltip" title="Guardar cambios" data-placement="bottom" id="btnSavePasswordChange">Guardar <i class="fa fa-save"></i></button>
+            <button type="button" class="btn btn-light" data-toggle="tooltip" title="Salir sin guardar" data-placement="bottom" id="btnClosePasswordChange">Salir <i class="fa fa-window-close"></i></button>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>

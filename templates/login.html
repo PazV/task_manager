@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <link rel="icon" type="image/jpg" href="../static/images/rb.jpg">
+    <link href="../static/css/signin.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/lib/bootstrap-grid.min.css"/>
+    <link rel="stylesheet" href="../static/css/lib/bootstrap-reboot.min.css"/>
+    <link rel="stylesheet" href="../static/css/lib/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/jquery-loading/css/easy-loading.min.css" />
+    <link rel="stylesheet" href="../static/css/user-style.css" />
+    <link rel="stylesheet" href="../static/css/register-style.css"/>
+    <link rel="stylesheet" href="../static/css/task-style.css" />
+    <link rel="stylesheet" href="../static/css/settings-style.css" />
+    <link rel="stylesheet" href="../static/css/home-style.css" />
+    <title>Inicio de sesión</title>
+  </head>
+  <body style="padding-top: 10px;">
+      <div class="container-fluid">
+          <div>
+              <div class="alert alert-success alert-dismissible" id="alertLogin" style="display:none; align-self: baseline;" role="alert">
+                  <p>Mensaje</p>
+                  <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+              </div>
+          </div>
+          <div class="text-center" id="divLogin">
+              <form class="form-signin" method="post">
+                <img  src="../static/images/rb_azul.png" alt="" style="padding:3px; width:300px; height:70px;"></img>
+                <h1 class="h3 mb-3 font-weight-normal" style="padding:3px;">Inicio de sesión</h1>
+                <label for="inputUser" class="sr-only">Usuario:</label>
+                <input class="form-control" type="text" placeholder="Usuario" id="inputUser" name="username"> </input>
+                <label for="inputPassword" class="sr-only">Contraseña:</label>
+                <input class="form-control" type="password" placeholder="Contraseña" id="inputPassword" name="password"></input>
+                <button type="submit" class="btn-success btn-block" data-toggle="tooltip" title="Click para iniciar sesión">Iniciar sesión   <i class="fa fa-chevron-circle-right" style="vertical-align:-1px; font-size:18px;"></i></button>
+                <button type="button" class="btn-warning btn-block" data-toggle="tooltip" title="Click si deseas recuperar tu contraseña" id="btnForgotPassword">Olvidé mi contraseña   <i class="fa fa-expeditedssl" style="vertical-align:-1px; font-size:18px;"></i></button>
+              </form>
+          </div>
+      </div>
+
+    {% include 'modal/forgot_password.html' %}
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="../static/js/lib/bootstrap.min.js"></script>
+    <script src="../static/jquery-loading/js/easy-loading.min.js"></script>
+    <script src="../static/jquery-confirm/jquery-confirm.min.js"></script>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+    <script src="../static/js/login.js"></script>
+    <script src="../static/js/generic_functions.js"></script>
+  </body>
+</html>

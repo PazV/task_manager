@@ -1,0 +1,154 @@
+.fa-power-off{
+  color:#797878;
+}
+.fa-power-off:hover{
+  color:#cc0000;
+
+}
+
+/* Modal */
+.modal-backdrop {
+   background-color: #a5a5af;
+}
+.modal-content {
+    width: inherit;
+    max-width: inherit;
+    height: inherit;
+    margin:0 auto;
+    pointer-events: all;
+    overflow-y:auto;
+  /* height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed; */
+}
+
+.vertical-alignment-helper {
+    display:table;
+    height: 100%;
+    width: 100%;
+    overflow-y:'scroll';
+    pointer-events:none; /* This makes sure that we can still click outside of the modal to close it */
+}
+
+.vertical-align-center {
+    /* To center vertically */
+    display: table-cell;
+    vertical-align: middle;
+    pointer-events:none;
+}
+
+.modal-header{
+  position: relative;
+  padding: 8px;
+}
+
+.task-body{
+  background-color: #ffffe6;
+}
+.modal-footer{
+  padding:5px;
+}
+.task-footer,.task-header{
+  /*background-color: #ffffcc;
+  background: linear-gradient(#ff9999,#ffb3b3);*/
+  background: linear-gradient(to right,#ffa366,#ffa86f) ;
+}
+/*.task-header{
+  background:linear-gradient(#ff8533,#ff944d) ;
+}*/
+.fa-close{
+  color:white;
+}
+
+.btn-close-modal{
+  outline: none;
+  border: 2px solid white;
+  border-radius: 50%;
+  float: right;
+  background-color: transparent;
+  font-size:10px;
+  padding: none;
+  cursor: pointer;
+}
+.btn-close-modal:visited{
+  outline: none;
+}
+.btn-close-modal:active{
+  outline: none;
+}
+.btn-close-modal:focus{
+  outline:none
+}
+.btn-close-modal:focus-within{
+  outline:none;
+}
+/* Lista de tareas */
+
+
+.header-win-title{
+  font-size: 18px;
+  font-weight: bold;
+  color:white;
+}
+
+
+.btn-close-modal:hover{
+  background-color: #ff3333;
+  border:2px solid #ff4d4d;
+}
+
+.tabs-task-list{
+  background-color: #f2f2f2;
+  color:white;
+}
+
+.btn-evidence{
+  border:2px solid #00e673;
+  border-radius: 50%;
+  color:white;
+  float:right;
+  background-color: #00e673;
+  outline: none;
+  padding: 1px;
+  margin:1px 5px 3px 5px;
+}
+
+.btn-evidence:hover{
+  background-color: #00b359;
+  border: 2px solid #00b359;
+}
+
+.fieldset-evidence{
+  border:1px solid #d9d9d9;
+  border-radius: 5px;
+  width:100%;
+  padding: 5px 6px;
+  min-height: 160px;
+}
+.legend-evidence{
+  width:auto;
+  padding: 4px;
+  border-bottom:none;
+  margin-left: 1em;
+  margin-bottom: 1px;
+}
+
+.evidence-container{
+    height:36px;
+    background-color:#99ccff;
+    border-radius: 5px;
+    margin:8px;
+    padding:6px;
+}
+
+.fa-times{
+    cursor:pointer;
+}
+
+.fa-times:hover{
+    color:red;
+}
+
+.detail-ev-buttons{
+    padding:.1rem .5rem;
+}

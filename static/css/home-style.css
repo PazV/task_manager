@@ -1,0 +1,68 @@
+/* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+/* .row.content {min-height: 800px} */
+
+/* Set gray background color and 100% height */
+/* .sidenav {
+  background-color: #f1f1f1;
+  height: 100%;
+} */
+
+
+/* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+.row.content {height: 550px}
+
+/* Set gray background color and 100% height */
+.sidenav {
+  background-color: #f1f1f1;
+  height: 100%;
+}
+
+/* On small screens, set height to 'auto' for the grid */
+@media screen and (max-width: 767px) {
+  .row.content {height: auto;}
+}
+
+html {
+  height:100%;
+}
+
+body {
+  min-height: 100%;
+  padding-top: 56px;
+}
+
+@media (max-width: 979px) {
+  body {
+    padding-top: 0px;
+  }
+}
+
+/* Botón cerrar sesión */
+.btn-log-off{
+  color:#797878;
+  background-color: #222;
+  border-radius: 50%;
+  font-size: 20px;
+  border: 2px solid #797878;
+  outline: none;
+}
+.btn-log-off:hover{
+    background-color: white;
+    color:#cc0000;
+    border: 2px solid #cc0000;
+    outline: none;
+}
+.btn-log-off:focus{
+  outline: none;
+}
+.btn-log-off:active{
+  outline: none;
+}
+.btn-log-off:visited{
+  outline:none;
+}
+
+.alert{
+    margin-bottom: 0px;
+    padding:0.5rem 1.25rem;
+}

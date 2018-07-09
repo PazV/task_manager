@@ -1,0 +1,60 @@
+
+<div class="modal fade" id="win_my_account" data-keyboard="false" data-backdrop="static">
+ <div class="vertical-alignment-helper">
+     <div class="modal-dialog vertical-align-center">
+       <div class="modal-content" style="min-width:435px;">
+         <div class="modal-header user-header header-win-title">
+           <span>Mi cuenta</span>
+           <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+         </div>
+         <div class="modal-body user-body">
+           <div class="container-fluid" style="min-height:200px; width:auto;">
+             <div class="form-group row">
+               <label for="txtUserName" class="col-md-2 col-form-label">Nombre:</label>
+               <div class="col-md-10">
+                 <input type="text" placeholder="Nombre" id="txtUserName" name="name" class="form-control user-info"/>
+               </div>
+             </div>
+             <div class="form-group row">
+               <label for="txtLogin" class="col-md-2 col-form-label">Usuario:</label>
+               <div class="col-md-10">
+                 <input type="text" id="txtLogin" placeholder="Usuario" name="login" class="form-control user-info"/>
+               </div>
+             </div>
+             <div class="form-group row">
+               <label for="selUserCompany" class="col-md-2 col-form-label">Empresa:</label>
+              <div class="col-md-10">
+                <select class="form-control user-info" style="border-radius:5px;" id="selUserCompany" placeholder="Empresa" name="company_id">
+                  <option>Empresa 1</option>
+                  <option>Empresa 2</option>
+                </select>
+              </div>
+             </div>
+             <div class="form-group row">
+               <label for="txtUserMail" class="col-md-2 col-form-label">Correo:</label>
+               <div class="col-md-10">
+                 <input type="text" class="form-control user-info" name="mail" id="txtUserMail" placeholder="Correo electrónico"/>
+               </div>
+             </div>
+             <div class="form-group row">
+               <label for="selUserProfile" class="col-md-2 col-form-label">Perfil:</label>
+               <div class="col-md-10">
+                 <select id="selUserProfile" name="profile_id" class="form-control user-info" style="border-radius:5px;">
+                   <option>Auxiliar</option>
+                   <option>Gerente</option>
+                   <option>Administrador</option>
+                   <option>Consultor</option>
+                 </select>
+               </div>
+             </div>
+           </div>
+         </div>
+         <div class="modal-footer user-footer">
+           <button type="button" class="btn btn-light" data-toggle="tooltip" title="Cambiar contraseña" data-placement="bottom" id="btn-chng-pass">Cambiar contraseña <i class="fa fa-expeditedssl"></i></button>
+           <button type="button" class="btn btn-light" data-toggle="tooltip" title="Guardar cambios" data-placement="bottom">Guardar <i class="fa fa-save"></i></button>
+           <button type="button" class="btn btn-light" data-toggle="tooltip" title="Salir sin guardar" data-placement="bottom" id="btn-close-myaccount">Salir <i class="fa fa-window-close"></i></button>
+         </div>
+       </div>
+     </div>
+ </div>
+</div>

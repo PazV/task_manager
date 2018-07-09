@@ -1,0 +1,87 @@
+<div class="modal fade" id="win_notification_settings" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content" style="min-width:580px;">
+                <div class="modal-header user-header header-win-title">
+                    <span>Configuración de notificaciones</span>
+                    <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body" style="padding: 0.5rem;">
+                    <div class="alert alert-info alert-dismissible" id="alertNSForm" style="display:none;" role="alert">
+                        <p>Ocurrió un error.</p>
+                        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                    </div>
+                    <form method="POST" id="frmNotifSettings">
+                        <div class="container-fluid">
+                            <div class="row" style="margin:10px 3px;">
+                                <span style="margin-right: 6px;" class="col-form-label">Enviar resumen de obligaciones a administrador cada </span>
+                                <select class="form-control" placeholder="Sel" style="width:110px; margin-left: 5px; padding:3px;" name="admin_report_frequency" id="NSadmin_report_frequency">
+                                    <option id="1_d">día</option>
+                                    <option id="2_d" >2 días</option>
+                                    <option id="3_d">3 días</option>
+                                    <option id="4_d" >4 días</option>
+                                    <option id="5_d" >5 días</option>
+                                    <option id="1_w">semana</option>
+                                    <option id="2_w" >2 semanas</option>
+                                    <option id="1_m" >mes</option>
+                                </select>
+                            </div>
+                            <div class="row" style="margin:10px 3px;">
+                                <span style="margin-right: 6px;" class="col-form-label">Notificar a <b>auxiliar</b> </span>
+                                <select class="form-control" placeholder="Sel" style="margin: 0px 2px; width:80px; padding:3px;" name="assignee_days" id="NSassignee_days">
+                                    <option id="1_d">1 día</option>
+                                    <option id="2_d">2 días</option>
+                                    <option id="3_d">3 días</option>
+                                    <option id="4_d">4 días</option>
+                                    <option id="5_d">5 días</option>
+                                    <option id="6_d">6 días</option>
+                                    <option id="7_d">7 días</option>
+                                    <option id="8_d">8 días</option>
+                                    <option id="9_d">9 días</option>
+                                    <option id="10_d">10 días</option>
+                                </select>
+                                <span class="col-form-label" style="margin-left:2px;">antes de su fecha de vencimiento.</span>
+                            </div>
+                            <div class="row" style="margin:10px 3px;">
+                                <span style="margin-right: 6px;" class="col-form-label">Notificar a <b>supervisor</b> </span>
+                                <select class="form-control" placeholder="Sel" style="margin: 0px 2px; width:80px; padding:3px;" name="supervisor_days" id="NSsupervisor_days">
+                                    <option id="1_d">1 día</option>
+                                    <option id="2_d">2 días</option>
+                                    <option id="3_d">3 días</option>
+                                    <option id="4_d">4 días</option>
+                                    <option id="5_d">5 días</option>
+                                    <option id="6_d">6 días</option>
+                                    <option id="7_d">7 días</option>
+                                    <option id="8_d">8 días</option>
+                                    <option id="9_d">9 días</option>
+                                    <option id="10_d">10 días</option>
+                                </select>
+                                <span class="col-form-label" style="margin-left:2px;">antes de su fecha de vencimiento.</span>
+                            </div>
+                            <div class="row" style="margin:10px 3px;">
+                                <span style="margin-right: 6px;" class="col-form-label">Notificar a <b>administrador</b> </span>
+                                <select class="form-control" placeholder="Sel" style="margin: 0px 2px; width:80px; padding:3px;" name="admin_days" id="NSadmin_days">
+                                    <option id="1_d">1 día</option>
+                                    <option id="2_d">2 días</option>
+                                    <option id="3_d">3 días</option>
+                                    <option id="4_d">4 días</option>
+                                    <option id="5_d">5 días</option>
+                                    <option id="6_d">6 días</option>
+                                    <option id="7_d">7 días</option>
+                                    <option id="8_d">8 días</option>
+                                    <option id="9_d">9 días</option>
+                                    <option id="10_d">10 días</option>
+                                </select>
+                                <span class="col-form-label" style="margin-left:2px;">antes de su fecha de vencimiento.</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnSaveNotifSettings" data-toggle="tooltip" title="Guardar cambios">Guardar <i class="fa fa-save"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCloseNotifSettings" data-toggle="tooltip" title="Salir sin guardar cambios">Salir <i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+.user-body{
+  /*background-color: #e6fff5;*/
+  background-color: white;
+}
+
+/* .user-footer{
+  background: linear-gradient(to right,#00b3b3,#00cccc);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+} */
+.user-header,.user-footer{
+  /* background: linear-gradient(to right,#595959,#737373); */
+  background-color: #002b52;
+}
+
+/* .user-header{
+  background: linear-gradient(#00b3b3,#00cccc);
+} */
+
+.user-info, .chng-pass{
+  border: 1px solid silver;
+  border-radius: 5px;
+}
+
+.modal-content{
+  -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+    border-radius: 10px !important;
+}

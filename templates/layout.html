@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/jpg" href="../static/images/rb.jpg">
+    <link rel="stylesheet" href="../static/css/lib/bootstrap-grid.min.css"/>
+    <link rel="stylesheet" href="../static/css/lib/bootstrap-reboot.min.css"/>
+    <link rel="stylesheet" href="../static/css/lib/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" >
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/sl-1.2.5/datatables.min.css"/> -->
+
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/b-print-1.5.1/sl-1.2.5/datatables.min.css"/> -->
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/r-2.2.1/rr-1.2.3/sc-1.4.4/sl-1.2.5/datatables.min.css"/>
+    <link rel="stylesheet" href="../static/jquery-loading/css/easy-loading.min.css" />
+
+    <link rel="stylesheet" href="../static/jquery-ui/jquery-ui.css"/>
+    <link rel="stylesheet" href="../static/jquery-confirm/jquery-confirm.min.css"/>
+    <link rel="stylesheet" href="../static/css/home-style.css" />
+    <link rel="stylesheet" href="../static/css/settings-style.css" />
+    <link rel="stylesheet" href="../static/css/task-style.css" />
+    <link rel="stylesheet" href="../static/css/user-style.css" />
+    <link rel="stylesheet" href="../static/css/register-style.css"/>
+
+    <title>Task App</title>
+
+  </head>
+  <body>
+    {% include 'elements/_topnavbar.html' %}
+    <div class="container-fluid">
+        {% if g.user_info %}
+        <span id="spnSession" style="display: none">{{ g.user_info }}</span>
+        {% else %}
+        <span id="spnSession" style="display: none">{}</span>
+        {% endif %}
+      <div class="row">
+        <div class="col-lg-9">
+            <div class="alert alert-info alert-dismissible" id="alertLayout" style="display:none; margin-top:10px;" role="alert">
+                <p>Ocurrió un error.</p>
+                <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+            </div>
+          {% block body %}{% endblock %}
+        </div>
+      </div>
+      {% include 'tasks.html' %}
+    </div>
+
+    {% include 'modal/new_company.html' %}
+    {% include 'modal/new_admin_user.html' %}
+    {% include 'modal/user_change_pass.html' %}
+    {% include 'modal/new_task.html' %}
+    {% include 'modal/admin_users.html' %}
+    {% include 'modal/new_user.html' %}
+    {% include 'modal/task_details.html' %}
+    {% include 'modal/decline_task.html' %}
+    {% include 'modal/resolve_task.html' %}
+    {% include 'modal/add_evidence.html' %}
+    {% include 'modal/check_task.html' %}
+    {% include 'modal/check_declined_task.html' %}
+    {% include 'modal/notification_settings.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="../static/jquery-ui/jquery-ui.js"></script>
+    <script src="../static/js/lib/bootstrap.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/sl-1.2.5/datatables.min.js"></script> -->
+
+
+<!--
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/b-print-1.5.1/sl-1.2.5/datatables.min.js"></script> -->
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/r-2.2.1/rr-1.2.3/sc-1.4.4/sl-1.2.5/datatables.min.js"></script>
+    <script src="../static/jquery-loading/js/easy-loading.min.js"></script>
+    <script src="../static/jquery-confirm/jquery-confirm.min.js"></script>
+    <script src="../static/js/register.js"></script>
+    <script src="../static/js/home_functions.js"></script>
+    <script src="../static/js/user.js"></script>
+    <script src="../static/js/task.js"></script>
+    <script src="../static/js/settings.js"></script>
+    <script src="../static/js/generic_functions.js"></script>
+  </body>
+</html>

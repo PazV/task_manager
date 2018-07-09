@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EasyLoading jQuery Plugin Demo</title>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="js/easy-loading.js"></script>
+
+    <link rel="stylesheet" href="css/easy-loading.css">
+
+    <style>
+        body{
+          font-family:'Roboto';
+            background-color: deepskyblue;
+        }
+    </style>
+
+</head>
+<body>
+<h1>EasyLoading jQuery Plugin Demo</h1>
+<div class="jquery-script-ads" style="margin:30px auto"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-2783044520727903";
+/* jQuery_demo */
+google_ad_slot = "2780937993";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div>
+    <button id="timeout_btn">without timeout</button>
+
+    <ul id="list">
+    </ul>
+
+    <script>
+
+        var isTimeout = false;
+
+        var styleList = [
+            "BALL_PULSE",
+            "BALL_CLIP_ROTATE", "BALL_CLIP_ROTATE_PULSE", "SQUARE_SPIN", "BALL_CLIP_ROTATE_MULTIPLE",
+            "BALL_PULSE_RISE", "BALL_ROTATE", "CUBE_TRANSITION", "BALL_ZIP_ZAG", "BALL_ZIP_ZAG_DEFLECT",
+            "BALL_TRIANGLE_PATH", "BALL_SCALE", "LINE_SCALE", "LINE_SCALE_PARTY", "BALL_SCALE_MULTIPLE",
+            "BALL_PULSE_SYNC", "BALL_BEAT", "LINE_SCALE_PULSE_OUT", "LINE_SCALE_PULSE_OUT_RAPID",
+            "BALL_SCALE_RIPPLE", "BALL_SCALE_RIPPLE_MULTIPLE", "BALL_SPIN_FADE_LOADER", "LINK_SPIN_FADE_LOADER",
+            "TRIANGLE_SKEW_SPIN", "PACMAN", "SEMI_CIRCLE_SPIN"
+        ];
+
+        $(document).ready(function(){
+            $("#timeout_btn").click(function(){
+                $(this).text(!isTimeout?"with 5 second timeout":"without timeout");
+                isTimeout = !isTimeout;
+            });
+
+            var list = $("#list");
+            $(styleList).each(function(index, element){
+                var button = $("<button>"+element+"</button>")
+                    .click(function(){
+                        EasyLoading.show({
+                            type: EasyLoading.TYPE[element],
+                            button: 'dismiss',
+                            text: 'loading',
+                            timeout: isTimeout?3000:null,
+                            callback: function(event, data){
+                                $("body").append($("<div>"+event+"</div>"));
+                            }
+                        })
+                    });
+                var li = $("<li></li>");
+                list.append(li.append(button));
+            });
+        });
+    </script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36251023-1']);
+  _gaq.push(['_setDomainName', 'jqueryscript.net']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body>
+</html>
