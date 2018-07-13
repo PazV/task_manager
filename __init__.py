@@ -7,7 +7,7 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_mail import Mail, Message
-from .views import db_connection
+# from views import db_connection
 
 #from .db_connection import getDB
 # db = db_connection.getDB()
@@ -52,18 +52,20 @@ def create_app(test_config=None):
 
 
 
-    from .views import auth
+    from views import auth
     app.register_blueprint(auth.bp)
-    from .views import register
+    from views import register
     app.register_blueprint(register.bp)
-    from .views import dashboard
+    from views import dashboard
     app.register_blueprint(dashboard.bp)
     app.add_url_rule('/',endpoint='index')
-    from .views import users
+    from views import users
     app.register_blueprint(users.bp)
-    from .views import task
+    from views import task
     app.register_blueprint(task.bp)
-    from .views import settings
+    from views import settings
     app.register_blueprint(settings.bp)
 
     return app
+
+app=create_app()

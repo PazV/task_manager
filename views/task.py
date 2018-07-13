@@ -20,6 +20,7 @@ import sys
 import time
 import os
 import random
+import app_config as cfg
 bp = Blueprint('task', __name__, url_prefix='/task')
 
 @bp.route('/getSupervisor',methods=['GET','POST'])
@@ -436,7 +437,7 @@ def getDocumentType():
         app.logger.info(traceback.format_exc(exc_info))
     return json.dumps(response)
 
-UPLOAD_FOLDER = '/usr/local/arctic/tmp/'
+UPLOAD_FOLDER = '%s'%cfg.task_path
 ALLOWED_EXTENSIONS = set(['txt', 'pdf'])
 
 def allowed_file(filename):
@@ -455,7 +456,7 @@ def resolveTask():
             select task_folder from system.company where company_id=%s
         """%data['company_id']).dictresult()[0]['task_folder']
         task_folder="task_%s"%data['task_id']
-        task_path='/usr/local/arctic/tmp/%s/%s/'%(folder,task_folder)
+        task_path='%s%s/%s/'%(cfg.task_path,folder,task_folder)
         app.logger.info("files list %s"%files_list)
         app.logger.info(frm)
         if not os.path.exists(task_path):
@@ -570,7 +571,7 @@ def pauseResolveTask():
             company_folder=db.query("""
                 select task_folder from system.company where company_id=%s
             """%data['company_id']).dictresult()[0]['task_folder']
-            path='/usr/local/arctic/tmp/%s/task_%s/'%(company_folder,data['task_id'])
+            path='%s%s/task_%s/'%(cfg.task_path,company_folder,data['task_id'])
             if not os.path.exists(path): #validate if folder exists
                 os.makedirs(path) #if it doesn't exists, creates one
             for f in files_list:

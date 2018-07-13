@@ -238,7 +238,7 @@ def createUser():
                         email='%s'
                     and company_id=%s %s
                 """%(dict['email'],dict['company_id'],condition)).dictresult()
-                exist_email[0]['count']=0 #bypass email validation
+                #exist_email[0]['count']=0 #bypass email validation
                 if exist_email[0]['count']==0:
                     if dict['user_id']==-1:
                         exist_login=db.query("""

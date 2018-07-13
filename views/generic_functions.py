@@ -1,11 +1,11 @@
 #-*- coding: utf-8 -*-
 
-from .db_connection import getDB
+#from .db_connection import getDB
+# db = getDB()
 import logging
 import sys
 import traceback
 import json
-db = getDB()
 from flask import Flask, session, request, logging, g
 from flask_mail import Mail, Message
 import random

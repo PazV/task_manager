@@ -55,7 +55,14 @@ def getNotificationSettings():
         flag,data=GF.toDict(request.form,'post')
         if flag:
             info=db.query("""
-                select * from system.notification_settings
+                select
+                    notification_settings_id,
+                    company_id,
+                    admin_report_frequency,
+                    assignee_days,
+                    supervisor_days,
+                    admin_days
+                from system.notification_settings
                 where company_id=%s
             """%data['company_id']).dictresult()
             if info!=[]:
