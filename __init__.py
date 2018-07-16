@@ -5,7 +5,7 @@ from pg import DB
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask
-from flask_debugtoolbar import DebugToolbarExtension
+#from flask_debugtoolbar import DebugToolbarExtension
 from flask_mail import Mail, Message
 # from views import db_connection
 
