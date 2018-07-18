@@ -990,7 +990,7 @@ $(document).ready(function(){
         $.confirm({
             theme:'dark',
             title: 'Atención',
-            content: 'Al confirmar que la tarea está correcta, ésta será cerrada, ¿desea continuar?',
+            content: 'Al confirmar que la tarea se encuentra correcta, ésta será cerrada, ¿desea continuar?',
             buttons: {
                 confirm:{
                     text:'Sí',
@@ -1360,7 +1360,7 @@ $(document).ready(function(){
 
 
 
-// 
+//
 // function emptyFieldRow(fieldId,spanId){
 //     var valid=false;
 //     var input=$(fieldId);
