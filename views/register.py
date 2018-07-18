@@ -20,6 +20,7 @@ import pwd
 import grp
 from . import generic_functions
 GF=generic_functions.GenericFunctions()
+import app_config as cfg
 # from flask import current_app as app
 #from flask import current_app as app
 bp = Blueprint('register', __name__, url_prefix='/register')
@@ -93,11 +94,16 @@ def saveNewCompany():
                         where company_id=%s
                     """%(folder,company['company_id']))
                     logging.info(company)
-                    if not os.path.exists('/usr/local/arctic/tmp/%s'%folder):
-                        os.makedirs('/usr/local/arctic/tmp/%s'%folder)
-                        uid = pwd.getpwnam("pgarcia").pw_uid
-                        gid = grp.getgrnam("pgarcia").gr_gid
-                        path = '/usr/local/arctic/tmp/%s'%folder
+                    # if not os.path.exists('/usr/local/arctic/tmp/%s'%folder):
+                    #     os.makedirs('/usr/local/arctic/tmp/%s'%folder)
+                    #     uid = pwd.getpwnam("pgarcia").pw_uid
+                    #     gid = grp.getgrnam("pgarcia").gr_gid
+                    #     path = '/usr/local/arctic/tmp/%s'%folder
+                    if not os.path.exists('%s%s'%(cfg.task_path,folder)):
+                        os.makedirs('%s%s'%(cfg.task_path,folder))
+                        uid = pwd.getpwnam(cfg.admin_uid).pw_uid
+                        gid = grp.getgrnam(cfg.admin_gid).gr_gid
+                        path = '%s%s'%(cfg.task_path,folder)
                         os.chown(path, uid, gid)
 
 
