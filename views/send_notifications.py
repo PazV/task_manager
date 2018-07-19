@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#--*-- coding: utf-8 --*--
 from db_connection import getDB
 db = getDB()
 import generic_functions
@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
+import re
 
 print "Entra cron"
 # create logger with 'spam_application'
@@ -38,14 +39,15 @@ class MailFunctions:
     def sendMail(self,to_address,subject,body):
         success=True
         try:
-            server=smtplib.SMTP('smtpparla.spamina.com',587)
-            server.login("pgarcia@russellbedford.mx","d2hC4qFFxq")
-            from_address="pgarcia@russellbedford.mx"
+            server=smtplib.SMTP(cfg.mail_server,cfg.port)
+            server.login(cfg.mail_username,cfg.mail_password)
+            from_address=cfg.mail_username
             # to_address="pgarcia@russellbedford.mx"
             msg=MIMEMultipart()
             msg['From']=from_address
             msg['To']=to_address
             msg['Subject']=subject.decode('utf-8')
+            body=self.replaceStringHtml(body)
             msg.attach(MIMEText(body,'html'))
             text=msg.as_string()
             server.sendmail(from_address,to_address,text)
@@ -54,6 +56,26 @@ class MailFunctions:
             exc_info=sys.exc_info()
             logger.error(traceback.format_exc(exc_info))
         return success
+
+    def replaceStringHtml(self,text):
+        rep = {
+            "á":"&aacute;",
+            "é":"&eacute;",
+            "í":"&iacute;",
+            "ó":"&oacute;",
+            "ú":"&uacute;",
+            "Á":"&Aacute;",
+            "É":"&Eacute;",
+            "Í":"&Iacute;",
+            "Ó":"&Oacute;",
+            "Ú":"&Uacute;",
+            "ñ":"&ntilde;",
+            "Ñ":"&Ntilde;"
+        }
+        rep = dict((re.escape(k), v) for k, v in rep.iteritems())
+        pattern = re.compile("|".join(rep.keys()))
+        new_text = pattern.sub(lambda m: rep[re.escape(m.group(0))], text)
+        return new_text
 
 def main():
     try:
@@ -74,21 +96,49 @@ def main():
                 assignee_date=str(now_date-timedelta(days=assignee_days))
                 logger.info("assignee date %s"%assignee_date)
 
+                # pending_tasks_assignee=db.query("""
+                #     select
+                #         task_id,
+                #         name,
+                #         description,
+                #         assignee_id,
+                #         to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                #         (select a.name from system.user a where a.user_id=assignee_id) as assignee,
+                #         (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
+                #     from task.task
+                #     where status_id in (1,6)
+                #     and company_id=%s
+                #     and assignee_deadline between '%s 00:00:00' and '%s 23:59:59'
+                # """%(x['company_id'],assignee_date.split(" ")[0],now_str)).dictresult()
                 pending_tasks_assignee=db.query("""
                     select
-                        task_id,
-                        name,
-                        description,
-                        assignee_id,
-                        to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
-                        (select a.name from system.user a where a.user_id=assignee_id) as assignee,
-                        (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
-                    from task.task
-                    where status_id in (1,6)
-                    and company_id=%s
-                    and assignee_deadline between '%s 00:00:00' and '%s 23:59:59'
-                """%(x['company_id'],assignee_date.split(" ")[0],now_str)).dictresult()
-                
+                            task_id,
+                            name,
+                            description,
+                            assignee_id,
+                            to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                            (select a.name from system.user a where a.user_id=assignee_id) as assignee,
+                            (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
+                        from task.task
+                        where status_id in (1,6)
+                        and company_id=%s
+                        and now() between assignee_deadline - INTERVAL '%s DAYS' and assignee_deadline
+                """%(x['company_id'],assignee_days)).dictresult()
+                # """
+                # select
+                #         task_id,
+                #         name,
+                #         description,
+                #         assignee_id,
+                #         to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                #         (select a.name from system.user a where a.user_id=assignee_id) as assignee,
+                #         (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
+                #     from task.task
+                #     where status_id in (1,6)
+                #     and company_id=3
+                # and now() between assignee_deadline - INTERVAL '4 DAYS' and assignee_deadline;
+                # """
+
                 if pending_tasks_assignee!=[]:
                     assignee_template=db.query("""
                         select * from template.generic_template where type_id=13
