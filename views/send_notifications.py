@@ -170,8 +170,8 @@ def main():
                     from task.task
                     where status_id in (1,6)
                     and company_id=%s
-                    and supervisor_deadline between '%s 00:00:00' and '%s 23:59:59'
-                """%(x['company_id'],supervisor_date.split(" ")[0],now_str)).dictresult()
+                    and now() between supervisor_deadline - INTERVAL '%s DAYS' and supervisor_deadline
+                """%(x['company_id'],supervisor_days)).dictresult()
 
                 if pending_tasks_supervisor!=[]:
                     supervisor_template=db.query("""
@@ -204,8 +204,8 @@ def main():
                     from task.task
                     where status_id in (1,6)
                     and company_id=%s
-                    and deadline between '%s 00:00:00' and '%s 23:59:59'
-                """%(x['company_id'],admin_date.split(" ")[0],now_str)).dictresult()
+                    and now() between deadline - INTERVAL '%s DAYS' and deadline
+                """%(x['company_id'],admin_days)).dictresult()
 
                 if pending_tasks_admin!=[]:
                     admin_template=db.query("""
