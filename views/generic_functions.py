@@ -9,15 +9,16 @@ import json
 from flask import Flask, session, request, logging, g
 from flask_mail import Mail, Message
 import random
+import app_config as cfg
 app=Flask(__name__)
 app.config.update(dict(
-    DEBUG = True,
-    MAIL_SERVER='smtpparla.spamina.com',
-    MAIL_PORT=587,
-    MAIL_USERNAME='pgarcia@russellbedford.mx',
-    MAIL_PASSWORD='d2hC4qFFxq',
-    MAIL_USE_TLS=True,
-    MAIL_USE_SSL=False,
+    DEBUG = False,
+    MAIL_SERVER=cfg.mail_server,
+    MAIL_PORT=cfg.port,
+    MAIL_USERNAME=cfg.username,
+    MAIL_PASSWORD=cfg.password,
+    MAIL_USE_TLS=cfg.use_tls,
+    MAIL_USE_SSL=cfg.use_ssl,
 ))
 mail = Mail(app)
 class GenericFunctions:
@@ -46,7 +47,7 @@ class GenericFunctions:
         try:
             # msg=Message('Nuevo usuario plataforma Russell Bedford', sender='pgarcia@russellbedford.mx',recipients=['pgarcia@russellbedford.mx'])
             # msg.html='Correo de prueba'
-            msg=Message(subject,sender='pgarcia@russellbedford.mx',recipients=[recipient])
+            msg=Message(subject,sender=cfg.username,recipients=[recipient])
             msg.html=msg_body
             mail.send(msg)
             response['success']=True
