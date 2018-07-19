@@ -149,6 +149,7 @@ def saveTask():
                     recipient=db.query("""
                         select email from system.user where user_id=%s
                     """%data['assignee_id']).dictresult()[0]['email']
+                    task_info['link']=cfg.host
                     msg=message['body'].format(**task_info)
                     GF.sendMail(message['subject'],msg,recipient)
 
@@ -531,7 +532,7 @@ def resolveTask():
         message=db.query("""
             select * from template.generic_template where type_id=2
         """).dictresult()[0]
-
+        task_info['link']=cfg.host
         msg=message['body'].format(**task_info)
         GF.sendMail(message['subject'],msg,supervisor)
         if task_info['notify_admin']==True: #si está indicado que se debe notificar al administrador al resolver la tarea
@@ -544,7 +545,7 @@ def resolveTask():
             message_admin=db.query("""
                 select * from template.generic_template where type_id=3
             """).dictresult()[0]
-
+            task_info['link']=cfg.host
             msg_admin=message_admin['body'].format(**task_info)
             GF.sendMail(message_admin['subject'],msg_admin,admin['email'])
 
@@ -703,7 +704,7 @@ def completeTask():
             message=db.query("""
                 select * from template.generic_template where type_id=4
             """).dictresult()[0]
-
+            task_info['link']=cfg.host
             msg=message['body'].format(**task_info)
             GF.sendMail(message['subject'],msg,assignee)
 
@@ -779,7 +780,7 @@ def incompleteTask():
             message=db.query("""
                 select * from template.generic_template where type_id=5
             """).dictresult()[0]
-
+            task_info['link']=cfg.host
             msg=message['body'].format(**task_info)
             GF.sendMail(message['subject'],msg,assignee)
 
@@ -836,7 +837,7 @@ def declineTask():
             message=db.query("""
                 select * from template.generic_template where type_id=6
             """).dictresult()[0]
-
+            task_info['link']=cfg.host
             msg=message['body'].format(**task_info)
             GF.sendMail(message['subject'],msg,recipient)
             response['success']=True
@@ -892,6 +893,7 @@ def updateDeclinedTask():
                 where
                     task_id=%s
             """%data['task_id']).dictresult()[0]
+            task_info['link']=cfg.host
             msg=msg_info['body'].format(**task_info)
             GF.sendMail(msg_info['subject'],msg,task_info['recipient'])
             response['success']=True
@@ -937,6 +939,7 @@ def cancelTask():
                 where
                     task_id=%s
             """%data['task_id']).dictresult()[0]
+            task_info['link']=cfg.host
             msg=message_info['body'].format(**task_info)
             GF.sendMail(message_info['subject'],msg,task_info['recipient'])
             response['success']=True
