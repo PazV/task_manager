@@ -1,4 +1,4 @@
-#--*-- coding: utf-8 --*--
+ # -*- coding: utf-8 -*-
 from flask import Flask, render_template, flash, redirect, url_for, session, request, logging, Blueprint, g
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
@@ -28,13 +28,13 @@ bp = Blueprint('register', __name__, url_prefix='/register')
 
 app=Flask(__name__)
 app.config.update(dict(
-    DEBUG = True,
-    MAIL_SERVER='smtpparla.spamina.com',
-    MAIL_PORT=587,
-    MAIL_USERNAME='pgarcia@russellbedford.mx',
-    MAIL_PASSWORD='d2hC4qFFxq',
-    MAIL_USE_TLS=True,
-    MAIL_USE_SSL=False,
+    DEBUG = False,
+    MAIL_SERVER=cfg.mail_server,
+    MAIL_PORT=cfd.mail_port,
+    MAIL_USERNAME=cfg.mail_username,
+    MAIL_PASSWORD=cfg.mail_password,
+    MAIL_USE_TLS=cfg.mail_use_tls,
+    MAIL_USE_SSL=cfg.mail_use_ssl,
 ))
 mail = Mail(app)
 
@@ -260,8 +260,11 @@ def createUser():
                             passwd_success,passwd=generateRandomPassword(8)
                             if passwd_success:
                                 dict['password']=generate_password_hash(passwd)
-                                dict['login']=dict['login'].lower().strip()
-                                dict['name']=dict['name'].title().strip()
+                                login=dict['login'].strip()
+                                dict['login']=replaceString(login)
+                                dict['login']=dict['login'].lower()
+                                dict['name']=dict['name'].strip()
+                                dict['name']=dict['name'].decode('utf-8')
                                 dict['email']=dict['email'].strip()
                                 del dict['user_id']
                                 db.insert('system.user',dict)
@@ -287,6 +290,7 @@ def createUser():
                                 #     """).dictresult()[0]
                                 recipient=dict['email']
                                 dict['password']=passwd
+                                dict['link']=cfg.host
                                 msg=message['body'].format(**dict)
                                 GF.sendMail(message['subject'],msg,recipient)
 
@@ -299,7 +303,9 @@ def createUser():
                             response['success']=False
                             response['msg_response']='El usuario (login) ingresado ya se encuentra registrado para la empresa seleccionada.'
                     else:
-                        dict['name']=dict['name'].title().strip()
+
+                        dict['name']=dict['name'].strip()
+                        dict['name']=dict['name'].decode('utf-8')
                         dict['email']=dict['email'].strip()
                         dict['last_updated']='now'
                         db.update('system.user',dict)
