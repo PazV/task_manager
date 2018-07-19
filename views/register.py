@@ -30,7 +30,7 @@ app=Flask(__name__)
 app.config.update(dict(
     DEBUG = False,
     MAIL_SERVER=cfg.mail_server,
-    MAIL_PORT=cfd.mail_port,
+    MAIL_PORT=cfg.mail_port,
     MAIL_USERNAME=cfg.mail_username,
     MAIL_PASSWORD=cfg.mail_password,
     MAIL_USE_TLS=cfg.mail_use_tls,
