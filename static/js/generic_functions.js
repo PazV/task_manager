@@ -176,3 +176,14 @@ function validateMail(inputId,spanId){
     }
     return valid;
 }
+
+function checkDate(from,to){
+    var cfrom = new Date(from);
+    var cto = new Date(to);
+    if (cfrom>cto){
+        return to;
+    }
+    if (cfrom<=cto){
+        return from;
+    }
+}

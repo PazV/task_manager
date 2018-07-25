@@ -1,8 +1,13 @@
 $(document).ready(function(){
     var me = this;
     this.user_info=JSON.parse($("#spnSession")[0].textContent);
-    console.log("grd task")
 
+    var today=new Date().toISOString().split("T")[0];
+    var split_date=today.split("-");
+    split_date[2]="01";
+    var first_day=split_date.join("-");
+    $("#TLdateFrom").val(first_day);
+    $("#TLdateTo").val(today);
 
     $("#grdTask").DataTable({
         "scrollY": "255px",
@@ -13,7 +18,15 @@ $(document).ready(function(){
                 'company_id':me.user_info.company_id,
                 'user_id':me.user_info.user_id,
                 'user_type_id':me.user_info.user_type_id,
-                'filter':JSON.stringify({'a.status_id':-1})
+                'filter':JSON.stringify({
+                    'status_id':-1,
+                    'assignee_id':-1,
+                    'supervisor_id':-1,
+                    'date_type':1,
+                    'from':-1,
+                    'to':-1,
+                    'search':-1
+                })
             },
             url:'/task/getTask',
             dataSrc:'data',
@@ -27,6 +40,141 @@ $(document).ready(function(){
             {data:'supervisor',"width":"20%"},
             {data:'status',"width":"10%"}
         ]
+    });
+
+
+    $.ajax({
+        url:'/task/getSupervisor',
+        method:'POST',
+        data:JSON.stringify({
+            'company_id':me.user_info['company_id'],
+            'user_id':me.user_info['user_id'],
+            'user_type_id':me.user_info['user_type_id']
+        }),
+        success:function(response){
+            var res_sup=JSON.parse(response);
+            if (res_sup.success){
+                $.each(res_sup.data,function(i, item){
+                    $("#TLselSupervisor").append($('<option>',{
+                        text:item.name,
+                        name:item.supervisor_id
+                    }));
+                });
+                if (me.user_info['user_type_id']!=2){
+                    $("#TLselSupervisor").append($('<option>',{
+                        text:'Todos',
+                        name:-1,
+                        selected:true
+                    }));
+                }
+                $.ajax({
+                    url:'/task/getAssignee',
+                    method:'POST',
+                    data:JSON.stringify({
+                        'company_id':me.user_info['company_id'],
+                        'user_id':me.user_info['user_id'],
+                        'user_type_id':me.user_info['user_type_id']
+                    }),
+                    success:function(responseA){
+                        var res_as=JSON.parse(responseA);
+                        if (res_as.success){
+                            $.each(res_as.data,function(i,item){
+                                $("#TLselAssignee").append($('<option>',{
+                                    text:item.name,
+                                    name:item.assignee_id
+                                }));
+                            });
+                            if (me.user_info['user_type_id']!=3){
+                                $("#TLselAssignee").append($('<option>',{
+                                    text:'Todos',
+                                    name:-1,
+                                    selected:true
+                                }));
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    });
+
+    $("#btnTaskSearch").click(function(){
+        var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+        var filters=getDictForm("#TLfrmFilters",sel_list);
+        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+        filters['from']=checkDate(filters['from'],filters['to']);
+        $("#TLdateFrom").val(filters['from']);
+        $("#grdTask").DataTable({
+            "scrollY": "255px",
+            "scrollCollapse":true,
+            serverSide:true,
+            ajax:{
+                data:{
+                    'company_id':me.user_info.company_id,
+                    'user_id':me.user_info.user_id,
+                    'user_type_id':me.user_info.user_type_id,
+                    'filter':JSON.stringify(filters)
+                },
+                url:'/task/getTask',
+                dataSrc:'data',
+                type:'POST'
+            },
+            columns:[
+                {data:'created', "width":"15%"},
+                {data:'name',"width":"20%"},
+                {data:'deadline',"width":"15%"},
+                {data:'assignee',"width":"20%"},
+                {data:'supervisor',"width":"20%"},
+                {data:'status',"width":"10%"}
+            ]
+        });
+        console.log(filters);
+    });
+
+    $("#btnClearTaskSearch").click(function(){
+        $("#TLsearchName").val("");
+        if (me.user_info.user_type_id!=2){
+            $("#TLselSupervisor option[name='-1']").prop('selected', true);
+        }
+        if (me.user_info.user_type_id!=3){
+            $("#TLselAssignee option[name='-1']").prop('selected', true);
+        }
+        $("#TLdateType option[id='1']").prop('selected', true);
+        $("#TLselStatus option[id='-1']").prop('selected', true);
+        $("#TLdateFrom").val(first_day);
+        $("#TLdateTo").val(today);
+        var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+        var filters=getDictForm("#TLfrmFilters",sel_list);
+        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+        filters['from']=checkDate(filters['from'],filters['to']);
+        $("#TLdateFrom").val(filters['from']);
+        $("#grdTask").DataTable({
+            "scrollY": "255px",
+            "scrollCollapse":true,
+            serverSide:true,
+            ajax:{
+                data:{
+                    'company_id':me.user_info.company_id,
+                    'user_id':me.user_info.user_id,
+                    'user_type_id':me.user_info.user_type_id,
+                    'filter':JSON.stringify(filters)
+                },
+                url:'/task/getTask',
+                dataSrc:'data',
+                type:'POST'
+            },
+            columns:[
+                {data:'created', "width":"15%"},
+                {data:'name',"width":"20%"},
+                {data:'deadline',"width":"15%"},
+                {data:'assignee',"width":"20%"},
+                {data:'supervisor',"width":"20%"},
+                {data:'status',"width":"10%"}
+            ]
+        });
+
     });
 
     $("#btnCollapseCalendar").click(function(){
@@ -47,7 +195,12 @@ $(document).ready(function(){
     $("#TLselStatus").change(function(){
         console.log($("#TLselStatus option:selected")[0].value);
         console.log($("#TLselStatus option:selected")[0].id);
-
+        var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+        var filters=getDictForm("#TLfrmFilters",sel_list);
+        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+        filters['from']=checkDate(filters['from'],filters['to']);
+        $("#TLdateFrom").val(filters['from']);
         $("#grdTask").DataTable({
             "scrollY": "255px",
             "scrollCollapse":true,
@@ -57,7 +210,7 @@ $(document).ready(function(){
                     'company_id':me.user_info.company_id,
                     'user_id':me.user_info.user_id,
                     'user_type_id':me.user_info.user_type_id,
-                    'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                    'filter':JSON.stringify(filters)
                 },
                 url:'/task/getTask',
                 dataSrc:'data',
@@ -111,7 +264,9 @@ $(document).ready(function(){
                         url:'/task/getAssignee',
                         method:'POST',
                         data:JSON.stringify({
-                            'company_id':me.user_info['company_id']
+                            'company_id':me.user_info['company_id'],
+                            'user_id':me.user_info['user_id'],
+                            'user_type_id':me.user_info['user_type_id']
                         }),
                         success:function(responseA){
                             var res_as=JSON.parse(responseA);
@@ -242,6 +397,12 @@ $(document).ready(function(){
                         $("#alertLayout").find('p').html(res.msg_response);
                         $("#alertLayout").css("display","block");
                         $("#win_new_task").modal("hide");
+                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                        filters['from']=checkDate(filters['from'],filters['to']);
+                        $("#TLdateFrom").val(filters['from']);
                         $("#grdTask").DataTable({
                             "scrollY": "255px",
                             "scrollCollapse":true,
@@ -251,7 +412,7 @@ $(document).ready(function(){
                                     'company_id':me.user_info.company_id,
                                     'user_id':me.user_info.user_id,
                                     'user_type_id':me.user_info.user_type_id,
-                                    'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                    'filter':JSON.stringify(filters)
                                 },
                                 url:'/task/getTask',
                                 dataSrc:'data',
@@ -504,6 +665,12 @@ $(document).ready(function(){
                             $("#alertLayout").find('p').html(res.msg_response);
                             $("#alertLayout").css("display","block");
                             $("#win_resolve_task").modal("hide");
+                            var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                            var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                            filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                            filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                            filters['from']=checkDate(filters['from'],filters['to']);
+                            $("#TLdateFrom").val(filters['from']);
                             $("#grdTask").DataTable({
                                 "scrollY": "255px",
                                 "scrollCollapse":true,
@@ -513,7 +680,7 @@ $(document).ready(function(){
                                         'company_id':me.user_info.company_id,
                                         'user_id':me.user_info.user_id,
                                         'user_type_id':me.user_info.user_type_id,
-                                        'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                        'filter':JSON.stringify(filters)
                                     },
                                     url:'/task/getTask',
                                     dataSrc:'data',
@@ -623,6 +790,12 @@ $(document).ready(function(){
                             $("#alertLayout").find('p').html(res.msg_response);
                             $("#alertLayout").css("display","block");
                             $("#win_resolve_task").modal("hide");
+                            var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                            var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                            filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                            filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                            filters['from']=checkDate(filters['from'],filters['to']);
+                            $("#TLdateFrom").val(filters['from']);
                             $("#grdTask").DataTable({
                                 "scrollY": "255px",
                                 "scrollCollapse":true,
@@ -632,7 +805,7 @@ $(document).ready(function(){
                                         'company_id':me.user_info.company_id,
                                         'user_id':me.user_info.user_id,
                                         'user_type_id':me.user_info.user_type_id,
-                                        'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                        'filter':JSON.stringify(filters)
                                     },
                                     url:'/task/getTask',
                                     dataSrc:'data',
@@ -769,6 +942,12 @@ $(document).ready(function(){
                         $("#alertLayout").find('p').html(res.msg_response);
                         $("#alertLayout").css("display","block");
                         $("#win_resolve_task").modal("hide");
+                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                        filters['from']=checkDate(filters['from'],filters['to']);
+                        $("#TLdateFrom").val(filters['from']);
                         $("#grdTask").DataTable({
                             "scrollY": "255px",
                             "scrollCollapse":true,
@@ -778,7 +957,7 @@ $(document).ready(function(){
                                     'company_id':me.user_info.company_id,
                                     'user_id':me.user_info.user_id,
                                     'user_type_id':me.user_info.user_type_id,
-                                    'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                    'filter':JSON.stringify(filters)
                                 },
                                 url:'/task/getTask',
                                 dataSrc:'data',
@@ -938,7 +1117,11 @@ $(document).ready(function(){
                                 $.ajax({
                                     url:'/task/getAssignee',
                                     method:'POST',
-                                    data:JSON.stringify({'company_id':me.user_info.company_id}),
+                                    data:JSON.stringify({
+                                      'company_id':me.user_info.company_id,
+                                      'user_id':me.user_info['user_id'],
+                                      'user_type_id':me.user_info['user_type_id']
+                                    }),
                                     success:function(assignee_response){
                                         var assig_res=JSON.parse(assignee_response);
                                         if (assig_res.success){
@@ -1018,6 +1201,12 @@ $(document).ready(function(){
                                     $("#alertLayout").find('p').html(res.msg_response);
                                     $("#alertLayout").css("display","block");
                                     $("#win_check_task").modal("hide");
+                                    var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                    var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                    filters['from']=checkDate(filters['from'],filters['to']);
+                                    $("#TLdateFrom").val(filters['from']);
                                     $("#grdTask").DataTable({
                                         "scrollY": "255px",
                                         "scrollCollapse":true,
@@ -1027,7 +1216,7 @@ $(document).ready(function(){
                                                 'company_id':me.user_info.company_id,
                                                 'user_id':me.user_info.user_id,
                                                 'user_type_id':me.user_info.user_type_id,
-                                                'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                                'filter':JSON.stringify(filters)
                                             },
                                             url:'/task/getTask',
                                             dataSrc:'data',
@@ -1095,6 +1284,12 @@ $(document).ready(function(){
                                     $("#alertLayout").find('p').html(res.msg_response);
                                     $("#alertLayout").css("display","block");
                                     $("#win_check_task").modal("hide");
+                                    var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                    var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                    filters['from']=checkDate(filters['from'],filters['to']);
+                                    $("#TLdateFrom").val(filters['from']);
                                     $("#grdTask").DataTable({
                                         "scrollY": "255px",
                                         "scrollCollapse":true,
@@ -1104,7 +1299,7 @@ $(document).ready(function(){
                                                 'company_id':me.user_info.company_id,
                                                 'user_id':me.user_info.user_id,
                                                 'user_type_id':me.user_info.user_type_id,
-                                                'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                                'filter':JSON.stringify(filters)
                                             },
                                             url:'/task/getTask',
                                             dataSrc:'data',
@@ -1188,6 +1383,12 @@ $(document).ready(function(){
                                         $("#alertLayout").find('p').html(res.msg_response);
                                         $("#alertLayout").css("display","block");
                                         $("#win_check_declined_task").modal("hide");
+                                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                        filters['from']=checkDate(filters['from'],filters['to']);
+                                        $("#TLdateFrom").val(filters['from']);
                                         $("#grdTask").DataTable({
                                             "scrollY": "255px",
                                             "scrollCollapse":true,
@@ -1197,7 +1398,7 @@ $(document).ready(function(){
                                                     'company_id':me.user_info.company_id,
                                                     'user_id':me.user_info.user_id,
                                                     'user_type_id':me.user_info.user_type_id,
-                                                    'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                                    'filter':JSON.stringify(filters)
                                                 },
                                                 url:'/task/getTask',
                                                 dataSrc:'data',
@@ -1248,6 +1449,12 @@ $(document).ready(function(){
                         $("#alertLayout").find('p').html(res.msg_response);
                         $("#alertLayout").css("display","block");
                         $("#win_check_declined_task").modal("hide");
+                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                        filters['from']=checkDate(filters['from'],filters['to']);
+                        $("#TLdateFrom").val(filters['from']);
                         $("#grdTask").DataTable({
                             "scrollY": "255px",
                             "scrollCollapse":true,
@@ -1257,7 +1464,7 @@ $(document).ready(function(){
                                     'company_id':me.user_info.company_id,
                                     'user_id':me.user_info.user_id,
                                     'user_type_id':me.user_info.user_type_id,
-                                    'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                    'filter':JSON.stringify(filters)
                                 },
                                 url:'/task/getTask',
                                 dataSrc:'data',
@@ -1313,6 +1520,12 @@ $(document).ready(function(){
                                     $("#alertLayout").find('p').html(res.msg_response);
                                     $("#alertLayout").css("display","block");
                                     $("#win_check_declined_task").modal("hide");
+                                    var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                    var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                    filters['from']=checkDate(filters['from'],filters['to']);
+                                    $("#TLdateFrom").val(filters['from']);
                                     $("#grdTask").DataTable({
                                         "scrollY": "255px",
                                         "scrollCollapse":true,
@@ -1322,7 +1535,7 @@ $(document).ready(function(){
                                                 'company_id':me.user_info.company_id,
                                                 'user_id':me.user_info.user_id,
                                                 'user_type_id':me.user_info.user_type_id,
-                                                'filter':JSON.stringify({'a.status_id':parseInt($("#TLselStatus option:selected")[0].id)})
+                                                'filter':JSON.stringify(filters)
                                             },
                                             url:'/task/getTask',
                                             dataSrc:'data',

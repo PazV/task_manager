@@ -21,6 +21,8 @@ import time
 import os
 import random
 import app_config as cfg
+import datetime
+import time
 bp = Blueprint('task', __name__, url_prefix='/task')
 
 @bp.route('/getSupervisor',methods=['GET','POST'])
@@ -43,6 +45,7 @@ def getSupervisor():
                         user_type_id=2
                     and company_id=%s
                     and enabled in (1,3) %s
+                    order by name
                 """%(int(data['company_id']),condition)).dictresult()
                 response['data']=supervisor
                 response['success']=True
@@ -67,6 +70,9 @@ def getAssignee():
         if request.method=='POST':
             flag,data=GF.toDict(request.form,'post')
             if flag:
+                condition=""
+                if int(data['user_type_id'])==3:
+                    condition=" and user_id=%s"%data['user_id']
                 assignee=db.query("""
                     select
                         user_id as assignee_id,
@@ -75,9 +81,10 @@ def getAssignee():
                         system.user
                     where
                         user_type_id=3
-                    and company_id=%s
+                    and company_id=%s %s
                     and enabled in (1,3)
-                """%(int(data['company_id']))).dictresult()
+                    order by name
+                """%(int(data['company_id']),condition)).dictresult()
                 response['data']=assignee
                 response['success']=True
             else:
@@ -187,19 +194,56 @@ def getTask():
             deadline=""
             filter=json.loads(request.form['filter'])
             filters=""
+            now=datetime.datetime.now()
             for key,value in filter.iteritems():
                 if value!=-1:
-                    filters+=" and %s = %s"%(key,value)
+                    if key[-3:]=='_id':
+                        filters+=" and a.%s = %s"%(key,value)
+                    elif key=='to' or key=='from':
+                        if value=="":
+                            if key=="to" and filters['from']!="":
+                                filter['to']=filters['from']
+                            elif key=="to" and filters['from']=="":
+                                filter['from']="%s-%s-01"%(now.year,str(now.month).zfill(2))
+                                filter['to']="%s-%s-%s"%(now.year,str(now.month).zfill(2),now.day)
+                            elif key=="from" and filters['to']!="":
+                                filter['from']=filters['to']
+                            elif key=="from" and filters['to']=="":
+                                filter['from']="%s-%s-01"%(now.year,str(now.month).zfill(2))
+                                filter['to']="%s-%s-%s"%(now.year,str(now.month).zfill(2),now.day)
+                    elif key=='search' and value!="":
+                        filters+=" and a.name||a.description ilike '%%%s%%'"%value
+                else:
+                    if key=='from':
+                        filter['from']="%s-%s-01"%(now.year,str(now.month).zfill(2))
+                        filter['to']="%s-%s-%s"%(now.year,str(now.month).zfill(2),now.day)
+
+            if filter['from']!="" and filter['to']!="":
+                cfrom=time.strptime(filter['from'],"%Y-%m-%d")
+                cto=time.strptime(filter['to'],"%Y-%m-%d")
+                if cfrom>cto:
+                    filter['from']=filter['to']
+
+            if filter['date_type']==1:
+                filters+=" and a.created between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+
+
             if user_type_id in (1,4,5):
                 user=""
                 deadline="to_char(a.deadline,'DD-MM-YYYY') as deadline"
+                if filter['date_type']==2:
+                    filters+=" and a.deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
             elif user_type_id==2:
                 user=" and supervisor_id=%s"%user_id
                 deadline="to_char(a.supervisor_deadline,'DD-MM-YYYY') as deadline"
+                if filter['date_type']==2:
+                    filters+=" and a.supervisor_deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
             elif user_type_id==3:
                 user=" and assignee_id=%s"%user_id
                 deadline="to_char(a.assignee_deadline,'DD-MM-YYYY') as deadline"
-
+                if filter['date_type']==2:
+                    filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+            app.logger.info(filters)
             task=db.query("""
                 select
                     a.task_id,
@@ -224,6 +268,7 @@ def getTask():
                 order by created asc
                 offset %s limit %s
             """%(deadline,int(request.form['company_id']),user,filters,int(request.form['start']),int(request.form['length']))).dictresult()
+            
             total=db.query("""
                 select
                     count(*)
