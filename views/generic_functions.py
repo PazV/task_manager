@@ -47,7 +47,7 @@ class GenericFunctions:
         try:
             # msg=Message('Nuevo usuario plataforma Russell Bedford', sender='pgarcia@russellbedford.mx',recipients=['pgarcia@russellbedford.mx'])
             # msg.html='Correo de prueba'
-            msg=Message(subject,sender=cfg.username,recipients=[recipient])
+            msg=Message(subject,sender=cfg.mail_username,recipients=[recipient])
             msg.html=msg_body
             mail.send(msg)
             response['success']=True

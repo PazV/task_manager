@@ -14,7 +14,7 @@ from flask import current_app as app
 from . import generic_functions
 GF=generic_functions.GenericFunctions()
 db = getDB()
-
+import app_config as cfg
 bp=Blueprint('auth',__name__, url_prefix='/auth')
 # @auth.route('/login')
 # def login():
@@ -107,10 +107,7 @@ def recoverPassword():
                 select * from system.user
                 where login='%s' and email='%s'
             """%(data['login'].lower().strip(),data['email'].strip())).dictresult()
-            app.logger.info("""
-                select * from system.user
-                where login='%s' and email='%s'
-            """%(data['login'].lower().strip(),data['email'].strip()))
+            
             if exists!=[]:
                 passwd_success,passwd=GF.generateRandomPassword(8)
                 if passwd_success:
@@ -126,8 +123,10 @@ def recoverPassword():
                     """).dictresult()[0]
                     msg_info={
                         'login':exists[0]['login'],
-                        'passwd':passwd
+                        'passwd':passwd,
+                        'link':cfg.host
                     }
+
                     msg=message['body'].format(**msg_info)
                     GF.sendMail(message['subject'],msg,exists[0]['email'])
 

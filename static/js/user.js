@@ -278,6 +278,10 @@ $(document).ready(function(){
         $("#NUlogin").attr("readonly",false);
     });
 
+    $("#win_change_pass").on('hidden.bs.modal',function(){
+        resetForm("#frmChangePassword",["input|INPUT","checkbox|CHECKBOX"]);
+
+    });
 
     $('#grdAdminUsers').DataTable().on( 'select', function ( e, dt, type, index ) {
         var record = $('#grdAdminUsers').DataTable().rows(index).data()[0];
