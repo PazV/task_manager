@@ -26,8 +26,10 @@ def create_app(test_config=None):
     app.logger.addHandler(handler)
 
     mail = Mail(app)
+    from views import app_config as cfg
+
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY=cfg.app_secret_key,
         #DATABASE=os.path.join(app.instance_path, 'taskapp.sqlite'),
         DEBUG_TB_INTERCEPT_REDIRECTS=False,
     )
