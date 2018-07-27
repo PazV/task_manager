@@ -10,6 +10,7 @@ from flask import Flask, session, request, logging, g
 from flask_mail import Mail, Message
 import random
 import app_config as cfg
+import re
 app=Flask(__name__)
 app.config.update(dict(
     DEBUG = False,
@@ -90,6 +91,26 @@ class GenericFunctions:
             "&":"",
             "'":"",
             " ":"_"
+        }
+        rep = dict((re.escape(k), v) for k, v in rep.iteritems())
+        pattern = re.compile("|".join(rep.keys()))
+        new_text = pattern.sub(lambda m: rep[re.escape(m.group(0))], text)
+        return new_text
+
+    def replaceStringHtml(self,text):
+        rep = {
+            "á":"&aacute;",
+            "é":"&eacute;",
+            "í":"&iacute;",
+            "ó":"&oacute;",
+            "ú":"&uacute;",
+            "Á":"&Aacute;",
+            "É":"&Eacute;",
+            "Í":"&Iacute;",
+            "Ó":"&Oacute;",
+            "Ú":"&Uacute;",
+            "ñ":"&ntilde;",
+            "Ñ":"&Ntilde;"
         }
         rep = dict((re.escape(k), v) for k, v in rep.iteritems())
         pattern = re.compile("|".join(rep.keys()))

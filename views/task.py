@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #--*-- coding: utf-8 --*--
 from flask import Flask, render_template, flash, redirect, url_for, session, request, logging, Blueprint, g, send_file
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
@@ -249,7 +250,7 @@ def getTask():
                 deadline="to_char(a.assignee_deadline,'DD-MM-YYYY') as deadline"
                 if filter['date_type']==2:
                     filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
-            
+
             task=db.query("""
                 select
                     a.task_id,
@@ -1000,6 +1001,51 @@ def cancelTask():
             response['msg_response']="Ocurrió un error al intentar obtener la información."
     except:
         response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+@bp.route('/checkAssigneeTasks', methods=['GET','POST'])
+def checkAssigneeTasks():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            response['overlaps']=False
+            response['overlap_msg']=''
+            tasks=db.query("""
+                select name
+                from task.task
+                where assignee_deadline='%s 23:59:59'
+                and company_id=%s
+                and assignee_id=%s
+            """%(data['assignee_deadline'],data['company_id'],data['assignee_id'])).dictresult()
+            if tasks!=[]:
+                response['overlaps']=True
+                name=db.query("""
+                    select name from system.user where user_id=%s
+                """%data['assignee_id']).dictresult()
+                msg=""
+                for x in tasks:
+                    msg+="<li>%s</li>"%GF.replaceStringHtml(x['name'])
+                app.logger.info(name[0]['name'])
+                app.logger.info(GF.replaceStringHtml(name[0]['name']))
+                app.logger.info(data['assignee_deadline'])
+                app.logger.info(msg)
+                split_date=data['assignee_deadline'].split("-")
+                new_name=GF.replaceStringHtml(name[0]['name'])
+                new_date="%s-%s-%s"%(split_date[2],split_date[1],split_date[0])
+                #response['overlap_msg']="El usuario %s tiene las siguientes tareas asignadas el d&iacute;a %s, ¿desea continuar?"%(new_name,new_date)
+                response['overlap_msg']="El usuario %s tiene las siguientes tareas asignadas el d&iacute;a %s: <br><ul>%s</ul>&iquest;desea continuar?"%(new_name,new_date,msg)
+            response['success']=True
+        else:
+            response['success']=False
+            response['msg_response']='Ocurrió un error al intentar obtener los datos, favor de intentarlo de nuevo.'
+
+
+    except:
+        response['succes']=False
         response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
         exc_info=sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))

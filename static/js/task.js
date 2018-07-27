@@ -129,7 +129,7 @@ $(document).ready(function(){
                 {data:'status',"width":"10%"}
             ]
         });
-        
+
     });
 
     $("#btnClearTaskSearch").click(function(){
@@ -193,8 +193,7 @@ $(document).ready(function(){
     });
 
     $("#TLselStatus").change(function(){
-        console.log($("#TLselStatus option:selected")[0].value);
-        console.log($("#TLselStatus option:selected")[0].id);
+
         var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
         var filters=getDictForm("#TLfrmFilters",sel_list);
         filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
@@ -242,7 +241,7 @@ $(document).ready(function(){
     });
 
     $("#win_new_task").on('show.bs.modal',function(){
-        // console.log(me.user_info)
+
         $.ajax({
             url:'/task/getSupervisor',
             method:'POST',
@@ -368,7 +367,7 @@ $(document).ready(function(){
             if (input_list[x].type=='text' || input_list[x].type=='date' || input_list[x].type=='textarea'){
                 if ($("#"+input_list[x].id).hasClass('valid-field')===false){
                     $("#"+input_list[x].id).focusout();
-                    console.log(input_list[x].id);
+
                     is_valid=false;
                 }
             }
@@ -385,59 +384,154 @@ $(document).ready(function(){
             data['company_id']=me.user_info['company_id'];
             data['user_id']=me.user_info['user_id'];
             data['document']=JSON.stringify(me.evidence_list);
-            console.log(data);
+
             $.ajax({
-                url:'/task/saveTask',
+                url:'/task/checkAssigneeTasks',
                 method:'POST',
                 data:JSON.stringify(data),
-                success:function(response){
-                    var res=JSON.parse(response);
-                    if (res.success){
-                        EasyLoading.hide();
-                        $("#alertLayout").find('p').html(res.msg_response);
-                        $("#alertLayout").css("display","block");
-                        $("#win_new_task").modal("hide");
-                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                        $("#TLdateFrom").val(filters['from']);
-                        $("#grdTask").DataTable({
-                            "scrollY": "255px",
-                            "scrollCollapse":true,
-                            serverSide:true,
-                            ajax:{
-                                data:{
-                                    'company_id':me.user_info.company_id,
-                                    'user_id':me.user_info.user_id,
-                                    'user_type_id':me.user_info.user_type_id,
-                                    'filter':JSON.stringify(filters)
+                success:function(resp1){
+                    var res1 = JSON.parse(resp1);
+                    if (res1.success){
+                        if (res1.overlaps){
+                            EasyLoading.hide();
+                            $.confirm({
+                                theme:'dark',
+                                title: 'Atención',
+                                content: res1.overlap_msg,
+                                buttons: {
+                                    confirm:{
+                                        text:'Sí',
+                                        action: function(){
+                                            EasyLoading.show({
+                                                text:"Cargando...",
+                                                type:EasyLoading.TYPE["PACMAN"],
+                                            });
+                                            $.ajax({
+                                                url:'/task/saveTask',
+                                                method:'POST',
+                                                data:JSON.stringify(data),
+                                                success:function(response){
+                                                    var res=JSON.parse(response);
+                                                    if (res.success){
+                                                        EasyLoading.hide();
+                                                        $("#alertLayout").find('p').html(res.msg_response);
+                                                        $("#alertLayout").css("display","block");
+                                                        $("#win_new_task").modal("hide");
+                                                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                                        $("#TLdateFrom").val(filters['from']);
+                                                        $("#grdTask").DataTable({
+                                                            "scrollY": "255px",
+                                                            "scrollCollapse":true,
+                                                            serverSide:true,
+                                                            ajax:{
+                                                                data:{
+                                                                    'company_id':me.user_info.company_id,
+                                                                    'user_id':me.user_info.user_id,
+                                                                    'user_type_id':me.user_info.user_type_id,
+                                                                    'filter':JSON.stringify(filters)
+                                                                },
+                                                                url:'/task/getTask',
+                                                                dataSrc:'data',
+                                                                type:'POST'
+                                                            },
+                                                            columns:[
+                                                                {data:'created', "width":"15%"},
+                                                                {data:'name',"width":"20%"},
+                                                                {data:'deadline',"width":"15%"},
+                                                                {data:'assignee',"width":"20%"},
+                                                                {data:'supervisor',"width":"20%"},
+                                                                {data:'status',"width":"10%"}
+                                                            ]
+                                                        });
+                                                    }
+                                                    else{
+                                                        EasyLoading.hide();
+                                                        setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                                    }
+                                                },
+                                                error:function(error){
+                                                    EasyLoading.hide();
+                                                    setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger","Ocurrió un error al intentar enviar la información, favor de intentarlo de nuevo.",true);
+                                                }
+                                            });
+                                        }
+                                    },
+                                    cancel:{
+                                        text:'No'
+                                    }
+                                }
+                            })
+                        }
+                        else{
+                            $.ajax({
+                                url:'/task/saveTask',
+                                method:'POST',
+                                data:JSON.stringify(data),
+                                success:function(response){
+                                    var res=JSON.parse(response);
+                                    if (res.success){
+                                        EasyLoading.hide();
+                                        $("#alertLayout").find('p').html(res.msg_response);
+                                        $("#alertLayout").css("display","block");
+                                        $("#win_new_task").modal("hide");
+                                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                        $("#TLdateFrom").val(filters['from']);
+                                        $("#grdTask").DataTable({
+                                            "scrollY": "255px",
+                                            "scrollCollapse":true,
+                                            serverSide:true,
+                                            ajax:{
+                                                data:{
+                                                    'company_id':me.user_info.company_id,
+                                                    'user_id':me.user_info.user_id,
+                                                    'user_type_id':me.user_info.user_type_id,
+                                                    'filter':JSON.stringify(filters)
+                                                },
+                                                url:'/task/getTask',
+                                                dataSrc:'data',
+                                                type:'POST'
+                                            },
+                                            columns:[
+                                                {data:'created', "width":"15%"},
+                                                {data:'name',"width":"20%"},
+                                                {data:'deadline',"width":"15%"},
+                                                {data:'assignee',"width":"20%"},
+                                                {data:'supervisor',"width":"20%"},
+                                                {data:'status',"width":"10%"}
+                                            ]
+                                        });
+                                    }
+                                    else{
+                                        EasyLoading.hide();
+                                        setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                    }
                                 },
-                                url:'/task/getTask',
-                                dataSrc:'data',
-                                type:'POST'
-                            },
-                            columns:[
-                                {data:'created', "width":"15%"},
-                                {data:'name',"width":"20%"},
-                                {data:'deadline',"width":"15%"},
-                                {data:'assignee',"width":"20%"},
-                                {data:'supervisor',"width":"20%"},
-                                {data:'status',"width":"10%"}
-                            ]
-                        });
+                                error:function(error){
+                                    EasyLoading.hide();
+                                    setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger","Ocurrió un error al intentar enviar la información, favor de intentarlo de nuevo.",true);
+                                }
+                            });
+                        }
                     }
                     else{
                         EasyLoading.hide();
-                        setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                        setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger",res1.msg_response,true);
                     }
                 },
-                error:function(error){
+                error:function(){
                     EasyLoading.hide();
                     setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger","Ocurrió un error al intentar enviar la información, favor de intentarlo de nuevo.",true);
                 }
             });
+
         }
         else{
             setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger","Existen campos vacíos o incorrectos, favor de revisar.",true);
@@ -455,8 +549,7 @@ $(document).ready(function(){
             data['company_id']=me.user_info.company_id;
             data['user_type_id']=me.user_info.user_type_id;
             data['from']='details';
-            console.log(record);
-            console.log(data);
+
             $.ajax({
                 url:'/task/getTaskDetails',
                 method:'POST',
@@ -504,7 +597,7 @@ $(document).ready(function(){
             var data={};
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
-            console.log(record);
+
             if (record['status_id']==1 || record['status_id']==6){
                 data['task_id']=record['task_id'];
                 data['user_id']=me.user_info.user_id;
@@ -609,7 +702,7 @@ $(document).ready(function(){
             for (x in frm_evidence){
                 if (frm_evidence[x].type=='file'){
                     try{
-                        console.log(frm_evidence[x].files[0].size);
+
                         total_size+=frm_evidence[x].files[0].size;
                     }
                     catch(err){
@@ -617,10 +710,9 @@ $(document).ready(function(){
                     }
                 }
             }
-            console.log(total_size);
-            console.log(total_size/1024 +"KB");
+
             total_size_MB=total_size/1024/1024;
-            console.log(total_size_MB +"MB");
+
             if (total_size_MB<=3){
                 var files_list=[];
                 var frm=new FormData();
@@ -638,8 +730,8 @@ $(document).ready(function(){
                         }
                     }
                 }
-                console.log(files_list);
-                //lega en files
+
+                //llega en files
                 var table=$("#grdTask").DataTable();
                 var ind=table.row('.selected').index();
                 var record=table.rows(ind).data()[0];
@@ -751,11 +843,11 @@ $(document).ready(function(){
                             files_list.push(name);
                             data.append(name,file);
                             total_size+=input_list[x].files[0].size;
-                            console.log(input_list[x].files[0].size);
+
                         }
                         else{
                             total_size+=parseFloat($("#"+input_list[x].id).data('size'))*1048576;
-                            console.log(parseFloat($("#"+input_list[x].id).data('size'))*1048576);
+
                         }
                     }
                 }
@@ -765,7 +857,7 @@ $(document).ready(function(){
                 var table=$("#grdTask").DataTable();
                 var ind=table.row('.selected').index();
                 var record=table.rows(ind).data()[0];
-                console.log(record);
+
                 data.append('task_id',record['task_id']);
                 data.append('user_id',me.user_info.user_id);
                 data.append('company_id',me.user_info.company_id);
@@ -1046,7 +1138,7 @@ $(document).ready(function(){
             if (input_list[x].type=='text' || input_list[x].type=='textarea'){
                 if ($("#"+input_list[x].id).hasClass('valid-field')===false){
                     $("#"+input_list[x].id).focusout();
-                    console.log(input_list[x].id);
+
                     is_valid=false;
                 }
             }
@@ -1054,7 +1146,7 @@ $(document).ready(function(){
         if (is_valid){
             var sel_list=[{'id':"#TEdocument_type",'name':"document_type_id"}];
             var data=getDictForm("#frmAddEvidence",sel_list);
-            console.log(data);
+
             data['id']=me.evidence_counter;
             me.evidence_list.push(data);
             var div='<div class="evidence-container" id="'+data['id']+'">'+data['name']+' - ('+data['document_type']+')<a class="close-evidence-container pull-right" data-toggle="tooltip" title="Eliminar evidencia"><i class="fa fa-times"></i></a></div>'
