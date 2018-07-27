@@ -178,12 +178,36 @@ function validateMail(inputId,spanId){
 }
 
 function checkDate(from,to){
-    var cfrom = new Date(from);
-    var cto = new Date(to);
-    if (cfrom>cto){
-        return to;
+    var today=new Date().toISOString().split("T")[0];
+    var split_date=today.split("-");
+    split_date[2]="01";
+    var first_day=split_date.join("-");
+    if (from==""){
+        $("#TLdateFrom").val(first_day);
+        from=first_day;
+        if (to==""){
+            to=today;
+            $("#TLdateTo").val(today);
+        }
     }
-    if (cfrom<=cto){
-        return from;
+    if (to==""){
+        to=today;
+        $("#TLdateTo").val(today);
     }
+    if (from!="" && to!=""){
+        var cfrom = new Date(from);
+        var cto = new Date(to);
+        if (cfrom>cto){
+            return to,to;
+        }
+        if (cfrom<=cto){
+            return from,to;
+        }
+    }
+    else{
+        to=today;
+        from=first_day;
+        return from,to;
+    }
+
 }

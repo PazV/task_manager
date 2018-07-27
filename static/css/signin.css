@@ -59,3 +59,9 @@ body {
   font-weight: bold;
   color:black;
 }
+
+
+.login-error-msg{
+    font-size:small;
+    color:red;
+}

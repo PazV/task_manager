@@ -73,4 +73,14 @@ $(document).ready(function(){
         resetForm("#frmRecoverPassword",["input|INPUT"]);
     });
 
+    $("#inputUser").keyup(function(){
+        $("#spnLoginUser").css("display","none");
+        $("#spnLoginPass").css("display","none");
+    });
+
+    $("#inputPassword").keyup(function(){
+        $("#spnLoginUser").css("display","none");
+        $("#spnLoginPass").css("display","none");
+    });
+
 });

@@ -32,6 +32,7 @@ bp=Blueprint('auth',__name__, url_prefix='/auth')
 
 @bp.route('/login', methods=['GET','POST'])
 def login():
+    error=''
     if request.method == 'POST':
         #username = request.form['username']
         login = request.form['username']
@@ -42,8 +43,10 @@ def login():
         """%(login)).dictresult()
         if user==[]:
             error = 'Usuario no encontrado.'
+            flash(u'Usuario no encontrado','user')
         elif not check_password_hash(user[0]['password'],password):
             error = 'Contraseña incorrecta.'.decode('utf-8')
+            flash(u'Contraseña incorrecta','pass')
         else:
             error=''
 
@@ -69,7 +72,7 @@ def login():
     else:
         logging.info("no post")
         # return render_template('login.html')
-    return render_template('login.html')
+    return render_template('login.html',error=error)
 
 def is_logged_in(f):
     @wraps(f)
@@ -107,7 +110,7 @@ def recoverPassword():
                 select * from system.user
                 where login='%s' and email='%s'
             """%(data['login'].lower().strip(),data['email'].strip())).dictresult()
-            
+
             if exists!=[]:
                 passwd_success,passwd=GF.generateRandomPassword(8)
                 if passwd_success:

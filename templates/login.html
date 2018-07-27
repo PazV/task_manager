@@ -10,7 +10,6 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
     <link rel="icon" type="image/jpg" href="../static/images/rb.jpg">
-    <link href="../static/css/signin.css" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/lib/bootstrap-grid.min.css"/>
     <link rel="stylesheet" href="../static/css/lib/bootstrap-reboot.min.css"/>
     <link rel="stylesheet" href="../static/css/lib/bootstrap.min.css" />
@@ -21,6 +20,7 @@
     <link rel="stylesheet" href="../static/css/task-style.css" />
     <link rel="stylesheet" href="../static/css/settings-style.css" />
     <link rel="stylesheet" href="../static/css/home-style.css" />
+    <link rel="stylesheet" href="../static/css/signin.css">
     <title>Inicio de sesión</title>
   </head>
   <body style="padding-top: 10px;">
@@ -33,13 +33,24 @@
           </div>
           <div class="text-center" id="divLogin">
               <form class="form-signin" method="post">
+
                 <img  src="../static/images/rb_azul.png" alt="" style="padding:3px; width:300px; height:70px;"></img>
                 <h1 class="h3 mb-3 font-weight-normal" style="padding:3px;">Inicio de sesión</h1>
                 <label for="inputUser" class="sr-only">Usuario:</label>
                 <input class="form-control" type="text" placeholder="Usuario" id="inputUser" name="username"> </input>
+                {% with errors = get_flashed_messages(category_filter=["user"]) %}
+                    {% if errors %}
+                        <span class="login-error-msg" id="spnLoginUser">{{errors[0]}}</span>
+                    {% endif %}
+                {% endwith %}
                 <label for="inputPassword" class="sr-only">Contraseña:</label>
-                <input class="form-control" type="password" placeholder="Contraseña" id="inputPassword" name="password"></input>
-                <button type="submit" class="btn-success btn-block" data-toggle="tooltip" title="Click para iniciar sesión">Iniciar sesión   <i class="fa fa-chevron-circle-right" style="vertical-align:-1px; font-size:18px;"></i></button>
+                <input class="form-control" type="password" placeholder="Contraseña" id="inputPassword" name="password" style="margin-bottom:0px;"></input>
+                {% with errors = get_flashed_messages(category_filter=["pass"]) %}
+                    {% if errors %}
+                        <span class="login-error-msg" id="spnLoginPass">{{errors[0]}}</span>
+                    {% endif %}
+                {% endwith %}
+                <button type="submit" class="btn-success btn-block" data-toggle="tooltip" title="Click para iniciar sesión" style="margin-top:10px;">Iniciar sesión   <i class="fa fa-chevron-circle-right" style="vertical-align:-1px; font-size:18px;"></i></button>
                 <button type="button" class="btn-warning btn-block" data-toggle="tooltip" title="Click si deseas recuperar tu contraseña" id="btnForgotPassword">Olvidé mi contraseña   <i class="fa fa-expeditedssl" style="vertical-align:-1px; font-size:18px;"></i></button>
               </form>
           </div>
