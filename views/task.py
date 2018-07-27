@@ -193,6 +193,7 @@ def getTask():
             user=""
             deadline=""
             filter=json.loads(request.form['filter'])
+
             filters=""
             now=datetime.datetime.now()
             for key,value in filter.iteritems():
@@ -201,14 +202,14 @@ def getTask():
                         filters+=" and a.%s = %s"%(key,value)
                     elif key=='to' or key=='from':
                         if value=="":
-                            if key=="to" and filters['from']!="":
-                                filter['to']=filters['from']
-                            elif key=="to" and filters['from']=="":
+                            if key=="to" and filter['from']!="":
+                                filter['to']=filter['from']
+                            elif key=="to" and filter['from']=="":
                                 filter['from']="%s-%s-01"%(now.year,str(now.month).zfill(2))
                                 filter['to']="%s-%s-%s"%(now.year,str(now.month).zfill(2),now.day)
-                            elif key=="from" and filters['to']!="":
-                                filter['from']=filters['to']
-                            elif key=="from" and filters['to']=="":
+                            elif key=="from" and filter['to']!="":
+                                filter['from']=filter['to']
+                            elif key=="from" and filter['to']=="":
                                 filter['from']="%s-%s-01"%(now.year,str(now.month).zfill(2))
                                 filter['to']="%s-%s-%s"%(now.year,str(now.month).zfill(2),now.day)
                     elif key=='search' and value!="":
@@ -217,6 +218,11 @@ def getTask():
                     if key=='from':
                         filter['from']="%s-%s-01"%(now.year,str(now.month).zfill(2))
                         filter['to']="%s-%s-%s"%(now.year,str(now.month).zfill(2),now.day)
+
+            if 'from' not in filter:
+                filter['from']="%s-%s-01"%(now.year,str(now.month).zfill(2))
+            if 'to' not in filter:
+                filter['to']="%s-%s-%s"%(now.year,str(now.month).zfill(2),now.day)
 
             if filter['from']!="" and filter['to']!="":
                 cfrom=time.strptime(filter['from'],"%Y-%m-%d")
@@ -243,7 +249,7 @@ def getTask():
                 deadline="to_char(a.assignee_deadline,'DD-MM-YYYY') as deadline"
                 if filter['date_type']==2:
                     filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
-            app.logger.info(filters)
+            
             task=db.query("""
                 select
                     a.task_id,
@@ -268,7 +274,7 @@ def getTask():
                 order by created asc
                 offset %s limit %s
             """%(deadline,int(request.form['company_id']),user,filters,int(request.form['start']),int(request.form['length']))).dictresult()
-            
+
             total=db.query("""
                 select
                     count(*)

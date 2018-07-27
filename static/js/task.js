@@ -103,7 +103,7 @@ $(document).ready(function(){
         var filters=getDictForm("#TLfrmFilters",sel_list);
         filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
         filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-        filters['from']=checkDate(filters['from'],filters['to']);
+        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
         $("#TLdateFrom").val(filters['from']);
         $("#grdTask").DataTable({
             "scrollY": "255px",
@@ -129,7 +129,7 @@ $(document).ready(function(){
                 {data:'status',"width":"10%"}
             ]
         });
-        console.log(filters);
+        
     });
 
     $("#btnClearTaskSearch").click(function(){
@@ -148,7 +148,7 @@ $(document).ready(function(){
         var filters=getDictForm("#TLfrmFilters",sel_list);
         filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
         filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-        filters['from']=checkDate(filters['from'],filters['to']);
+        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
         $("#TLdateFrom").val(filters['from']);
         $("#grdTask").DataTable({
             "scrollY": "255px",
@@ -199,7 +199,7 @@ $(document).ready(function(){
         var filters=getDictForm("#TLfrmFilters",sel_list);
         filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
         filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-        filters['from']=checkDate(filters['from'],filters['to']);
+        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
         $("#TLdateFrom").val(filters['from']);
         $("#grdTask").DataTable({
             "scrollY": "255px",
@@ -401,7 +401,7 @@ $(document).ready(function(){
                         var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                         filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                         filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                        filters['from']=checkDate(filters['from'],filters['to']);
+                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                         $("#TLdateFrom").val(filters['from']);
                         $("#grdTask").DataTable({
                             "scrollY": "255px",
@@ -669,7 +669,7 @@ $(document).ready(function(){
                             var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                             filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                             filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                            filters['from']=checkDate(filters['from'],filters['to']);
+                            filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                             $("#TLdateFrom").val(filters['from']);
                             $("#grdTask").DataTable({
                                 "scrollY": "255px",
@@ -794,7 +794,7 @@ $(document).ready(function(){
                             var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                             filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                             filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                            filters['from']=checkDate(filters['from'],filters['to']);
+                            filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                             $("#TLdateFrom").val(filters['from']);
                             $("#grdTask").DataTable({
                                 "scrollY": "255px",
@@ -946,7 +946,7 @@ $(document).ready(function(){
                         var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                         filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                         filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                        filters['from']=checkDate(filters['from'],filters['to']);
+                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                         $("#TLdateFrom").val(filters['from']);
                         $("#grdTask").DataTable({
                             "scrollY": "255px",
@@ -1205,7 +1205,7 @@ $(document).ready(function(){
                                     var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                                     filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                                     filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                    filters['from']=checkDate(filters['from'],filters['to']);
+                                    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                                     $("#TLdateFrom").val(filters['from']);
                                     $("#grdTask").DataTable({
                                         "scrollY": "255px",
@@ -1288,7 +1288,7 @@ $(document).ready(function(){
                                     var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                                     filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                                     filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                    filters['from']=checkDate(filters['from'],filters['to']);
+                                    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                                     $("#TLdateFrom").val(filters['from']);
                                     $("#grdTask").DataTable({
                                         "scrollY": "255px",
@@ -1387,7 +1387,7 @@ $(document).ready(function(){
                                         var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                                         filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                                         filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                        filters['from']=checkDate(filters['from'],filters['to']);
+                                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                                         $("#TLdateFrom").val(filters['from']);
                                         $("#grdTask").DataTable({
                                             "scrollY": "255px",
@@ -1453,7 +1453,7 @@ $(document).ready(function(){
                         var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                         filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                         filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                        filters['from']=checkDate(filters['from'],filters['to']);
+                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                         $("#TLdateFrom").val(filters['from']);
                         $("#grdTask").DataTable({
                             "scrollY": "255px",
@@ -1524,7 +1524,7 @@ $(document).ready(function(){
                                     var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                                     filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
                                     filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                    filters['from']=checkDate(filters['from'],filters['to']);
+                                    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
                                     $("#TLdateFrom").val(filters['from']);
                                     $("#grdTask").DataTable({
                                         "scrollY": "255px",
