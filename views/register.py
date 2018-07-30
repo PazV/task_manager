@@ -254,7 +254,7 @@ def createUser():
                                 system.user
                             where
                                 login='%s'
-                            and company_id=%s
+                            --and company_id=%s
                         """%(dict['login'].lower(),dict['company_id'])).dictresult()
                         if exist_login[0]['count']==0:
                             passwd_success,passwd=generateRandomPassword(8)
@@ -301,7 +301,8 @@ def createUser():
                                 response['msg_response']='Ocurrió un error al intentar realizar el registro, favor de intentarlo de nuevo más tarde.'
                         else:
                             response['success']=False
-                            response['msg_response']='El usuario (login) ingresado ya se encuentra registrado para la empresa seleccionada.'
+                            #response['msg_response']='El usuario (login) ingresado ya se encuentra registrado para la empresa seleccionada.'
+                            response['msg_response']='El usuario (login) ingresado ya se encuentra registrado, favor de ingresar uno nuevo.'
                     else:
 
                         dict['name']=dict['name'].strip()
