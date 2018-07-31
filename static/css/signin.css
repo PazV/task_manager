@@ -63,5 +63,6 @@ body {
 
 .login-error-msg{
     font-size:small;
-    color:red;
+    color:#f3152a;
+    text-shadow: -.5px 0 #aa0919, 0 .5px #aa0919, .5px 0 #aa0919, 0 -.5px #aa0919;
 }

@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="../static/css/signin.css">
     <title>Inicio de sesión</title>
   </head>
-  <body style="padding-top: 10px;">
+  <body style="padding-top: 10px; background-image:url('../static/images/fondo.jpg'); background-size:cover; background-repeat:no-repeat;">
       <div class="container-fluid">
           <div>
               <div class="alert alert-success alert-dismissible" id="alertLogin" style="display:none; align-self: baseline;" role="alert">
@@ -34,8 +34,8 @@
           <div class="text-center" id="divLogin">
               <form class="form-signin" method="post">
 
-                <img  src="../static/images/rb_azul.png" alt="" style="padding:3px; width:300px; height:70px;"></img>
-                <h1 class="h3 mb-3 font-weight-normal" style="padding:3px;">Inicio de sesión</h1>
+                <!-- <img  src="../static/images/rb_azul.png" alt="" style="padding:3px; width:300px; height:70px;"></img> -->
+                <h1 class="h2 mb-3 font-weight-normal" style="padding:3px; color: #ffff99; text-shadow: -.2px 0 #998f66, 0 .2px #998f66, .2px 0 #998f66, 0 -.2px #998f66;">Inicio de sesión</h1>
                 <label for="inputUser" class="sr-only">Usuario:</label>
                 <input class="form-control" type="text" placeholder="Usuario" id="inputUser" name="username"> </input>
                 {% with errors = get_flashed_messages(category_filter=["user"]) %}
