@@ -1,0 +1,70 @@
+<div class="modal fade" id="win_check_declined_task_supervisor" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content" style="min-width:550px">
+                <div class="modal-header user-header header-win-title">
+                    <span>Revisar tarea declinada</span>
+                    <button class="btn-close-modal pull-right" data-dismiss="modal" type="button"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info alert-dismissible" id="alertCHDSUPTask" style="display:none;" role="alert">
+                        <p>Ocurrió un error</p>
+                        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                    </div>
+                    <div class="jumbotron" style="margin:15px; padding:20px;">
+                        <span id="CHDSUPTtask_info"></span>
+                    </div>
+                    <form method="POST" id="frmCheckSupDeclinedTask" style="padding:8px;">
+                        <div class="form-group row row-w-span">
+                          <label for="CHDSUPdeadline" style="width:37%; padding-right:15px;padding-left:15px;" class="col-form-label">Fecha de vencimiento:</label>
+                          <div style="width:63%; padding-right:15px;padding-left:15px;">
+                             <input type="date" name="deadline" class="form-control" id="CHDSUPdeadline"/>
+                          </div>
+                        </div>
+                        <div class="row">
+                            <span style="width:37%;"></span>
+                            <span class="error-msg" style="width:63%;" id="spnCHDSUPdeadline">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                          <label for="CHDSUPsupervisor_id" class="col-form-label" style="width:20%; padding-left:15px;">Supervisa:</label>
+                          <div style="width:35%;padding-right:8px;">
+                            <select id="CHDSUPsupervisor_id" class="form-control" placeholder="Supervisor" name="supervisor_id"></select>
+                          </div>
+                          <label for="CHDSUPsupervisor_deadline" style="width:13%;padding-left:8px;" class="col-form-label">Fecha:</label>
+                          <div style="width:32%;padding-right:15px;">
+                            <input type="date" class="form-control" id="CHDSUPsupervisor_deadline" name="supervisor_deadline"/>
+                          </div>
+                        </div>
+                        <div class="row">
+                            <span style="width:20%; padding-left:15px;"></span>
+                            <span style="width:35%;padding-right:8px;" class="error-msg-row" id="spnCHDSUPsupervisor_id">Error</span>
+                            <span style="width:13%;padding-left:8px;"></span>
+                            <span style="width:32%;padding-right:15px;" class="error-msg-row" id="spnCHDSUPsupervisor_deadline">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                          <label for="CHDSUPassignee_id" style="width:20%; padding-left:15px;" class="col-form-label">Asignado a:</label>
+                          <div style="width:35%; padding-right:8px;">
+                            <select id="CHDSUPassignee_id" class="form-control" placeholder="Asignado a" name="assignee_id"></select>
+                          </div>
+                          <label for="CHDSUPassigee_deadline" class="col-form-label" style="width:13%;padding-left:8px;">Fecha:</label>
+                          <div style="width:32%;padding-right:15px;">
+                            <input type="date" id="CHDSUPassigee_deadline" class="form-control" name="assignee_deadline"/>
+                          </div>
+                        </div>
+                        <div class="row">
+                            <span style="width:20%; padding-left:15px;"></span>
+                            <span style="width:35%; padding-right:8px;" class="error-msg-row" id="spnCHDSUPassignee_id">Error</span>
+                            <span style="width:13%; padding-left:8px;"></span>
+                            <span style="width:32%; padding-right:15px;" class="error-msg-row" id="spnCHDSUPassigee_deadline">Error</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button class="btn btn-light" type="button" id="btnSaveCheckDeclinedSupTask" data-toggle="tooltip" title="Asignar tarea a auxiliar seleccionado y/o cambiar descripción">Enviar <i class="fa fa-calendar-check-o"></i></button>
+                    <button class="btn btn-light" type="button" id="btnCancelDeclinedSupTask" data-toggle="tooltip" title="Cancelar tarea (ya no será asignada a ningún auxiliar)">Cancelar tarea <i class="fa fa-calendar-times-o"></i></button>
+                    <button class="btn btn-light" type="button" id="btnCloseCheckDeclinedSupTask" data-toggle="tooltip" title="Salir sin realizar cambios">Salir <i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

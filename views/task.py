@@ -446,6 +446,18 @@ def getTaskDetails():
                 response['evidence']=buttons
 
             elif data['from']=='check_declined':
+                declined_by=db.query("""
+                    select
+                        a.declined_by,
+                        b.user_type_id
+                    from
+                        system.user b,
+                        task.task a
+                    where
+                        a.task_id=%s
+                    and a.declined_by=b.user_id
+                """%data['task_id']).dictresult()[0]
+
                 assignee_info=db.query("""
                     select
                         to_char(assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as date,
@@ -454,9 +466,32 @@ def getTaskDetails():
                     from task.task
                     where task_id=%s
                 """%data['task_id']).dictresult()[0]
-                html="""
-                    <p><b>Nombre:</b> %s <br> <b>Descripción:</b> %s <br> <b>Fecha límite:</b> %s <br> <b>Supervisa:</b> %s <br> <b>Asignado a:</b> %s <br> <b>Fecha límite de auxiliar:</b> %s <br> <b>Fecha en que se declinó:</b> %s <br> <b>Comentarios auxiliar:</b> %s </p>
-                """%(task['name'],task['description'],task['deadline'],task['supervisor'],task['assignee'],assignee_info['date'],assignee_info['last_updated'],assignee_info['declining_cause'])
+                if declined_by['user_type_id']==3:
+                    response['declined_by']='assignee'
+                    html="""
+                        <p><b>Nombre:</b> %s <br> <b>Descripción:</b> %s <br> <b>Fecha límite:</b> %s <br> <b>Supervisa:</b> %s <br> <b>Asignado a:</b> %s <br> <b>Fecha límite de auxiliar:</b> %s <br> <b>Fecha en que se declinó:</b> %s <br> <b>Comentarios auxiliar:</b> %s </p>
+                    """%(task['name'],task['description'],task['deadline'],task['supervisor'],task['assignee'],assignee_info['date'],assignee_info['last_updated'],assignee_info['declining_cause'])
+                else:
+                    response['declined_by']='supervisor'
+                    app.logger.info("user_id %s"%data['user_id'])
+                    app.logger.info("declined_by %s"%declined_by['declined_by'])
+                    if data['user_id']==declined_by['declined_by']:
+                        response['allow_check']=False
+                        html=""
+                    else:
+                        response['allow_check']=True
+                        html="""<p><b>Nombre:</b> %s <br> <b>Descripción:</b> %s"""%(task['name'],task['description'])
+                        deadlines=db.query("""
+                            select
+                                to_char(assignee_deadline,'YYYY-MM-DD') as assignee_deadline,
+                                to_char(supervisor_deadline,'YYYY-MM-DD') as supervisor_deadline,
+                                to_char(deadline,'YYYY-MM-DD') as deadline
+                            from
+                                task.task
+                            where
+                                task_id=%s
+                        """%data['task_id']).dictresult()[0]
+                        response['deadlines']=deadlines
 
             response['data']=html
             response['success']=True
@@ -858,40 +893,84 @@ def declineTask():
                     status_id=3,
                     declining_cause='%s',
                     last_updated='now',
-                    user_last_updated=%s
+                    user_last_updated=%s,
+                    declined_by=%s
                 where
                     task_id=%s
                 and company_id=%s
-            """%(data['comments'],data['user_id'],data['task_id'],data['company_id']))
-            recipient=db.query("""
-                select a.email
-                from
-                    system.user a,
-                    task.task b
-                where
-                    a.user_id=b.supervisor_id
-                and b.task_id=%s
-            """%data['task_id']).dictresult()[0]['email']
-            task_info=db.query("""
-                select
-                    (select name from system.user where user_id=a.supervisor_id) as supervisor,
-                    a.name,
-                    (select name from system.user where user_id=a.assignee_id) as assignee,
-                    a.declining_cause,
-                    a.description,
-                    to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
-                    to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline
-                from
-                    task.task a
-                where a.task_id=%s
-            """%data['task_id']).dictresult()[0]
+            """%(data['comments'],data['user_id'],data['user_id'],data['task_id'],data['company_id']))
+            if data['user_type_id']==3:
+                recipient=db.query("""
+                    select a.email
+                    from
+                        system.user a,
+                        task.task b
+                    where
+                        a.user_id=b.supervisor_id
+                    and b.task_id=%s
+                """%data['task_id']).dictresult()[0]['email']
+                task_info=db.query("""
+                    select
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        a.name,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        a.declining_cause,
+                        a.description,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline
+                    from
+                        task.task a
+                    where a.task_id=%s
+                """%data['task_id']).dictresult()[0]
 
-            message=db.query("""
-                select * from template.generic_template where type_id=6
-            """).dictresult()[0]
-            task_info['link']=cfg.host
-            msg=message['body'].format(**task_info)
-            GF.sendMail(message['subject'],msg,recipient)
+                message=db.query("""
+                    select * from template.generic_template where type_id=6
+                """).dictresult()[0]
+                task_info['link']=cfg.host
+                msg=message['body'].format(**task_info)
+                GF.sendMail(message['subject'],msg,recipient)
+            else:
+                task_info=db.query("""
+                    select
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        a.name,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        a.declining_cause,
+                        a.description,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                        to_char(a.deadline, 'DD-MM-YYYY HH24:MI:SS') as deadline
+                    from
+                        task.task a
+                    where a.task_id=%s
+                """%data['task_id']).dictresult()[0]
+                task_info['link']=cfg.host
+
+                assignee=db.query("""
+                    select
+                        email
+                    from
+                        system.user
+                    where
+                        user_id=(select assignee_id from task.task where task_id=%s)
+                    and company_id=%s
+                """%(data['task_id'],data['company_id'])).dictresult()[0]['email']
+                message_assignee=db.query("""
+                    select * from template.generic_template where type_id=16
+                """).dictresult()[0]
+                msg_assignee=message_assignee['body'].format(**task_info)
+                GF.sendMail(message_assignee['subject'],msg_assignee,assignee)
+
+                admin=db.query("""
+                    select email,name from system.user where user_type_id=1 and company_id=%s
+                """%data['company_id']).dictresult()[0]
+                task_info['admin']=admin['name']
+                message_admin=db.query("""
+                    select * from template.generic_template where type_id=17
+                """).dictresult()[0]
+                msg_admin=message_admin['body'].format(**task_info)
+                GF.sendMail(message_admin['subject'],msg_admin,admin['email'])
+
             response['success']=True
             response['msg_response']='La tarea ha sido declinada.'
         else:
@@ -914,40 +993,53 @@ def updateDeclinedTask():
                 db.query("""
                     update task.task
                     set assignee_id=%s,
+                    supervisor_id=%s,
                     status_id=1,
                     last_updated='now',
                     user_last_updated=%s
                     where task_id=%s
-                """%(data['assignee_id'],data['user_id'],data['task_id']))
+                """%(data['assignee_id'],data['supervisor_id'],data['user_id'],data['task_id']))
             else:
                 db.query("""
                     update task.task
                     set assignee_id=%s,
+                    supervisor_id=%s,
                     description='%s',
                     status_id=1,
                     last_updated='now',
                     user_last_updated=%s
                     where task_id=%s
-                """%(data['assignee_id'],data['description'],data['user_id'],data['task_id']))
-            msg_info=db.query("""
-                select * from template.generic_template where type_id=10
-            """).dictresult()[0]
+                """%(data['assignee_id'],data['supervisor_id'],data['description'],data['user_id'],data['task_id']))
+
             task_info=db.query("""
                 select
                     (select a.name from system.user a where a.user_id=assignee_id) as assignee,
-                    (select a.email from system.user a where a.user_id=assignee_id) as recipient,
+                    (select a.email from system.user a where a.user_id=assignee_id) as assignee_mail,
                     (select a.name from system.user a where a.user_id=supervisor_id) as supervisor,
+                    (select a.email from system.user a where a.user_id=supervisor_id) as supervisor_mail,
                     name,
                     description,
-                    to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline
+                    to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                    to_char(supervisor_deadline, 'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline
                 from
                     task.task
                 where
                     task_id=%s
             """%data['task_id']).dictresult()[0]
             task_info['link']=cfg.host
-            msg=msg_info['body'].format(**task_info)
-            GF.sendMail(msg_info['subject'],msg,task_info['recipient'])
+            #Send mail to assignee
+            msg_info_a=db.query("""
+                select * from template.generic_template where type_id=10
+            """).dictresult()[0]
+            msg_a=msg_info_a['body'].format(**task_info)
+            GF.sendMail(msg_info_a['subject'],msg_a,task_info['assignee_mail'])
+
+            #Send mail supervisor
+            msg_info_s=db.query("""
+                select * from template.generic_template where type_id=19
+            """).dictresult()[0]
+            msg_s=msg_info_s['body'].format(**task_info)
+            GF.sendMail(msg_info_s['subject'],msg_s,task_info['supervisor_mail'])
             response['success']=True
             response['msg_response']='La tarea ha sido reasignada.'
         else:
@@ -974,10 +1066,6 @@ def cancelTask():
                 where task_id=%s
             """%(data['user_id'],data['task_id']))
 
-            message_info=db.query("""
-                select * from template.generic_template where type_id=11
-            """).dictresult()[0]
-
             task_info=db.query("""
                 select
                     (select a.name from system.user a where a.user_id=assignee_id) as assignee,
@@ -985,15 +1073,29 @@ def cancelTask():
                     name,
                     description,
                     to_char(assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
-                    (select a.email from system.user a where a.user_id=assignee_id) as recipient
+                    to_char(supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    (select a.email from system.user a where a.user_id=assignee_id) as assignee_mail,
+                    (select a.email from system.user a where a.user_id=supervisor_id) as supervisor_mail
                 from
                     task.task
                 where
                     task_id=%s
             """%data['task_id']).dictresult()[0]
             task_info['link']=cfg.host
-            msg=message_info['body'].format(**task_info)
-            GF.sendMail(message_info['subject'],msg,task_info['recipient'])
+
+            #send mail to assignee
+            message_info_a=db.query("""
+                select * from template.generic_template where type_id=11
+            """).dictresult()[0]
+            msg_a=message_info_a['body'].format(**task_info)
+            GF.sendMail(message_info_a['subject'],msg_a,task_info['assignee_mail'])
+
+            message_info_s=db.query("""
+                select * from template.generic_template where type_id=20
+            """).dictresult()[0]
+            msg_s=message_info_s['body'].format(**task_info)
+            GF.sendMail(message_info_s['subject'],msg_s,task_info['supervisor_mail'])
+
             response['success']=True
             response['msg_response']="La tarea ha sido cancelada."
         else:

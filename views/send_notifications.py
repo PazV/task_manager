@@ -39,7 +39,7 @@ class MailFunctions:
     def sendMail(self,to_address,subject,body):
         success=True
         try:
-            server=smtplib.SMTP(cfg.mail_server,cfg.port)
+            server=smtplib.SMTP(cfg.mail_server,cfg.mail_port)
             server.login(cfg.mail_username,cfg.mail_password)
             from_address=cfg.mail_username
             # to_address="pgarcia@russellbedford.mx"
