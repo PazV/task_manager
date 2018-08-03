@@ -1010,70 +1010,85 @@ $(document).ready(function(){
             is_valid=false;
         }
         if (is_valid){
-            EasyLoading.show({
-                text:"Cargando...",
-                type:EasyLoading.TYPE["PACMAN"],
-            });
-            var table=$("#grdTask").DataTable();
-            var data={};
-            var ind=table.row('.selected').index();
-            var record=table.rows(ind).data()[0];
-            data['task_id']=record['task_id'];
-            data['user_id']=me.user_info.user_id;
-            data['company_id']=me.user_info.company_id;
-            data['user_type_id']=me.user_info.user_type_id;
-            data['comments']=$("#DecTcomments")[0].value;
-            $.ajax({
-                url:'/task/declineTask',
-                method:'POST',
-                data:JSON.stringify(data),
-                success:function(response){
-                    var res=JSON.parse(response);
-                    if (res.success){
-                        EasyLoading.hide();
-                        $("#alertLayout").find('p').html(res.msg_response);
-                        $("#alertLayout").css("display","block");
-                        $("#win_resolve_task").modal("hide");
-                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                        $("#TLdateFrom").val(filters['from']);
-                        $("#grdTask").DataTable({
-                            "scrollY": "255px",
-                            "scrollCollapse":true,
-                            serverSide:true,
-                            ajax:{
-                                data:{
-                                    'company_id':me.user_info.company_id,
-                                    'user_id':me.user_info.user_id,
-                                    'user_type_id':me.user_info.user_type_id,
-                                    'filter':JSON.stringify(filters)
+            $.confirm({
+                theme:'dark',
+                title:'Atención',
+                content:'¿Está seguro que desea declinar esta tarea?',
+                buttons:{
+                    confirm:{
+                        text:'Sí',
+                        action:function(){
+                            EasyLoading.show({
+                                text:"Cargando...",
+                                type:EasyLoading.TYPE["PACMAN"],
+                            });
+                            var table=$("#grdTask").DataTable();
+                            var data={};
+                            var ind=table.row('.selected').index();
+                            var record=table.rows(ind).data()[0];
+                            data['task_id']=record['task_id'];
+                            data['user_id']=me.user_info.user_id;
+                            data['company_id']=me.user_info.company_id;
+                            data['user_type_id']=me.user_info.user_type_id;
+                            data['comments']=$("#DecTcomments")[0].value;
+                            $.ajax({
+                                url:'/task/declineTask',
+                                method:'POST',
+                                data:JSON.stringify(data),
+                                success:function(response){
+                                    var res=JSON.parse(response);
+                                    if (res.success){
+                                        EasyLoading.hide();
+                                        $("#alertLayout").find('p').html(res.msg_response);
+                                        $("#alertLayout").css("display","block");
+                                        $("#win_resolve_task").modal("hide");
+                                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                        $("#TLdateFrom").val(filters['from']);
+                                        $("#grdTask").DataTable({
+                                            "scrollY": "255px",
+                                            "scrollCollapse":true,
+                                            serverSide:true,
+                                            ajax:{
+                                                data:{
+                                                    'company_id':me.user_info.company_id,
+                                                    'user_id':me.user_info.user_id,
+                                                    'user_type_id':me.user_info.user_type_id,
+                                                    'filter':JSON.stringify(filters)
+                                                },
+                                                url:'/task/getTask',
+                                                dataSrc:'data',
+                                                type:'POST'
+                                            },
+                                            columns:[
+                                                {data:'created', "width":"15%"},
+                                                {data:'name',"width":"20%"},
+                                                {data:'deadline',"width":"15%"},
+                                                {data:'assignee',"width":"20%"},
+                                                {data:'supervisor',"width":"20%"},
+                                                {data:'status',"width":"10%"}
+                                            ]
+                                        });
+                                        $("#win_decline_task").modal("hide");
+                                    }
+                                    else{
+                                        EasyLoading.hide();
+                                        setMessage("#alertDecTask",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                    }
                                 },
-                                url:'/task/getTask',
-                                dataSrc:'data',
-                                type:'POST'
-                            },
-                            columns:[
-                                {data:'created', "width":"15%"},
-                                {data:'name',"width":"20%"},
-                                {data:'deadline',"width":"15%"},
-                                {data:'assignee',"width":"20%"},
-                                {data:'supervisor',"width":"20%"},
-                                {data:'status',"width":"10%"}
-                            ]
-                        });
-                        $("#win_decline_task").modal("hide");
+                                error:function(){
+                                    EasyLoading.hide();
+                                    setMessage("#alertDecTask",["alert-info","alert-success"],"alert-danger","Ocurrió un error al intentar enviar la información, favor de intentarlo de nuevo.",true);
+                                }
+                            });
+                        }
+                    },
+                    cancel:{
+                        text:'No'
                     }
-                    else{
-                        EasyLoading.hide();
-                        setMessage("#alertDecTask",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
-                    }
-                },
-                error:function(){
-                    EasyLoading.hide();
-                    setMessage("#alertDecTask",["alert-info","alert-success"],"alert-danger","Ocurrió un error al intentar enviar la información, favor de intentarlo de nuevo.",true);
                 }
             });
         }
