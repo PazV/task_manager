@@ -76,6 +76,7 @@ def changePassword():
     return json.dumps(response)
 
 @bp.route('/getUsers',methods=['GET','POST'])
+@is_logged_in
 def getUsers():
     """
     Parameters:{user_id}

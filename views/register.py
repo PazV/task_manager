@@ -213,13 +213,13 @@ def getUserType():
     return json.dumps(response)
 
 
-@bp.route('/sendMail', methods=['GET','POST'])
-def sendMail():
-    logging.info("entra mail")
-    msg=Message('Hello',sender='pgarcia@russellbedford.mx',recipients=['pazgarcia91@gmail.com'])
-    msg.body='Prueba mensaje flask'
-    mail.send(msg)
-    return 'Sent'
+# @bp.route('/sendMail', methods=['GET','POST'])
+# def sendMail():
+#     logging.info("entra mail")
+#     msg=Message('Hello',sender='pgarcia@russellbedford.mx',recipients=['pazgarcia91@gmail.com'])
+#     msg.body='Prueba mensaje flask'
+#     mail.send(msg)
+#     return 'Sent'
 
 @bp.route('/createUser',methods=['GET','POST'])
 @is_logged_in

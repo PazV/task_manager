@@ -78,6 +78,12 @@ def is_logged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if 'logged_in' in session:
+            app.logger.info("session %s"%session)
+            db.query("""
+                update system.user_session
+                set last_action_at=now()
+                where session_id=%s
+            """%session['session_id'])
             return f(*args, **kwargs)
         else:
             flash('Unauthorized, Please login', 'danger')

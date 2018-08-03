@@ -27,6 +27,7 @@ import time
 bp = Blueprint('task', __name__, url_prefix='/task')
 
 @bp.route('/getSupervisor',methods=['GET','POST'])
+@is_logged_in
 def getSupervisor():
     response={}
     try:
@@ -64,6 +65,7 @@ def getSupervisor():
     return json.dumps(response)
 
 @bp.route('/getAssignee',methods=['GET','POST'])
+@is_logged_in
 def getAssignee():
     response={}
     try:
@@ -102,6 +104,7 @@ def getAssignee():
     return json.dumps(response)
 
 @bp.route('/saveTask',methods=['GET','POST'])
+@is_logged_in
 def saveTask():
     response={}
     try:
@@ -185,6 +188,7 @@ def saveTask():
     return json.dumps(response)
 
 @bp.route("/getTask", methods=['GET','POST'])
+@is_logged_in
 def getTask():
     response={}
     try:
@@ -302,6 +306,7 @@ def getTask():
     return json.dumps(response)
 
 @bp.route('/getTaskDetails',methods=['GET','POST'])
+@is_logged_in
 def getTaskDetails():
     response={}
     try:
@@ -506,6 +511,7 @@ def getTaskDetails():
     return json.dumps(response)
 
 @bp.route('/getDocumentType', methods=['GET','POST'])
+@is_logged_in
 def getDocumentType():
     response={}
     try:
@@ -533,6 +539,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @bp.route('/resolveTask', methods=['GET','POST'])
+@is_logged_in
 def resolveTask():
     response={}
     try:
@@ -646,6 +653,7 @@ def resolveTask():
     return json.dumps(response)
 
 @bp.route('/pauseResolveTask',methods=['GET','POST'])
+@is_logged_in
 def pauseResolveTask():
     response={}
     try:
@@ -751,6 +759,7 @@ def downloadEvidence(document_id):
         return response
 
 @bp.route('/completeTask', methods=['GET','POST'])
+@is_logged_in
 def completeTask():
     response={}
     try:
@@ -808,6 +817,7 @@ def completeTask():
     return json.dumps(response)
 
 @bp.route('/incompleteTask', methods=['GET','POST'])
+@is_logged_in
 def incompleteTask():
     response={}
     try:
@@ -882,6 +892,7 @@ def incompleteTask():
     return json.dumps(response)
 
 @bp.route('/declineTask', methods=['GET','POST'])
+@is_logged_in
 def declineTask():
     response={}
     try:
@@ -984,6 +995,7 @@ def declineTask():
     return json.dumps(response)
 
 @bp.route('/updateDeclinedTask', methods=['GET','POST'])
+@is_logged_in
 def updateDeclinedTask():
     response={}
     try:
@@ -1053,6 +1065,7 @@ def updateDeclinedTask():
     return json.dumps(response)
 
 @bp.route('/cancelTask', methods=['GET','POST'])
+@is_logged_in
 def cancelTask():
     response={}
     try:
@@ -1109,6 +1122,7 @@ def cancelTask():
     return json.dumps(response)
 
 @bp.route('/checkAssigneeTasks', methods=['GET','POST'])
+@is_logged_in
 def checkAssigneeTasks():
     response={}
     try:

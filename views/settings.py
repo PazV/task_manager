@@ -14,6 +14,7 @@ import os
 bp = Blueprint('settings', __name__, url_prefix='/settings')
 
 @bp.route('/saveNotificationSettings', methods=['GET','POST'])
+@is_logged_in
 def saveNotificationSettings():
     response={}
     try:
@@ -49,6 +50,7 @@ def saveNotificationSettings():
     return json.dumps(response)
 
 @bp.route('/getNotificationSettings', methods=['GET','POST'])
+@is_logged_in
 def getNotificationSettings():
     response={}
     try:
