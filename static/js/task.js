@@ -30,7 +30,8 @@ $(document).ready(function(){
             },
             url:'/task/getTask',
             dataSrc:'data',
-            type:'POST'
+            type:'POST',
+            error: handleAjaxErrorLoc
         },
         columns:[
             {data:'created', "width":"15%"},
@@ -52,7 +53,11 @@ $(document).ready(function(){
             'user_type_id':me.user_info['user_type_id']
         }),
         success:function(response){
-            var res_sup=JSON.parse(response);
+            try{
+                var res_sup=JSON.parse(response);
+            }catch(err){
+                handleAjaxErrorLoc(1,2,3);
+            }
             if (res_sup.success){
                 $.each(res_sup.data,function(i, item){
                     $("#TLselSupervisor").append($('<option>',{
@@ -76,7 +81,11 @@ $(document).ready(function(){
                         'user_type_id':me.user_info['user_type_id']
                     }),
                     success:function(responseA){
-                        var res_as=JSON.parse(responseA);
+                        try{
+                            var res_as=JSON.parse(responseA);
+                        }catch(err){
+                            handleAjaxErrorLoc(1,2,3);
+                        }
                         if (res_as.success){
                             $.each(res_as.data,function(i,item){
                                 $("#TLselAssignee").append($('<option>',{
@@ -118,7 +127,8 @@ $(document).ready(function(){
                 },
                 url:'/task/getTask',
                 dataSrc:'data',
-                type:'POST'
+                type:'POST',
+                error: handleAjaxErrorLoc
             },
             columns:[
                 {data:'created', "width":"15%"},
@@ -131,6 +141,8 @@ $(document).ready(function(){
         });
 
     });
+
+
 
     $("#btnClearTaskSearch").click(function(){
         $("#TLsearchName").val("");
@@ -163,7 +175,8 @@ $(document).ready(function(){
                 },
                 url:'/task/getTask',
                 dataSrc:'data',
-                type:'POST'
+                type:'POST',
+                error: handleAjaxErrorLoc
             },
             columns:[
                 {data:'created', "width":"15%"},
@@ -213,7 +226,8 @@ $(document).ready(function(){
                 },
                 url:'/task/getTask',
                 dataSrc:'data',
-                type:'POST'
+                type:'POST',
+                error: handleAjaxErrorLoc
             },
             columns:[
                 {data:'created', "width":"15%"},
@@ -250,7 +264,11 @@ $(document).ready(function(){
                 'user_type_id':me.user_info['user_type_id']
             }),
             success:function(response){
-                var res_sup=JSON.parse(response);
+                try{
+                    var res_sup=JSON.parse(response);
+                }catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
                 if (res_sup.success){
                     $.each(res_sup.data,function(i, item){
                         $("#NTsupervisor_id").append($('<option>',{
@@ -267,7 +285,11 @@ $(document).ready(function(){
                             'user_type_id':me.user_info['user_type_id']
                         }),
                         success:function(responseA){
-                            var res_as=JSON.parse(responseA);
+                            try{
+                                var res_as=JSON.parse(responseA);
+                            }catch(err){
+                                handleAjaxErrorLoc(1,2,3);
+                            }
                             if (res_as.success){
                                 $.each(res_as.data,function(i,item){
                                     $("#NTassignee_id").append($('<option>',{
@@ -280,7 +302,11 @@ $(document).ready(function(){
                                     method:'POST',
                                     data:JSON.stringify({}),
                                     success:function(responseD){
-                                        var resD=JSON.parse(responseD);
+                                        try{
+                                            var resD=JSON.parse(responseD);
+                                        }catch(err){
+                                            handleAjaxErrorLoc(1,2,3);
+                                        }
                                         if (resD.success){
                                             me.document_type_list=resD.data;
                                         }
@@ -290,6 +316,14 @@ $(document).ready(function(){
                         }
                     });
                 }
+                else{
+                    console.log("ERROR");
+                }
+            },
+            error:function(xhr,textStatus,error){
+                console.log(xhr);
+                console.log(textStatus);
+                console.log(error);
             }
         });
         var month_list=[{'text':'1 mes','name':1},{'text':'2 meses','name':2},{'text':'3 meses','name':3},{'text':'4 meses','name':4},
@@ -389,7 +423,11 @@ $(document).ready(function(){
                 method:'POST',
                 data:JSON.stringify(data),
                 success:function(resp1){
-                    var res1 = JSON.parse(resp1);
+                    try{
+                        var res1 = JSON.parse(resp1);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
                     if (res1.success){
                         if (res1.overlaps){
                             EasyLoading.hide();
@@ -410,7 +448,11 @@ $(document).ready(function(){
                                                 method:'POST',
                                                 data:JSON.stringify(data),
                                                 success:function(response){
-                                                    var res=JSON.parse(response);
+                                                    try{
+                                                        var res=JSON.parse(response);
+                                                    }catch(err){
+                                                        handleAjaxErrorLoc(1,2,3);
+                                                    }
                                                     if (res.success){
                                                         EasyLoading.hide();
                                                         $("#alertLayout").find('p').html(res.msg_response);
@@ -435,7 +477,8 @@ $(document).ready(function(){
                                                                 },
                                                                 url:'/task/getTask',
                                                                 dataSrc:'data',
-                                                                type:'POST'
+                                                                type:'POST',
+                                                                error: handleAjaxErrorLoc
                                                             },
                                                             columns:[
                                                                 {data:'created', "width":"15%"},
@@ -471,7 +514,11 @@ $(document).ready(function(){
                                 method:'POST',
                                 data:JSON.stringify(data),
                                 success:function(response){
-                                    var res=JSON.parse(response);
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
                                     if (res.success){
                                         EasyLoading.hide();
                                         $("#alertLayout").find('p').html(res.msg_response);
@@ -496,7 +543,8 @@ $(document).ready(function(){
                                                 },
                                                 url:'/task/getTask',
                                                 dataSrc:'data',
-                                                type:'POST'
+                                                type:'POST',
+                                                error: handleAjaxErrorLoc
                                             },
                                             columns:[
                                                 {data:'created', "width":"15%"},
@@ -548,13 +596,16 @@ $(document).ready(function(){
             data['company_id']=me.user_info.company_id;
             data['user_type_id']=me.user_info.user_type_id;
             data['from']='details';
-
             $.ajax({
                 url:'/task/getTaskDetails',
                 method:'POST',
                 data:JSON.stringify(data),
                 success:function(response){
-                    var res=JSON.parse(response);
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
                     if (res.success){
                         $("#TDtask_info").html(res.data);
                         $("#win_task_details").modal("show");
@@ -608,7 +659,11 @@ $(document).ready(function(){
                     method:'POST',
                     data:JSON.stringify(data),
                     success:function(response){
-                        var res=JSON.parse(response);
+                        try{
+                            var res=JSON.parse(response);
+                        }catch(err){
+                            handleAjaxErrorLoc(1,2,3);
+                        }
                         if (res.success){
                             $("#RTtask_info").html(res.data);
                             if (res.html_docs.length>0){
@@ -750,7 +805,11 @@ $(document).ready(function(){
                     processData: false,
                     contentType: false,
                     success:function(response){
-                        var res=JSON.parse(response);
+                        try{
+                            var res=JSON.parse(response);
+                        }catch(err){
+                            handleAjaxErrorLoc(1,2,3);
+                        }
                         if (res.success){
                             EasyLoading.hide();
                             $("#alertLayout").find('p').html(res.msg_response);
@@ -775,7 +834,8 @@ $(document).ready(function(){
                                     },
                                     url:'/task/getTask',
                                     dataSrc:'data',
-                                    type:'POST'
+                                    type:'POST',
+                                    error: handleAjaxErrorLoc
                                 },
                                 columns:[
                                     {data:'created', "width":"15%"},
@@ -875,7 +935,11 @@ $(document).ready(function(){
                     processData: false,
                     contentType: false,
                     success:function(response){
-                        var res=JSON.parse(response);
+                        try{
+                            var res=JSON.parse(response);
+                        }catch(err){
+                            handleAjaxErrorLoc(1,2,3);
+                        }
                         EasyLoading.hide();
                         if (res.success){
                             $("#alertLayout").find('p').html(res.msg_response);
@@ -900,7 +964,8 @@ $(document).ready(function(){
                                     },
                                     url:'/task/getTask',
                                     dataSrc:'data',
-                                    type:'POST'
+                                    type:'POST',
+                                    error: handleAjaxErrorLoc
                                 },
                                 columns:[
                                     {data:'created', "width":"15%"},
@@ -957,7 +1022,11 @@ $(document).ready(function(){
                     method:'POST',
                     data:JSON.stringify(data),
                     success:function(response){
-                        var res=JSON.parse(response);
+                        try{
+                            var res=JSON.parse(response);
+                        }catch(err){
+                            handleAjaxErrorLoc(1,2,3);
+                        }
                         if (res.success){
                             $("#DecTinfo").html(res.data);
                         }
@@ -1036,7 +1105,11 @@ $(document).ready(function(){
                                 method:'POST',
                                 data:JSON.stringify(data),
                                 success:function(response){
-                                    var res=JSON.parse(response);
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
                                     if (res.success){
                                         EasyLoading.hide();
                                         $("#alertLayout").find('p').html(res.msg_response);
@@ -1061,7 +1134,8 @@ $(document).ready(function(){
                                                 },
                                                 url:'/task/getTask',
                                                 dataSrc:'data',
-                                                type:'POST'
+                                                type:'POST',
+                                                error: handleAjaxErrorLoc
                                             },
                                             columns:[
                                                 {data:'created', "width":"15%"},
@@ -1202,7 +1276,11 @@ $(document).ready(function(){
                         method:'POST',
                         data:JSON.stringify(data),
                         success:function(response){
-                            var res=JSON.parse(response);
+                            try{
+                                var res=JSON.parse(response);
+                            }catch(err){
+                                handleAjaxErrorLoc(1,2,3);
+                            }
                             if (res.success){
                                 $("#CHTtask_info").html(res.data);
                                 $("#CHTevidences").append(res.evidence);
@@ -1218,7 +1296,11 @@ $(document).ready(function(){
                         method:'POST',
                         data:JSON.stringify(data),
                         success:function(response){
-                            var res=JSON.parse(response);
+                            try{
+                                var res=JSON.parse(response);
+                            }catch(err){
+                                handleAjaxErrorLoc(1,2,3);
+                            }
                             if (res.success){
                                 if (res.declined_by=='assignee'){
                                     $("#CHDTtask_info").html(res.data);
@@ -1231,7 +1313,11 @@ $(document).ready(function(){
                                           'user_type_id':me.user_info['user_type_id']
                                         }),
                                         success:function(assignee_response){
-                                            var assig_res=JSON.parse(assignee_response);
+                                            try{
+                                                var assig_res=JSON.parse(assignee_response);
+                                            }catch(err){
+                                                handleAjaxErrorLoc(1,2,3);
+                                            }
                                             if (assig_res.success){
                                                 var items=assig_res.data;
                                                 $.each(items,function(i, item){
@@ -1271,7 +1357,11 @@ $(document).ready(function(){
                                                 'user_type_id':me.user_info['user_type_id']
                                             }),
                                             success:function(response){
-                                                var res_sup=JSON.parse(response);
+                                                try{
+                                                    var res_sup=JSON.parse(response);
+                                                }catch(err){
+                                                    handleAjaxErrorLoc(1,2,3);
+                                                }
                                                 if (res_sup.success){
                                                     $.each(res_sup.data,function(i, item){
                                                         if (item.supervisor_id==record['supervisor_id']){
@@ -1299,7 +1389,11 @@ $(document).ready(function(){
                                                             'user_type_id':me.user_info['user_type_id']
                                                         }),
                                                         success:function(responseA){
-                                                            var res_as=JSON.parse(responseA);
+                                                            try{
+                                                                var res_as=JSON.parse(responseA);
+                                                            }catch(err){
+                                                                handleAjaxErrorLoc(1,2,3);
+                                                            }
                                                             if (res_as.success){
                                                                 $.each(res_as.data,function(i,item){
                                                                     if (record['assignee_id']==item.assignee_id){
@@ -1380,7 +1474,11 @@ $(document).ready(function(){
             method:'POST',
             data:JSON.stringify(data),
             success:function(response){
-                var res=JSON.parse(response);
+                try{
+                    var res=JSON.parse(response);
+                }catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
                 if (res.success){
                     EasyLoading.hide();
                     $("#alertLayout").find('p').html(res.msg_response);
@@ -1405,7 +1503,8 @@ $(document).ready(function(){
                             },
                             url:'/task/getTask',
                             dataSrc:'data',
-                            type:'POST'
+                            type:'POST',
+                            error: handleAjaxErrorLoc
                         },
                         columns:[
                             {data:'created', "width":"15%"},
@@ -1450,7 +1549,11 @@ $(document).ready(function(){
                             method:'POST',
                             data:JSON.stringify({'task_id':record['task_id'],'user_id':me.user_info.user_id}),
                             success:function(response){
-                                var res=JSON.parse(response);
+                                try{
+                                    var res=JSON.parse(response);
+                                }catch(err){
+                                    handleAjaxErrorLoc(1,2,3);
+                                }
                                 EasyLoading.hide();
                                 if (res.success){
                                     $("#alertLayout").find('p').html(res.msg_response);
@@ -1475,7 +1578,8 @@ $(document).ready(function(){
                                             },
                                             url:'/task/getTask',
                                             dataSrc:'data',
-                                            type:'POST'
+                                            type:'POST',
+                                            error: handleAjaxErrorLoc
                                         },
                                         columns:[
                                             {data:'created', "width":"15%"},
@@ -1531,7 +1635,11 @@ $(document).ready(function(){
                             method:'POST',
                             data:JSON.stringify(data),
                             success:function(response){
-                                var res=JSON.parse(response);
+                                try{
+                                    var res=JSON.parse(response);
+                                }catch(err){
+                                    handleAjaxErrorLoc(1,2,3);
+                                }
                                 if (res.success){
                                     EasyLoading.hide();
                                     $("#alertLayout").find('p').html(res.msg_response);
@@ -1556,7 +1664,8 @@ $(document).ready(function(){
                                             },
                                             url:'/task/getTask',
                                             dataSrc:'data',
-                                            type:'POST'
+                                            type:'POST',
+                                            error: handleAjaxErrorLoc
                                         },
                                         columns:[
                                             {data:'created', "width":"15%"},
@@ -1614,7 +1723,11 @@ $(document).ready(function(){
                             method:'POST',
                             data:JSON.stringify(data),
                             success:function(response){
-                                var res=JSON.parse(response);
+                                try{
+                                    var res=JSON.parse(response);
+                                }catch(err){
+                                    handleAjaxErrorLoc(1,2,3);
+                                }
                                 if (res.success){
                                     EasyLoading.hide();
                                     $("#alertLayout").find('p').html(res.msg_response);
@@ -1639,7 +1752,8 @@ $(document).ready(function(){
                                             },
                                             url:'/task/getTask',
                                             dataSrc:'data',
-                                            type:'POST'
+                                            type:'POST',
+                                            error: handleAjaxErrorLoc
                                         },
                                         columns:[
                                             {data:'created', "width":"15%"},
@@ -1714,7 +1828,11 @@ $(document).ready(function(){
                                 method:'POST',
                                 data:JSON.stringify(data),
                                 success:function(response){
-                                    var res=JSON.parse(response);
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
                                     if (res.success){
                                         EasyLoading.hide();
                                         $("#alertLayout").find('p').html(res.msg_response);
@@ -1739,7 +1857,8 @@ $(document).ready(function(){
                                                 },
                                                 url:'/task/getTask',
                                                 dataSrc:'data',
-                                                type:'POST'
+                                                type:'POST',
+                                                error: handleAjaxErrorLoc
                                             },
                                             columns:[
                                                 {data:'created', "width":"15%"},
@@ -1780,7 +1899,11 @@ $(document).ready(function(){
                 method:'POST',
                 data:JSON.stringify(data),
                 success:function(response){
-                    var res=JSON.parse(response);
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
                     if (res.success){
                         EasyLoading.hide();
                         $("#alertLayout").find('p').html(res.msg_response);
@@ -1805,7 +1928,8 @@ $(document).ready(function(){
                                 },
                                 url:'/task/getTask',
                                 dataSrc:'data',
-                                type:'POST'
+                                type:'POST',
+                                error: handleAjaxErrorLoc
                             },
                             columns:[
                                 {data:'created', "width":"15%"},
@@ -1851,7 +1975,11 @@ $(document).ready(function(){
                             method:'POST',
                             data:JSON.stringify({'task_id':record['task_id'],'user_id':me.user_info.user_id}),
                             success:function(response){
-                                var res=JSON.parse(response);
+                                try{
+                                    var res=JSON.parse(response);
+                                }catch(err){
+                                    handleAjaxErrorLoc(1,2,3);
+                                }
                                 EasyLoading.hide();
                                 if (res.success){
                                     $("#alertLayout").find('p').html(res.msg_response);
@@ -1876,7 +2004,8 @@ $(document).ready(function(){
                                             },
                                             url:'/task/getTask',
                                             dataSrc:'data',
-                                            type:'POST'
+                                            type:'POST',
+                                            error: handleAjaxErrorLoc
                                         },
                                         columns:[
                                             {data:'created', "width":"15%"},

@@ -63,7 +63,11 @@ $(document).ready(function(){
                 data:JSON.stringify(data),
                 success:function(response1, response2, response3){
                     console.log("success");
-                    var response=JSON.parse(response1); //parsea response de petición ajax
+                    try{
+                        var response=JSON.parse(response1); //parsea response de petición ajax
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
                     EasyLoading.hide();
                     if (response.success){
                         $("#alertLayout").find('p').html(response.msg_response);
@@ -117,6 +121,11 @@ $(document).ready(function(){
             data:JSON.stringify({'company_id':-1}), //-1 -> todas
             method:'POST',
             success:function(response1){
+                try{
+                    var response=JSON.parse(response1);
+                }catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
                 var response=JSON.parse(response1);
                 if(response.success){
                     var items=response.data;
@@ -132,7 +141,11 @@ $(document).ready(function(){
                         data:JSON.stringify({'get':'admin'}),
                         method:'POST',
                         success:function(user_response){
-                            var resp=JSON.parse(user_response);
+                            try{
+                                var resp=JSON.parse(user_response);
+                            }catch(err){
+                                handleAjaxErrorLoc(1,2,3);
+                            }
                             if (resp.success){
                                 var items=resp.data;
                                 $.each(items,function(i, item){
@@ -236,7 +249,11 @@ $(document).ready(function(){
                 method:'POST',
                 data:JSON.stringify(frm),
                 success:function(response){
-                    var res=JSON.parse(response);
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
                     EasyLoading.hide();
                     if (res.success){
                         setMessage("#alertLayout",[],"",res.msg_response,true);

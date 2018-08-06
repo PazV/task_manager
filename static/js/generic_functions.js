@@ -211,3 +211,19 @@ function checkDate(from,to){
     }
 
 }
+
+function handleAjaxErrorLoc(xhr, textStatus, error){
+    $.confirm({
+        theme:'dark',
+        title:'Atención',
+        content:'Su sesión ha expirado, favor de iniciar sesión nuevamente.',
+        buttons: {
+            confirm:{
+                text:'Aceptar',
+                action: function(){
+                    location.reload();
+                }
+            }
+        }
+    });
+}

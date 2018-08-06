@@ -19,7 +19,11 @@ $(document).ready(function(){
             method:'POST',
             data:JSON.stringify(data),
             success:function(response){
-                var res=JSON.parse(response);
+                try{
+                    var res=JSON.parse(response);
+                }catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
                 EasyLoading.hide();
                 if (res.success){
                     $("#win_notification_settings").modal("hide");
@@ -47,7 +51,11 @@ $(document).ready(function(){
             method:'POST',
             data:JSON.stringify({'company_id':me.user_info.company_id}),
             success:function(response){
-                var res=JSON.parse(response);
+                try{
+                    var res=JSON.parse(response);
+                }catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
                 EasyLoading.hide();
                 if (res.success){
                     if (res.has_info){

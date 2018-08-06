@@ -52,7 +52,11 @@ $(document).ready(function(){
                 data:JSON.stringify(data),
                 success:function(response){
                     EasyLoading.hide();
-                    var res=JSON.parse(response);
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
                     if (res.success){
                         setMessage("#alertLayout",[],"",res.msg_response,true);
                         $("#win_change_pass").modal("hide");
@@ -136,7 +140,8 @@ $(document).ready(function(){
                 data:{'company_id':me.user_info.company_id},
                 url:'/users/getUsers',
                 dataSrc:'data',
-                type:'POST'
+                type:'POST',
+                error: handleAjaxErrorLoc
             },
             columns:[
                 {data:'name',"width":"40%"},
@@ -164,7 +169,11 @@ $(document).ready(function(){
             data:JSON.stringify({'get':'all'}),
             method:'POST',
             success:function(response){
-                var res=JSON.parse(response);
+                try{
+                    var res=JSON.parse(response);
+                }catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
                 var items=res.data;
                 $.each(items,function(i, item){
                     $("#NUuser_type_id").append($('<option>',{
@@ -237,7 +246,11 @@ $(document).ready(function(){
                 method:'POST',
                 success:function(response){
                     EasyLoading.hide();
-                    var res=JSON.parse(response);
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
                     if (res.success){
                         setMessage("#alertAdminUsersWin",[],"",res.msg_response,true);
                         $("#win_new_user").modal("hide");
@@ -249,7 +262,8 @@ $(document).ready(function(){
                                 data:{'company_id':me.user_info.company_id},
                                 url:'/users/getUsers',
                                 dataSrc:'data',
-                                type:'POST'
+                                type:'POST',
+                                error: handleAjaxErrorLoc
                             },
                             columns:[
                                 {data:'name',"width":"40%"},
@@ -300,7 +314,11 @@ $(document).ready(function(){
                 data:JSON.stringify({'get':'all'}),
                 method:'POST',
                 success:function(response){
-                    var res=JSON.parse(response);
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
                     var items=res.data;
                     $.each(items,function(i, item){
                         if (item.user_type_id==data['user_type_id']){
