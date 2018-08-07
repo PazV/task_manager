@@ -34,41 +34,59 @@ bp=Blueprint('auth',__name__, url_prefix='/auth')
 def login():
     error=''
     if request.method == 'POST':
-        #username = request.form['username']
         login = request.form['username']
         password = request.form['password']
-        #user=db.query("select * from public.users where username='%s'"%username).dictresult()
         user = db.query("""
             select * from system.user where login='%s'
         """%(login)).dictresult()
+
         if user==[]:
             error = 'Usuario no encontrado.'
             flash(u'Usuario no encontrado','user')
-        elif not check_password_hash(user[0]['password'],password):
-            error = 'Contraseña incorrecta.'.decode('utf-8')
-            flash(u'Contraseña incorrecta','pass')
         else:
-            error=''
-
+            if user[0]['login_attempts']>3:
+                #bloqueado
+                error='El usuario se encuentra bloqueado, favor de contactar a su consultor.'
+                flash(u'El usuario se encuentra bloqueado, favor de contactar a su consultor.','user')
+            elif not check_password_hash(user[0]['password'],password):
+                error = 'Contraseña incorrecta.'.decode('utf-8')
+                flash(u'Contraseña incorrecta','pass')
+                db.query("""
+                    update system.user set login_attempts=%s
+                    where user_id=%s
+                """%(user[0]['login_attempts']+1,user[0]['user_id']))
+            else:
+                error=''
         if error!='':
             logging.info("error: %s"%error)
             #return render_template('login.html', error=error)
         else:
             logging.info("logged")
-            new_session={
-                'user_id':user[0]['user_id'],
-                'start_session':'now',
-                'logged':True
-            }
-            inserted_session=db.insert('system.user_session',new_session)
-            session['logged_in']=True
-            session['username']=login
-            session['user_id']=user[0]['user_id']
-            session['session_id']=inserted_session['session_id']
-            g.session_id=session['session_id']
-            logging.info(g.session_id)
-            msg='Inicio de sesión correcto'.decode('utf-8')
-            return redirect(url_for('index'))
+            active_sessions=db.query("""
+                select count(*) from system.user_session
+                where user_id=%s and logged=True
+            """%user[0]['user_id']).dictresult()
+            if active_sessions[0]['count']==0:
+                new_session={
+                    'user_id':user[0]['user_id'],
+                    'start_session':'now',
+                    'logged':True
+                }
+                inserted_session=db.insert('system.user_session',new_session)
+                session['logged_in']=True
+                session['username']=login
+                session['user_id']=user[0]['user_id']
+                session['session_id']=inserted_session['session_id']
+                g.session_id=session['session_id']
+                logging.info(g.session_id)
+                msg='Inicio de sesión correcto'.decode('utf-8')
+                db.query("""
+                    update system.user set login_attempts=0 where user_id=%s
+                """%user[0]['user_id'])
+                return redirect(url_for('index'))
+            else:
+                error='Usted ya tiene una sesión activa.'
+                flash(u'Usted ya tiene una sesión activa.','main_msg')
     else:
         logging.info("no post")
         # return render_template('login.html')

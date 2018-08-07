@@ -28,13 +28,22 @@
           <div>
               <div class="alert alert-success alert-dismissible" id="alertLogin" style="display:none; align-self: baseline;" role="alert">
                   <p>Mensaje</p>
-                  <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
               </div>
+
           </div>
           <div class="text-center" id="divLogin">
               <form class="form-signin" method="post">
-
+                  {% with errors = get_flashed_messages(category_filter=["main_msg"]) %}
+                    {% if errors %}
+                        <div  class="alert alert-success alert-dismissible" style="display:block; align-self: baseline;" role="alert">
+                            <p>{{errors[0]}}</p>
+                            <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                        </div>
+                    {% endif %}
+                  {% endwith %}
                 <!-- <img  src="../static/images/rb_azul.png" alt="" style="padding:3px; width:300px; height:70px;"></img> -->
+                
                 <h1 class="h2 mb-3 font-weight-normal" style="padding:3px; color: #ffff99; text-shadow: -.2px 0 #998f66, 0 .2px #998f66, .2px 0 #998f66, 0 -.2px #998f66;">Inicio de sesión</h1>
                 <label for="inputUser" class="sr-only">Usuario:</label>
                 <input class="form-control" type="text" placeholder="Usuario" id="inputUser" name="username"> </input>
