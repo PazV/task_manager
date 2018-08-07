@@ -104,7 +104,7 @@ def getUsers():
                 a.company_id=%s
             and
                 a.user_type_id=b.user_type_id
-
+            and enabled in (1,3)
             order by name
             offset %s limit %s
         """%(company_id,start,limit)).dictresult()
@@ -118,6 +118,7 @@ def getUsers():
                 a.company_id=%s
             and
                 a.user_type_id=b.user_type_id
+            and enabled in (1,3)
         """%company_id).dictresult()
         response['data']=users
         response['recordsTotal']=total[0]['count']
@@ -131,7 +132,39 @@ def getUsers():
         app.logger.info(traceback.format_exc(exc_info))
     return json.dumps(response)
 
-
-# @users.route('/users/<str:company_id>')
-# @is_logged_in
-# def getUserList(company_id):
+@bp.route('/disableUser', methods=['GET','POST'])
+@is_logged_in
+def disableUser():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            has_tasks=db.query("""
+                select
+                    count(*)
+                from
+                    task.task
+                where
+                    (assignee_id=%s or supervisor_id=%s)
+                and status_id in (1,2,6)
+            """%(data['user_id'],data['user_id'])).dictresult()[0]
+            if has_tasks['count']==0:
+                db.query("""
+                    update system.user
+                    set enabled=2
+                    where user_id=%s
+                """%data['user_id'])
+                response['success']=True
+                response['msg_response']='El usuario ha sido deshabilitado.'
+            else:
+                response['success']=False
+                response['msg_response']='El usuario no puede ser deshabilitado, pues aún tiene tareas asignadas.'
+        else:
+            response['success']=False
+            response['msg_response']="Ocurrió un error al intentar procesar la información, favor de intentarlo nuevamente."
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo nuevamente."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)

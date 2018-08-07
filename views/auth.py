@@ -78,12 +78,11 @@ def is_logged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if 'logged_in' in session:
-
             logged=db.query("""
                 select logged from system.user_session
                 where session_id=%s
             """%session['session_id']).dictresult()
-            
+
             if logged!=[]:
                 if logged[0]['logged']==True:
                     db.query("""

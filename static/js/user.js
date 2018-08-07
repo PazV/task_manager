@@ -129,8 +129,6 @@ $(document).ready(function(){
         }
     });
 
-
-
     $("#win_admin_users").on("show.bs.modal",function(){
         $("#grdAdminUsers").DataTable({
             "scrollY": "255px",
@@ -150,15 +148,18 @@ $(document).ready(function(){
                 {data:'email',"width":"30%"}
             ]
         });
-        //$("#grdAdminUsers").DataTable().columns.adjust();
-        // $("#grdAdminUsers").DataTable().draw();
-        if ($("#grdAdminUsers").is(":visible")){
-            console.log("visible");
-        }
-        $.fn.dataTable.tables( { visible: true, api: true } ).columns.adjust();
+        setTimeout(function(){
+            $("#grdAdminUsers").DataTable().draw(); //espero 200 milisegundos a que el modal se forme para volver a dibujar la tabla y se muestre el encabezado con el tamaño correcto
+        },200);
     });
 
-    $("#grdAdminUsers").is(":visible");
+
+
+    // $("#win_admin_users").bind('resize', function () {
+    //     var table = $('#grdAdminUsers').DataTable();
+    //     table.fnAdjustColumnSizing();
+    // });
+    // $("#grdAdminUsers").is(":visible");
 
 
     $("#btnNewUser").click(function(){
@@ -302,6 +303,8 @@ $(document).ready(function(){
         console.log(record);
     } );
 
+
+
     $("#btnEditUser").click(function(){
         me.new_user=false;
         $("#NUlogin").attr("readonly",true);
@@ -374,28 +377,62 @@ $(document).ready(function(){
                     confirm:{
                         text:'Sí',
                         action: function () {
-                            $.alert('Confirmed!');
+                            var ind=table.row('.selected').index();
+                            var data=table.rows(ind).data()[0];
+                            console.log(data);
+                            $.ajax({
+                                url:'/users/disableUser',
+                                method:'POST',
+                                data:JSON.stringify({'user_id':data['user_id']}),
+                                success:function(response){
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
+                                    if (res.success){
+                                        $.alert({
+                                            theme:'dark',
+                                            title:'Atención',
+                                            content:res.msg_response
+                                        });
+                                        $("#grdAdminUsers").DataTable({
+                                            "scrollY": "255px",
+                                            "scrollCollapse":true,
+                                            serverSide:true,
+                                            ajax:{
+                                                data:{'company_id':me.user_info.company_id},
+                                                url:'/users/getUsers',
+                                                dataSrc:'data',
+                                                type:'POST',
+                                                error: handleAjaxErrorLoc
+                                            },
+                                            columns:[
+                                                {data:'name',"width":"40%"},
+                                                {data:'login',"width":"15%"},
+                                                {data:'user_type',"width":"15%"},
+                                                {data:'email',"width":"30%"}
+                                            ]
+                                        });
+                                    }
+                                    else{
+                                        $.alert({
+                                            theme:'dark',
+                                            title:'Atención',
+                                            content:res.msg_response
+                                        });
+                                    }
+                                }
+                            });
                         }
                     },
                     cancel:{
-                        text:'No',
-                        action:function () {
-                            $.alert('Canceled!');
-                        }
+                        text:'No'
                     }
-                    // somethingElse: {
-                    //     text: 'Something else',
-                    //     btnClass: 'btn-blue',
-                    //     keys: ['enter', 'shift'],
-                    //     action: function(){
-                    //         $.alert('Something else?');
-                    //     }
-                    // }
                 }
             });
         }
     });
-
 });
 
 // function minLen(inputId,spanId,len){
@@ -456,6 +493,7 @@ $.extend( $.fn.dataTable.defaults, {
     // },
     "autoWidth":true,
     "searching":false,
+    "responsive":true,
     "ordering":false,
     "destroy":true,
     "select":{
