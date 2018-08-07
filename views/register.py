@@ -268,26 +268,11 @@ def createUser():
                                 dict['email']=dict['email'].strip()
                                 del dict['user_id']
                                 db.insert('system.user',dict)
-                                # msg=Message('Nuevo usuario plataforma Russell Bedford', sender='pgarcia@russellbedford.mx',recipients=[dict['email']])
-                                # msg.html='Se ha generado un usuario para la plataforma Russell Bedford.<p>Para acceder, de <a href="http://127.0.0.1:5000/">click</a>, e ingrese con los datos:<br><b>Usuario: </b>%s<br><b>Contraseña: </b>%s</p>'%(dict['login'],passwd)
-                                # mail.send(msg)
 
                                 message=db.query("""
                                     select * from template.generic_template where type_id=7
                                 """).dictresult()[0]
 
-                                # if dict['user_type_id']==1 or dict['user_type_id']==4: #admin o consultor
-                                #     message=db.query("""
-                                #         select * from template.generic_template where type_id=7
-                                #     """).dictresult()[0]
-                                # elif dict['user_type_id']==2: #supervisor
-                                #     message=db.query("""
-                                #         select * from template.generic_template where type_id=8
-                                #     """).dictresult()[0]
-                                # else: #auxiliar
-                                #     message=db.query("""
-                                #         select * from template.generic_template where type_id=9
-                                #     """).dictresult()[0]
                                 recipient=dict['email']
                                 dict['password']=passwd
                                 dict['link']=cfg.host
@@ -301,7 +286,6 @@ def createUser():
                                 response['msg_response']='Ocurrió un error al intentar realizar el registro, favor de intentarlo de nuevo más tarde.'
                         else:
                             response['success']=False
-                            #response['msg_response']='El usuario (login) ingresado ya se encuentra registrado para la empresa seleccionada.'
                             response['msg_response']='El usuario (login) ingresado ya se encuentra registrado, favor de ingresar uno nuevo.'
                     else:
 
@@ -309,9 +293,53 @@ def createUser():
                         dict['name']=dict['name'].decode('utf-8')
                         dict['email']=dict['email'].strip()
                         dict['last_updated']='now'
-                        db.update('system.user',dict)
-                        response['success']=True
-                        response['msg_response']='El usuario ha sido actualizado.'
+                        #verificar si desea cambiar perfil
+                        old_profile=db.query("""
+                            select user_type_id from system.user where user_id=%s
+                        """%dict['user_id']).dictresult()
+                        if old_profile[0]['user_type_id']==dict['user_type_id']:
+                            db.update('system.user',dict)
+                            response['success']=True
+                            response['msg_response']='El usuario ha sido actualizado.'
+                        else:
+                            if old_profile[0]['user_type_id']==3:
+                                has_tasks=db.query("""
+                                    select count(*) from task.task
+                                    where assignee_id=%s
+                                    and status_id in (1,6)
+                                """%dict['user_id']).dictresult()
+                                if has_tasks[0]['count']==0:
+                                    db.update('system.user',dict)
+                                    response['success']=True
+                                    response['msg_response']='El usuario ha sido actualizado.'
+                                else:
+                                    response['success']=False
+                                    response['msg_response']='El usuario no puede ser actualizdo, pues a&uacute;n cuenta con tareas asignadas.'
+                            else:
+                                has_tasks=db.query("""
+                                    select count(*) from task.task
+                                    where supervisor_id=%s
+                                    and status_id in (1,2,3,6)
+                                """%dict['user_id']).dictresult()
+                                if has_tasks[0]['count']==0:
+                                    db.update('system.user',dict)
+                                    response['success']=True
+                                    response['msg_response']='El usuario ha sido actualizado.'
+                                else:
+                                    #revisar si las tareas asignadas declinadas han sido declinadas por el supervisor
+                                    declined_tasks=db.query("""
+                                        select count(*) from task.task
+                                        where status_id=3
+                                        and supervisor_id=%s
+                                        and declined_by=%s
+                                    """%(dict['user_id'],dict['user_id'])).dictresult()
+                                    if declined_tasks[0]['count']==has_tasks[0]['count']:
+                                        db.update('system.user',dict)
+                                        response['success']=True
+                                        response['msg_response']='El usuario ha sido actualizado.'
+                                    else:
+                                        response['success']=False
+                                        response['msg_response']='El usuario no puede ser actualizado, pues a&uacute;n cuenta con tareas asignadas.'
 
                 else:
                     response['success']=False
@@ -328,9 +356,6 @@ def createUser():
         exc_info = sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))
     return json.dumps(response)
-
-
-
 
 def toDict(form,method):
     """
