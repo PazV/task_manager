@@ -376,9 +376,25 @@ def getTaskDetails():
                     resolved_date="--"
                 else:
                     resolved_date=task['resolved_date']
+                str_other_dates=""
+                if data['user_type_id']!=3:
+                    other_dates=db.query("""
+                        select
+                            to_char(assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                            to_char(supervisor_deadline, 'DD-MM-YYYY') as supervisor_deadline
+                        from
+                            task.task
+                        where
+                            task_id=%s
+                    """%data['task_id']).dictresult()[0]
+                    if data['user_type_id'] in (1,4,5):
+                        str_other_dates="<b>Fecha límite auxiliar:</b> %s<br><b>Fecha límite supervisor:</b> %s<br>"%(other_dates['assignee_deadline'],other_dates['supervisor_deadline'])
+                    else:
+                        str_other_dates="<b>Fecha límite auxiliar:</b> %s<br>"%other_dates['assignee_deadline']
+
                 html="""
-                    <p><b>Nombre:</b> %s <br> <b>Descripción:</b> %s <br> <b>Fecha límite:</b> %s <br> <b>Supervisa:</b> %s <br> <b>Asignado a:</b> %s <br> <b>Creada:</b> %s <br> <b>Creada por:</b> %s <br> <b>Status:</b> %s <br> <b>Fecha en que se resolvió:</b> %s <br> <b>Evidencias necesarias:</b> <ul>%s</ul></p>
-                """%(task['name'],task['description'],task['deadline'],task['supervisor'],task['assignee'],task['created'],task['created_by'],task['status'],resolved_date,doc_list)
+                    <p><b>Nombre:</b> %s <br> <b>Descripción:</b> %s <br> %s <b>Fecha límite:</b> %s <br> <b>Supervisa:</b> %s <br> <b>Asignado a:</b> %s <br> <b>Creada:</b> %s <br> <b>Creada por:</b> %s <br> <b>Status:</b> %s <br> <b>Fecha en que se resolvió:</b> %s <br> <b>Evidencias necesarias:</b> <ul>%s</ul></p>
+                """%(task['name'],task['description'],str_other_dates,task['deadline'],task['supervisor'],task['assignee'],task['created'],task['created_by'],task['status'],resolved_date,doc_list)
             elif data['from']=='resolve':
                 html="""
                     <p><b>Nombre:</b> %s <br> <b>Descripción:</b> %s <br> <b>Fecha límite:</b> %s <br> <b>Supervisa:</b> %s <br> <b>Asignado a:</b> %s <br> <b>Status:</b> %s </p>
