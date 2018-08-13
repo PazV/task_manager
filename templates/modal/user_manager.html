@@ -1,0 +1,50 @@
+<div class="modal fade" id="win_user_manager" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-lg vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header user-header header-win-title">
+                    <span>Manejo de sesiones</span>
+                    <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body" style="width:100%;">
+                    <div class="alert alert-info alert-dismissible" id="alertUserManager" style="display:none;" role="alert">
+                        <p>Ocurrió un error.</p>
+                        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                    </div>
+                    <div class="content">
+                        <div class="pull-left" style="margin-left:12px;">
+                            <span class="switch switch-sm">
+                              <input type="checkbox" class="switch" id="switch-sm" data-toggle="tooltip" title="Mostrar/Ocultar usuarios deshabilitados">
+                              <label for="switch-sm">Ocultar/Mostrar usuarios deshabilitados</label>
+                            </span>
+                        </div>
+                        <div class="table-responsive" id="divTableResponsive">
+                            <table class="table display" id="grdUserManager" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Usuario</th>
+                                        <th>Perfil</th>
+                                        <th>Status</th>
+                                        <th>Sesión</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="btn-toolbar float-right" role="toolbar" style="padding-top:5px; padding-right:15px;">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary" id="btnUMSendPassword">Reenviar contraseña</button>
+                            <button type="button" class="btn btn-outline-primary" id="btnUMCloseSession">Cerrar sesión</button>
+                            <button type="button" class="btn btn-outline-primary" id="btnUMUnblockUser">Desbloquear usuario</button>
+                            <button type="button" class="btn btn-outline-primary" id="btnUMEnableUser">Habilitar usuario</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnCancelUserManager">Cerrar <i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
