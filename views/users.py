@@ -200,7 +200,7 @@ def getManagerUserList():
             order by name asc
             offset %s limit %s
         """%(company_id,enabled,start,limit)).dictresult()
-        
+
         for x in users:
             session=db.query("""
                 select * from system.user_session
@@ -313,7 +313,8 @@ def unblockUser():
         if flag:
             db.query("""
                 update system.user
-                set enabled=1
+                set enabled=1,
+                login_attempts=0
                 where user_id=%s
             """%data['user_id'])
             response['success']=True
