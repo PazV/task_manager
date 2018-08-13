@@ -46,6 +46,9 @@ def login():
         else:
             if user[0]['login_attempts']>3:
                 #bloqueado
+                db.query("""
+                    update system.user set enabled=3 where user_id=%s
+                """%user[0]['user_id'])
                 error='El usuario se encuentra bloqueado, favor de contactar a su consultor.'
                 flash(u'El usuario se encuentra bloqueado, favor de contactar a su consultor.','user')
             elif not check_password_hash(user[0]['password'],password):

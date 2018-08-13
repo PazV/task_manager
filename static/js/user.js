@@ -433,60 +433,353 @@ $(document).ready(function(){
             });
         }
     });
+
+    $("#btnCancelUserManager").click(function(){
+        $("#win_user_manager").modal("hide");
+    });
+
+    $("#win_user_manager").on('show.bs.modal',function(){
+        $("#switch-sm").prop("checked",false);
+        $("#grdUserManager").DataTable({
+            "scrollY": "255px",
+            "scrollCollapse":true,
+            serverSide:true,
+            ajax:{
+                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                url:'/users/getManagerUserList',
+                dataSrc:'data',
+                type:'POST',
+                error: handleAjaxErrorLoc
+            },
+            columns:[
+                {data:'name',"width":"40%"},
+                {data:'login',"width":"15%"},
+                {data:'user_type',"width":"12%"},
+                {data:'status',"width":"20%"},
+                {data:'session',"width":"13%"}
+            ]
+        });
+        setTimeout(function(){
+            $("#grdUserManager").DataTable().draw(); //espero 200 milisegundos a que el modal se forme para volver a dibujar la tabla y se muestre el encabezado con el tamaño correcto
+        },200);
+    });
+
+    $("#btnUMSendPassword").click(function(){
+        $.confirm({
+            theme:'dark',
+            title:'Atención',
+            content:'La contraseña será regenerada y enviada al correo del usuario, ¿desea continuar?',
+            buttons:{
+                confirm:{
+                    text:'Sí',
+                    action:function(){
+                        EasyLoading.show({
+                            text:"Cargando...",
+                            type:EasyLoading.TYPE["PACMAN"],
+                        });
+                        var table=$("#grdUserManager").DataTable();
+                        var ind=table.row('.selected').index();
+                        var record=table.rows(ind).data()[0];
+                        $.ajax({
+                            url:'/users/sendNewPassword',
+                            method:'POST',
+                            data:JSON.stringify({'user_id':record['user_id']}),
+                            success:function(response){
+                                try{
+                                    var res=JSON.parse(response);
+                                }catch(err){
+                                    handleAjaxErrorLoc(1,2,3);
+                                }
+                                if (res.success){
+                                    EasyLoading.hide();
+                                    $("#grdUserManager").DataTable({
+                                        "scrollY": "255px",
+                                        "scrollCollapse":true,
+                                        serverSide:true,
+                                        ajax:{
+                                            data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                                            url:'/users/getManagerUserList',
+                                            dataSrc:'data',
+                                            type:'POST',
+                                            error: handleAjaxErrorLoc
+                                        },
+                                        columns:[
+                                            {data:'name',"width":"40%"},
+                                            {data:'login',"width":"15%"},
+                                            {data:'user_type',"width":"12%"},
+                                            {data:'status',"width":"20%"},
+                                            {data:'session',"width":"13%"}
+                                        ]
+                                    });
+                                }
+                                else{
+                                    EasyLoading.hide();
+                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                }
+                            },
+                            error:function(){
+                                EasyLoading.hide();
+                                setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
+                            }
+                        });
+                    }
+                },
+                cancel:{
+                    text:'No'
+                }
+            }
+        });
+    });
+
+    $("#btnUMCloseSession").click(function(){
+        var table=$("#grdUserManager").DataTable();
+        var ind=table.row('.selected').index();
+        var record=table.rows(ind).data()[0];
+        if (record['session']=='Abierta'){
+            $.confirm({
+                theme:'dark',
+                title:'Atención',
+                content:'Estás a punto de cerrar la sesión del usuario, ¿deseas continuar?',
+                buttons:{
+                    confirm:{
+                        text:'Sí',
+                        action:function(){
+                            $.ajax({
+                                url:'/users/closeSession',
+                                method:'POST',
+                                data:JSON.stringify({'session_id':record['session_id'],'user_id':record['user_id']}),
+                                success:function(response){
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
+                                    if (res.success){
+                                        $("#grdUserManager").DataTable({
+                                            "scrollY": "255px",
+                                            "scrollCollapse":true,
+                                            serverSide:true,
+                                            ajax:{
+                                                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                                                url:'/users/getManagerUserList',
+                                                dataSrc:'data',
+                                                type:'POST',
+                                                error: handleAjaxErrorLoc
+                                            },
+                                            columns:[
+                                                {data:'name',"width":"40%"},
+                                                {data:'login',"width":"15%"},
+                                                {data:'user_type',"width":"12%"},
+                                                {data:'status',"width":"20%"},
+                                                {data:'session',"width":"13%"}
+                                            ]
+                                        });
+                                    }
+                                    else{
+                                        EasyLoading.hide();
+                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                    }
+                                },
+                                error:function(){
+                                    EasyLoading.hide();
+                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
+                                }
+                            });
+                        }
+                    },
+                    cancel:{
+                        text:'No'
+                    }
+                }
+            })
+        }
+        else{
+            if (record['session']=='Cerrada'){
+                var content='Esta sesión ya se encuentra cerrada.';
+            }
+            else{
+                var content='Este usuario no tiene ninguna sesión activa';
+            }
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:content
+            });
+        }
+
+    });
+
+    $("#btnUMUnblockUser").click(function(){
+        var table=$("#grdUserManager").DataTable();
+        var ind=table.row('.selected').index();
+        var record=table.rows(ind).data()[0];
+        if (record['status']=='Bloqueado'){
+            $.confirm({
+                theme:'dark',
+                title:'Atención',
+                content:'¿Desea desbloquear este usuario?',
+                buttons:{
+                    confirm:{
+                        text:'Sí',
+                        action:function(){
+                            $.ajax({
+                                url:'/users/unblockUser',
+                                method:'POST',
+                                data:JSON.stringify({'user_id':record['user_id']}),
+                                success:function(response){
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
+                                    if (res.success){
+                                        $("#grdUserManager").DataTable({
+                                            "scrollY": "255px",
+                                            "scrollCollapse":true,
+                                            serverSide:true,
+                                            ajax:{
+                                                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                                                url:'/users/getManagerUserList',
+                                                dataSrc:'data',
+                                                type:'POST',
+                                                error: handleAjaxErrorLoc
+                                            },
+                                            columns:[
+                                                {data:'name',"width":"40%"},
+                                                {data:'login',"width":"15%"},
+                                                {data:'user_type',"width":"12%"},
+                                                {data:'status',"width":"20%"},
+                                                {data:'session',"width":"13%"}
+                                            ]
+                                        });
+                                    }
+                                    else{
+                                        EasyLoading.hide();
+                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                    }
+                                },
+                                error:function(){
+                                    EasyLoading.hide();
+                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
+                                }
+                            });
+                        }
+                    },
+                    cancel:{
+                        text:'No'
+                    }
+                }
+            });
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Este usuario no puede ser desbloqueado.'
+            });
+        }
+    });
+
+    $("#btnUMEnableUser").click(function(){
+        var table=$("#grdUserManager").DataTable();
+        var ind=table.row('.selected').index();
+        var record=table.rows(ind).data()[0];
+        if (record['status']=='Deshabilitado'){
+            $.confirm({
+                theme:'dark',
+                title:'Atención',
+                content:'¿Está seguro que desea habilitar este usuario?',
+                buttons:{
+                    confirm:{
+                        text:'Sí',
+                        action:function(){
+                            $.ajax({
+                                url:'/users/enableUser',
+                                method:'POST',
+                                data:JSON.stringify({'user_id':record['user_id']}),
+                                success:function(response){
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
+                                    if (res.success){
+                                        $("#grdUserManager").DataTable({
+                                            "scrollY": "255px",
+                                            "scrollCollapse":true,
+                                            serverSide:true,
+                                            ajax:{
+                                                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                                                url:'/users/getManagerUserList',
+                                                dataSrc:'data',
+                                                type:'POST',
+                                                error: handleAjaxErrorLoc
+                                            },
+                                            columns:[
+                                                {data:'name',"width":"40%"},
+                                                {data:'login',"width":"15%"},
+                                                {data:'user_type',"width":"12%"},
+                                                {data:'status',"width":"20%"},
+                                                {data:'session',"width":"13%"}
+                                            ]
+                                        });
+                                    }
+                                    else{
+                                        EasyLoading.hide();
+                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                    }
+                                },
+                                error:function(){
+                                    EasyLoading.hide();
+                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
+                                }
+                            })
+                        }
+                    },
+                    cancel:{
+                        text:'No'
+                    }
+                }
+            });
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Este usuario ya se encuentra habilitado.'
+            });
+        }
+    });
+
+    $("#switch-sm").click(function(){
+        // if ($("#switch-sm")[0].checked){
+        //     console.log("on");
+        // }
+        // else{
+        //     console.log("off");
+        // }
+        $("#grdUserManager").DataTable({
+            "scrollY": "255px",
+            "scrollCollapse":true,
+            serverSide:true,
+            ajax:{
+                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                url:'/users/getManagerUserList',
+                dataSrc:'data',
+                type:'POST',
+                error: handleAjaxErrorLoc
+            },
+            columns:[
+                {data:'name',"width":"40%"},
+                {data:'login',"width":"15%"},
+                {data:'user_type',"width":"12%"},
+                {data:'status',"width":"20%"},
+                {data:'session',"width":"13%"}
+            ]
+        });
+    });
 });
 
-// function minLen(inputId,spanId,len){
-//     var valid=false;
-//     var val=$(inputId)[0].value;
-//     if (val.length<len){
-//         $(inputId).removeClass("valid-field").addClass("invalid-field");
-//         $(spanId).removeClass("error-msg").addClass("show-error-msg");
-//         $(spanId).html("Este campo debe tener un mínimo de "+len+" caracteres.");
-//     }
-//     else{
-//         $(inputId).removeClass("invalid-field").addClass("valid-field");
-//         $(spanId).removeClass("show-error-msg").addClass("error-msg");
-//         valid=true;
-//     }
-//     return valid;
-// }
-//
-// function noSpaces(inputId,spanId){
-//     var valid=false;
-//     var val=$(inputId)[0].value;
-//     var no_space=val.split(" ").join("");
-//     if (val!=no_space){
-//         $(inputId).removeClass("valid-field").addClass("invalid-field");
-//         $(spanId).removeClass("error-msg").addClass("show-error-msg");
-//         $(spanId).html("Este campo no debe contener espacios.");
-//     }
-//     else{
-//         $(inputId).removeClass("invalid-field").addClass("valid-field");
-//         $(spanId).removeClass("show-error-msg").addClass("error-msg");
-//         valid=true;
-//     }
-//     return valid;
-//
-// }
-//
-// function validateMail(inputId,spanId){
-//     var valid=false;
-//     var val=$(inputId)[0].value;
-//     var patt=/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-//     if (patt.exec(val)==null){
-//         $(inputId).removeClass("valid-field").addClass("invalid-field");
-//         $(spanId).removeClass("error-msg").addClass("show-error-msg");
-//         $(spanId).html("Debe ingresar una dirección de correo válida.");
-//     }
-//     else{
-//         $(inputId).removeClass("invalid-field").addClass("valid-field");
-//         $(spanId).removeClass("show-error-msg").addClass("error-msg");
-//         valid=true;
-//     }
-//     return valid;
-// }
-//
-//
 $.extend( $.fn.dataTable.defaults, {
     // "responsive":{
     //     "details":false
