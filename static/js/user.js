@@ -135,7 +135,7 @@ $(document).ready(function(){
             "scrollCollapse":true,
             serverSide:true,
             ajax:{
-                data:{'company_id':me.user_info.company_id},
+                data:{'company_id':me.user_info.company_id,'from':'admin_users'},
                 url:'/users/getUsers',
                 dataSrc:'data',
                 type:'POST',

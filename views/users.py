@@ -88,6 +88,11 @@ def getUsers():
         start=int(request.form['start'])
         limit=int(request.form['length'])
         company_id=request.form['company_id']
+        try:
+            data_from=request.form['from']
+            condition=" and user_type_id not in (1,4,5)"
+        except:
+            condition=""
 
         users=db.query("""
             select
@@ -104,10 +109,10 @@ def getUsers():
                 a.company_id=%s
             and
                 a.user_type_id=b.user_type_id
-            and enabled in (1,3)
+            and enabled in (1,3) %s
             order by name
             offset %s limit %s
-        """%(company_id,start,limit)).dictresult()
+        """%(company_id,condition,start,limit)).dictresult()
         total=db.query("""
             select
                 count(*)
@@ -118,8 +123,8 @@ def getUsers():
                 a.company_id=%s
             and
                 a.user_type_id=b.user_type_id
-            and enabled in (1,3)
-        """%company_id).dictresult()
+            and enabled in (1,3) %s
+        """%(company_id,condition)).dictresult()
         response['data']=users
         response['recordsTotal']=total[0]['count']
         response['recordsFiltered']=total[0]['count']
