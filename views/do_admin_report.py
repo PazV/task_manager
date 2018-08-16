@@ -13,8 +13,14 @@ from dateutil.relativedelta import relativedelta
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
+
+from os.path import basename
+from email.mime.application import MIMEApplication
+
 import re
 from openpyxl import Workbook
+from openpyxl.styles import colors
+from openpyxl.styles import Font, Color
 
 
 print "Entra do admin report"
@@ -40,19 +46,27 @@ logger.info("Log info")
 
 class MailFunctions:
 
-    def sendMail(self,to_address,subject,body):
+    def sendMail(self,to_address,subject,body,file=None):
         success=True
         try:
             server=smtplib.SMTP(cfg.mail_server,cfg.mail_port)
             server.login(cfg.mail_username,cfg.mail_password)
             from_address=cfg.mail_username
-            # to_address="pgarcia@russellbedford.mx"
             msg=MIMEMultipart()
             msg['From']=from_address
             msg['To']=to_address
             msg['Subject']=subject.decode('utf-8')
             body=self.replaceStringHtml(body)
             msg.attach(MIMEText(body,'html'))
+
+            if file!=None:
+                with open(file, "rb") as fil:
+                    part = MIMEApplication(
+                        fil.read(),
+                        Name=basename(file)
+                    )
+                part['Content-Disposition'] = 'attachment; filename="%s"' % basename(file)
+                msg.attach(part)
             text=msg.as_string()
             server.sendmail(from_address,to_address,text)
         except:
@@ -81,23 +95,37 @@ class MailFunctions:
         new_text = pattern.sub(lambda m: rep[re.escape(m.group(0))], text)
         return new_text
 
+    def as_text(self,value):
+        if value is None:
+            return ""
+        else:
+            try:
+                return str(value)
+            except:
+                return value
+
+
 def main():
     try:
         MF=MailFunctions()
         today=date.today()
+
         admins=db.query("""
             select
-                user_id,
-                name,
-                company_id,
-                email
+                a.user_id,
+                a.name as admin,
+                a.company_id,
+                a.email,
+                (select name from system.company where a.company_id=company_id) as company
             from
-                system.user
+                system.user a
             where
-                user_type_id=1
-            and enabled in (1,3)
+                a.user_type_id=1
+            and a.enabled in (1,3)
         """).dictresult()
+
         for a in admins:
+            logger.info(a)
             notif_settings=db.query("""
                 select
                     admin_report_frequency,
@@ -111,26 +139,22 @@ def main():
                 last_admin_notification=notif_settings[0]['last_admin_notification'].split("-")
                 d_last_notification=date(int(last_admin_notification[0]),int(last_admin_notification[1]),int(last_admin_notification[2]))
                 if frequency[1]=='d': #days
-                    if 1==1:
-                    # if today-timedelta(days=int(frequency[0]))==d_last_notification: #if True, generates a new report
+                    if today-timedelta(days=int(frequency[0]))==d_last_notification: #if True, generates a new report
                         do_report=True
                         interval_from=str(today-timedelta(days=int(frequency[0])))
                         interval_to=str(today+timedelta(days=int(frequency[0])))
                 elif frequency[1]=='w':
-                    #if today-timedelta(days=int(frequency[0])*7)==d_last_notification:
-                    if 1==1:
+                    if today-timedelta(days=int(frequency[0])*7)==d_last_notification:
                         do_report=True
                         interval_from=str(today-timedelta(days=int(frequency[0])*7))
                         interval_to=str(today+timedelta(days=int(frequency[0])*7))
                 elif frequency[1]=='m':
-                    #if today-relativedelta(months=int(frequency[0]))==d_last_notification:
-                    if 1==1:
+                    if today-relativedelta(months=int(frequency[0]))==d_last_notification:
                         do_report=True
                         interval_from=str(today-relativedelta(months=int(frequency[0])))
                         interval_to=str(today+relativedelta(months=int(frequency[0])))
                 else:
                     do_report=False
-                do_report=True
                 if do_report==True:
                     created_tasks=db.query("""
                         select
@@ -328,14 +352,14 @@ def main():
                     canceled_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by','last_updated','user_last_updated','declining_cause']
 
                     list_list=[
-                        {'title':created_tasks_title,'data':created_tasks,'sheet_name':'Tareas creadas','data_order':created_tasks_d_order},
-                        {'title':expired_assignee_tasks_title, 'data':expired_assignee_tasks,'sheet_name':'Tareas aux exp','data_order':expired_assignee_tasks_d_order},
-                        {'title':expired_supervisor_tasks_title, 'data':expired_supervisor_tasks, 'sheet_name':'Tareas sup exp','data_order':expired_supervisor_tasks_d_order},
-                        {'title':expired_admin_tasks_title, 'data':expired_admin_tasks,'sheet_name':'Tareas exp','data_order':expired_admin_tasks_d_order},
-                        {'title':resolved_tasks_title, 'data':resolved_tasks,'sheet_name':'Resueltas','data_order':resolved_tasks_d_order},
-                        {'title':closed_tasks_title, 'data':closed_tasks,'sheet_name':'Cerradas','data_order':closed_tasks_d_order},
-                        {'title':declined_tasks_title, 'data':declined_tasks,'sheet_name':'Declinadas','data_order':declined_tasks_d_order},
-                        {'title':canceled_tasks_title, 'data':canceled_tasks,'sheet_name':'Canceladas','data_order':canceled_tasks_d_order}
+                        {'title':created_tasks_title,'data':created_tasks,'sheet_name':'Tareas creadas','data_order':created_tasks_d_order,'color':"000040ff"},
+                        {'title':expired_assignee_tasks_title, 'data':expired_assignee_tasks,'sheet_name':'Tareas aux exp','data_order':expired_assignee_tasks_d_order,'color':"00ffd11a"},
+                        {'title':expired_supervisor_tasks_title, 'data':expired_supervisor_tasks, 'sheet_name':'Tareas sup exp','data_order':expired_supervisor_tasks_d_order,'color':"00ff8000"},
+                        {'title':expired_admin_tasks_title, 'data':expired_admin_tasks,'sheet_name':'Tareas exp','data_order':expired_admin_tasks_d_order,'color':"00e62e00"},
+                        {'title':resolved_tasks_title, 'data':resolved_tasks,'sheet_name':'Resueltas','data_order':resolved_tasks_d_order,'color':"0000e6b8"},
+                        {'title':closed_tasks_title, 'data':closed_tasks,'sheet_name':'Cerradas','data_order':closed_tasks_d_order,'color':"0000b300"},
+                        {'title':declined_tasks_title, 'data':declined_tasks,'sheet_name':'Declinadas','data_order':declined_tasks_d_order,'color':"00cc00cc"},
+                        {'title':canceled_tasks_title, 'data':canceled_tasks,'sheet_name':'Canceladas','data_order':canceled_tasks_d_order,'color':"00999999"}
                     ]
 
                     wb = Workbook()
@@ -344,27 +368,64 @@ def main():
                         logger.info("------------Haciendo %s-----------------"%ll['sheet_name'])
                         if ll['data']!=[]:
                             ws = wb.create_sheet("%s"%ll['sheet_name'],sheet_number)
+                            ws.sheet_properties.tabColor = ll['color']
                             sheet_number+=1
                             for i in range(1,len(ll['title'])+1):
                                 ws.cell(row=1,column=i,value=ll['title'][i-1])
+                                ws.cell(row=1,column=i).font=Font(name='Arial', size=12, bold=True)
                             row=2
                             for x in ll['data']:
                                 logger.info(x)
-                                for r in range(0,len(ll['data_order'])-1):
+                                for r in range(0,len(ll['data_order'])):
                                     logger.info("%s : %s"%(ll['data_order'][r],x[ll['data_order'][r]]))
                                     ws.cell(row=row,column=r+1,value=x[ll['data_order'][r]])
+                                    ws.cell(row=row,column=r+1).font=Font(name='Arial',size=11)
                                 row+=1
 
+                    for w in wb.sheetnames:
+                        sheet=wb[w]
+                        for column_cells in sheet.columns:
+                            length = max(len(MF.as_text(cell.value))+5 for cell in column_cells)
+                            sheet.column_dimensions[column_cells[0].column].width = length
                     fecha=str(datetime.today())
                     fecha=fecha.replace(" ","_")
                     fecha=fecha.replace(":","_")
                     fecha=fecha.replace(".","_")
-                    wb.save('/tmp/prueba_%s.xlsx'%fecha)
+
+                    new_from=interval_from.split("-")
+                    new_to=interval_to.split("-")
+                    mail_info={
+                        'admin':a['admin'],
+                        'company':a['company'],
+                        'from':'%s-%s-%s'%(new_from[2],new_from[1],new_from[0]),
+                        'to':'%s-%s-%s'%(new_to[2],new_to[1],new_to[0]),
+                        'link':cfg.host
+                    }
+                    if len(wb.sheetnames)>1:
+                        wb.remove(wb['Sheet'])
+                        wb.save('/tmp/Reporte_%s.xlsx'%fecha)
+                        mail_template=db.query("""
+                            select * from template.generic_template where type_id=22
+                        """).dictresult()[0]
+                        msg_body=mail_template['body'].format(**mail_info)
+                        MF.sendMail(a['email'],mail_template['subject'],msg_body,'/tmp/Reporte_%s.xlsx'%fecha)
+                        logger.info("Genera reporte de empresa %s"%a['company'])
+                    else:
+                        mail_template=db.query("""
+                            select * from template.generic_template where type_id=23
+                        """).dictresult()[0]
+                        msg_body=mail_template['body'].format(**mail_info)
+                        MF.sendMail(a['email'],mail_template['subject'],msg_body)
+                        logger.info("Reporte vacío de empresa %s"%a['company'])
+
+                    db.query("""
+                        update system.notification_settings set last_admin_notification = now() where company_id=%s
+                    """%a['company_id'])
 
             else:
                 logger.info("La empresa company_id %s no tiene configuración de notificaciones."%a['company_id'])
 
-        logger.info("Termina reporte administrador")
+        print "Termina reporte administrador"
 
     except:
         exc_info = sys.exc_info()
