@@ -42,7 +42,6 @@ class MailFunctions:
             server=smtplib.SMTP(cfg.mail_server,cfg.mail_port)
             server.login(cfg.mail_username,cfg.mail_password)
             from_address=cfg.mail_username
-            # to_address="pgarcia@russellbedford.mx"
             msg=MIMEMultipart()
             msg['From']=from_address
             msg['To']=to_address
