@@ -5,7 +5,7 @@ function getDictForm(formId,select_list){
         obj[item.name] = item.value;
         return obj;
     }, {});
-    console.log(select_list);
+    
     for (x in select_list){
         frm[select_list[x]['name']]=parseInt($(select_list[x]['id']).find("option:selected").attr("name"));
     }

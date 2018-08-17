@@ -2055,46 +2055,60 @@ $(document).ready(function(){
         });
     });
 
+    $("#TLselSupervisor").change(function(){
+        getTasks(me.user_info);
+    });
+
+    $("#TLdateType").change(function(){
+        getTasks(me.user_info);
+    });
+
+    $("#TLdateFrom").change(function(){
+        getTasks(me.user_info);
+    });
+
+    $("#TLdateTo").change(function(){
+        getTasks(me.user_info);
+    });
+
+    $("#TLselAssignee").change(function(){
+        getTasks(me.user_info);
+    });
+
 });
 
 
-
-//
-// function emptyFieldRow(fieldId,spanId){
-//     var valid=false;
-//     var input=$(fieldId);
-//     var is_name=input.val();
-//     if(is_name && (input[0].value.trim()).length>0){ //valida si es diferente de vacio y verifica que no tenga puros espacios vacios
-//         input.removeClass("invalid-field").addClass("valid-field");
-//         $(spanId).removeClass("show-error-msg-row").addClass("error-msg-row");
-//         $(spanId).html("Error");
-//         valid=true;
-//     }
-//     else{
-//         input.removeClass("valid-field").addClass("invalid-field");
-//         $(spanId).removeClass("error-msg-row").addClass("show-error-msg-row");
-//         $(spanId).html("Este campo es requerido.");
-//     }
-//     return valid;
-// }
-//
-// function hasExtension(inputID, exts) {
-//     var fileName = document.getElementById(inputID).value;
-//     return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName);
-// }
-//
-// function maxLenRow(inputId,spanId,len){
-//     var valid=false;
-//     var val=$(inputId)[0].value;
-//     if (val.length>len){
-//         $(inputId).removeClass("valid-field").addClass("invalid-field");
-//         $(spanId).removeClass("error-msg-row").addClass("show-error-msg-row");
-//         $(spanId).html("Este campo puede tener un máximo de "+len+" caracteres.");
-//     }
-//     else{
-//         $(inputId).removeClass("invalid-field").addClass("valid-field");
-//         $(spanId).removeClass("show-error-msg-row").addClass("error-msg-row");
-//         valid=true;
-//     }
-//     return valid;
-// }
+function getTasks(user_info){
+    var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+    var filters=getDictForm("#TLfrmFilters",sel_list);
+    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+    $("#TLdateFrom").val(filters['from']);
+    $("#grdTask").DataTable({
+        "scrollY": "255px",
+        "scrollCollapse":true,
+        serverSide:true,
+        ajax:{
+            data:{
+                'company_id':user_info.company_id,
+                'user_id':user_info.user_id,
+                'user_type_id':user_info.user_type_id,
+                'first':false,
+                'filter':JSON.stringify(filters)
+            },
+            url:'/task/getTask',
+            dataSrc:'data',
+            type:'POST',
+            error: handleAjaxErrorLoc
+        },
+        columns:[
+            {data:'created', "width":"15%"},
+            {data:'name',"width":"20%"},
+            {data:'deadline',"width":"15%"},
+            {data:'assignee',"width":"20%"},
+            {data:'supervisor',"width":"20%"},
+            {data:'status',"width":"10%"}
+        ]
+    });
+}
