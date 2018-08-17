@@ -64,7 +64,7 @@ def login():
             logging.info("error: %s"%error)
             #return render_template('login.html', error=error)
         else:
-            logging.info("logged")
+
             active_sessions=db.query("""
                 select count(*) from system.user_session
                 where user_id=%s and logged=True
@@ -81,7 +81,7 @@ def login():
                 session['user_id']=user[0]['user_id']
                 session['session_id']=inserted_session['session_id']
                 g.session_id=session['session_id']
-                logging.info(g.session_id)
+                logging.info("Inicia sesión usuario %s"%user[0]['user_id'])
                 msg='Inicio de sesión correcto'.decode('utf-8')
                 db.query("""
                     update system.user set login_attempts=0 where user_id=%s
@@ -126,9 +126,7 @@ def is_logged_in(f):
 @bp.route('/logout')
 @is_logged_in
 def logout():
-    logging.info("entra a logout")
 
-    logging.info(session)
     db.query("""
         update system.user_session
         set finish_session='now',
@@ -136,7 +134,7 @@ def logout():
         where user_id=%s
     """%session['user_id'])
     session.clear()
-    logging.info(session)
+
     return redirect(url_for('auth.login'))
 
 @bp.route('/recoverPassword', methods=['GET','POST'])

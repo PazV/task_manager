@@ -26,7 +26,7 @@ bp = Blueprint('dashboard', __name__ )
 @bp.route('/')
 @is_logged_in
 def index():
-    logging.info("Home")
+    
     user_info={
         'user_id':session['user_id'],
         'session_id':session['session_id']

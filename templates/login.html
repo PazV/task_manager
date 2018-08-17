@@ -33,7 +33,7 @@
 
           </div>
           <div class="text-center" id="divLogin" style="background-color: rgba(179, 179, 179, 0.4); position:absolute; margin:auto; top:0;right:0;left:0;bottom:0; width:350px;height:300px; border-radius:5px;">
-                  <form class="form-signin" method="post">
+                  <form class="form-signin" method="POST">
                       {% with errors = get_flashed_messages(category_filter=["main_msg"]) %}
                         {% if errors %}
                             <div  class="alert alert-success alert-dismissible" style="display:block; align-self: baseline;" role="alert">
