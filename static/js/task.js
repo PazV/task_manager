@@ -18,11 +18,12 @@ $(document).ready(function(){
                 'company_id':me.user_info.company_id,
                 'user_id':me.user_info.user_id,
                 'user_type_id':me.user_info.user_type_id,
+                'first':true,
                 'filter':JSON.stringify({
                     'status_id':-1,
                     'assignee_id':-1,
                     'supervisor_id':-1,
-                    'date_type':1,
+                    'date_type':2,
                     'from':-1,
                     'to':-1,
                     'search':-1
@@ -42,7 +43,11 @@ $(document).ready(function(){
             {data:'status',"width":"10%"}
         ]
     });
-
+    $('#grdTask').on( 'init.dt', function (a,b,c) {
+        if (c.first==true){
+            $("#TLdateFrom").val(c.older_task);
+        }
+    }).dataTable();
 
     $.ajax({
         url:'/task/getSupervisor',
@@ -123,6 +128,7 @@ $(document).ready(function(){
                     'company_id':me.user_info.company_id,
                     'user_id':me.user_info.user_id,
                     'user_type_id':me.user_info.user_type_id,
+                    'first':false,
                     'filter':JSON.stringify(filters)
                 },
                 url:'/task/getTask',
@@ -171,6 +177,7 @@ $(document).ready(function(){
                     'company_id':me.user_info.company_id,
                     'user_id':me.user_info.user_id,
                     'user_type_id':me.user_info.user_type_id,
+                    'first':false,
                     'filter':JSON.stringify(filters)
                 },
                 url:'/task/getTask',
@@ -222,6 +229,7 @@ $(document).ready(function(){
                     'company_id':me.user_info.company_id,
                     'user_id':me.user_info.user_id,
                     'user_type_id':me.user_info.user_type_id,
+                    'first':false,
                     'filter':JSON.stringify(filters)
                 },
                 url:'/task/getTask',
@@ -473,6 +481,7 @@ $(document).ready(function(){
                                                                     'company_id':me.user_info.company_id,
                                                                     'user_id':me.user_info.user_id,
                                                                     'user_type_id':me.user_info.user_type_id,
+                                                                    'first':false,
                                                                     'filter':JSON.stringify(filters)
                                                                 },
                                                                 url:'/task/getTask',
@@ -539,6 +548,7 @@ $(document).ready(function(){
                                                     'company_id':me.user_info.company_id,
                                                     'user_id':me.user_info.user_id,
                                                     'user_type_id':me.user_info.user_type_id,
+                                                    'first':false,
                                                     'filter':JSON.stringify(filters)
                                                 },
                                                 url:'/task/getTask',
@@ -830,6 +840,7 @@ $(document).ready(function(){
                                         'company_id':me.user_info.company_id,
                                         'user_id':me.user_info.user_id,
                                         'user_type_id':me.user_info.user_type_id,
+                                        'first':false,
                                         'filter':JSON.stringify(filters)
                                     },
                                     url:'/task/getTask',
@@ -960,6 +971,7 @@ $(document).ready(function(){
                                         'company_id':me.user_info.company_id,
                                         'user_id':me.user_info.user_id,
                                         'user_type_id':me.user_info.user_type_id,
+                                        'first':false,
                                         'filter':JSON.stringify(filters)
                                     },
                                     url:'/task/getTask',
@@ -1130,6 +1142,7 @@ $(document).ready(function(){
                                                     'company_id':me.user_info.company_id,
                                                     'user_id':me.user_info.user_id,
                                                     'user_type_id':me.user_info.user_type_id,
+                                                    'first':false,
                                                     'filter':JSON.stringify(filters)
                                                 },
                                                 url:'/task/getTask',
@@ -1499,6 +1512,7 @@ $(document).ready(function(){
                                 'company_id':me.user_info.company_id,
                                 'user_id':me.user_info.user_id,
                                 'user_type_id':me.user_info.user_type_id,
+                                'first':false,
                                 'filter':JSON.stringify(filters)
                             },
                             url:'/task/getTask',
@@ -1574,6 +1588,7 @@ $(document).ready(function(){
                                                 'company_id':me.user_info.company_id,
                                                 'user_id':me.user_info.user_id,
                                                 'user_type_id':me.user_info.user_type_id,
+                                                'first':false,
                                                 'filter':JSON.stringify(filters)
                                             },
                                             url:'/task/getTask',
@@ -1660,6 +1675,7 @@ $(document).ready(function(){
                                                 'company_id':me.user_info.company_id,
                                                 'user_id':me.user_info.user_id,
                                                 'user_type_id':me.user_info.user_type_id,
+                                                'first':false,
                                                 'filter':JSON.stringify(filters)
                                             },
                                             url:'/task/getTask',
@@ -1748,6 +1764,7 @@ $(document).ready(function(){
                                                 'company_id':me.user_info.company_id,
                                                 'user_id':me.user_info.user_id,
                                                 'user_type_id':me.user_info.user_type_id,
+                                                'first':false,
                                                 'filter':JSON.stringify(filters)
                                             },
                                             url:'/task/getTask',
@@ -1853,6 +1870,7 @@ $(document).ready(function(){
                                                     'company_id':me.user_info.company_id,
                                                     'user_id':me.user_info.user_id,
                                                     'user_type_id':me.user_info.user_type_id,
+                                                    'first':false,
                                                     'filter':JSON.stringify(filters)
                                                 },
                                                 url:'/task/getTask',
@@ -1924,6 +1942,7 @@ $(document).ready(function(){
                                     'company_id':me.user_info.company_id,
                                     'user_id':me.user_info.user_id,
                                     'user_type_id':me.user_info.user_type_id,
+                                    'first':false,
                                     'filter':JSON.stringify(filters)
                                 },
                                 url:'/task/getTask',
@@ -2000,6 +2019,7 @@ $(document).ready(function(){
                                                 'company_id':me.user_info.company_id,
                                                 'user_id':me.user_info.user_id,
                                                 'user_type_id':me.user_info.user_type_id,
+                                                'first':false,
                                                 'filter':JSON.stringify(filters)
                                             },
                                             url:'/task/getTask',

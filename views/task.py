@@ -198,7 +198,7 @@ def getTask():
             user=""
             deadline=""
             filter=json.loads(request.form['filter'])
-
+            first=request.form['first']
             filters=""
             now=datetime.datetime.now()
             for key,value in filter.iteritems():
@@ -238,22 +238,68 @@ def getTask():
             if filter['date_type']==1:
                 filters+=" and a.created between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
 
-
+            response['first']=False
             if user_type_id in (1,4,5):
                 user=""
                 deadline="to_char(a.deadline,'DD-MM-YYYY') as deadline"
                 if filter['date_type']==2:
-                    filters+=" and a.deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+                    if first=='true':
+                        older_task=db.query("""
+                            select to_char(deadline,'YYYY-MM-DD') as deadline from task.task
+                            where company_id=%s and status_id in (1,6) order by deadline asc limit 1
+                        """%int(request.form['company_id'])).dictresult()
+                        if older_task!=[]:
+                            filters+=" and a.deadline between '%s 00:00:00' and '%s 23:59:59' "%(older_task[0]['deadline'],filter['to'])
+                            response['first']=True
+                            response['older_task']=older_task[0]['deadline']
+                        else:
+                            filters+=" and a.deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+                    else:
+                        filters+=" and a.deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
             elif user_type_id==2:
                 user=" and supervisor_id=%s"%user_id
                 deadline="to_char(a.supervisor_deadline,'DD-MM-YYYY') as deadline"
                 if filter['date_type']==2:
-                    filters+=" and a.supervisor_deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+                    if first=='true':
+                        older_task=db.query("""
+                            select to_char(supervisor_deadline,'YYYY-MM-DD') as supervisor_deadline from task.task
+                            where supervisor_id=%s and company_id=%s and status_id in (1,6) order by supervisor_deadline asc limit 1
+                        """%(int(request.form['user_id']),int(request.form['company_id']))).dictresult()
+                        if older_task!=[]:
+                            filters+=" and a.supervisor_deadline between '%s 00:00:00' and '%s 23:59:59'"%(older_task[0]['supervisor_deadline'],filter['to'])
+                            response['first']=True
+                            response['older_task']=older_task[0]['supervisor_deadline']
+                        else:
+                            filters+=" and a.supervisor_deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+                    else:
+                        filters+=" and a.supervisor_deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
             elif user_type_id==3:
                 user=" and assignee_id=%s"%user_id
                 deadline="to_char(a.assignee_deadline,'DD-MM-YYYY') as deadline"
                 if filter['date_type']==2:
-                    filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+                    if first=='true':
+                        older_task=db.query("""
+                            select to_char(assignee_deadline,'YYYY-MM-DD') as assignee_deadline from task.task
+                            where assignee_id=%s and company_id=%s and status_id in (1,6) order by assignee_deadline asc limit 1
+                        """%(int(request.form['user_id']),int(request.form['company_id']))).dictresult()
+                        if older_task!=[]:
+                            filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(older_task[0]['assignee_deadline'],filter['to'])
+                            response['first']=True
+                            response['older_task']=older_task[0]['assignee_deadline']
+                        else:
+                            filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+                    else:
+                        filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+
+            if filter['date_type']==1:
+                order_by="a.created"
+            else:
+                if user_type_id in (1,4,5):
+                    order_by="a.deadline"
+                elif user_type_id == 2:
+                    order_by="a.supervisor_deadline"
+                else:
+                    order_by="a.assignee_deadline"
 
             task=db.query("""
                 select
@@ -276,9 +322,9 @@ def getTask():
                     a.company_id=%s
                 and a.status_id=b.status_id
                 %s %s
-                order by created asc
+                order by %s asc
                 offset %s limit %s
-            """%(deadline,int(request.form['company_id']),user,filters,int(request.form['start']),int(request.form['length']))).dictresult()
+            """%(deadline,int(request.form['company_id']),user,filters,order_by,int(request.form['start']),int(request.form['length']))).dictresult()
 
             total=db.query("""
                 select
@@ -291,6 +337,7 @@ def getTask():
                 and a.status_id=b.status_id
                 %s %s
             """%(int(request.form['company_id']),user,filters)).dictresult()
+
             response['data']=task
             response['recordsTotal']=total[0]['count']
             response['recordsFiltered']=total[0]['count']
