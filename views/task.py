@@ -110,7 +110,7 @@ def saveTask():
     try:
         flag,data=GF.toDict(request.form,'post')
         if flag:
-            app.logger.info(data)
+            
             valid=True
             for k,v in data.iteritems():
                 if v=="" or v==None:
@@ -128,9 +128,9 @@ def saveTask():
                     data['supervisor_deadline']="%s 23:59:59"%data['supervisor_deadline']
                     data['assignee_deadline']="%s 23:59:59"%data['assignee_deadline']
                     data['deadline']="%s 23:59:59"%data['deadline']
-                    app.logger.info("antes de insert")
-                    app.logger.info(data)
+
                     new_task=db.insert('task.task',data)
+                    app.logger.info("Se crea tarea %s, company_id:%s"%(data['name'],data['company_id']))
                     documents=json.loads(data['document'])
                     for x in documents:
                         doc={
@@ -148,7 +148,8 @@ def saveTask():
                             (select name from system.user where user_id=a.assignee_id) as assignee,
                             a.description,
                             to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
-                            to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline
+                            to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                            to_char(a.deadline, 'DD-MM-YYYY HH24:MI:SS') as deadline
                         from
                             task.task a
                         where a.task_id=%s
@@ -163,6 +164,25 @@ def saveTask():
                     task_info['link']=cfg.host
                     msg=message['body'].format(**task_info)
                     GF.sendMail(message['subject'],msg,recipient)
+
+                    message_sup=db.query("""
+                        select * from template.generic_template where type_id=18
+                    """).dictresult()[0]
+                    recipient_sup=db.query("""
+                        select email from system.user where user_id=%s
+                    """%data['supervisor_id']).dictresult()[0]['email']
+                    msg_sup=message_sup['body'].format(**task_info)
+                    GF.sendMail(message_sup['subject'],msg_sup,recipient_sup)
+
+                    message_admin=db.query("""
+                        select * from template.generic_template where type_id=24
+                    """).dictresult()[0]
+                    recipient_admin=db.query("""
+                        select name, email from system.user where company_id=%s and user_type_id=1
+                    """%data['company_id']).dictresult()[0]
+                    task_info['admin']=recipient_admin['name']
+                    msg_admin=message_admin['body'].format(**task_info)
+                    GF.sendMail(message_admin['subject'],msg_admin,recipient_admin['email'])
 
                     response['success']=True
                     response['msg_response']='La tarea ha sido creada.'
