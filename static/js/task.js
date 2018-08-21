@@ -259,6 +259,7 @@ $(document).ready(function(){
         $("#NTchkRecurrentTask").prop("checked",false);
         $("#NTchkNotifyAdmin").prop("checked",false);
         $("#NTtask_evidences").empty();
+        setMessage("#alertNTForm",["alert-success","alert-danger"],"alert-info","",false);
 
     });
 
@@ -1263,6 +1264,7 @@ $(document).ready(function(){
 
     $("#win_add_evidence").on('hidden.bs.modal',function(){
         resetForm("#frmAddEvidence",["input|INPUT","select|SELECT","textarea|TEXTAREA"]);
+        setMessage("#alertTEForm",["alert-success","alert-danger"],"alert-info","",false);
     });
 
 

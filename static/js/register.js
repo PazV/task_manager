@@ -173,9 +173,10 @@ $(document).ready(function(){
 
     });
     $("#win_new_admin_user").on('hidden.bs.modal',function(){
-
         resetForm("#frmNewAdminUser",["input|INPUT","select|SELECT"]);
+        setMessage("#alertNAUForm",["alert-success","alert-danger"],"alert-info","",false);
     });
+
     $("#chkNAUshow_password").click(function(){
         if ($("#chkNAUshow_password")[0].checked){
             $("#NAUpassword").attr("type","text");
