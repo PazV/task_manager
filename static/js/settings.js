@@ -8,7 +8,7 @@ $(document).ready(function(){
         data['assignee_days']=$("#NSassignee_days option:selected")[0].id;
         data['supervisor_days']=$("#NSsupervisor_days option:selected")[0].id;
         data['admin_days']=$("#NSadmin_days option:selected")[0].id;
-        console.log(data);
+        
         data['company_id']=me.user_info.company_id;
         EasyLoading.show({
             text:'Cargando...',

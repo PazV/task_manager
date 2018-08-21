@@ -33,7 +33,7 @@ $(document).ready(function(){
             if (input_list[x].type=='text' ){
                 if ($("#"+input_list[x].id).hasClass('valid-field')===false){
                     $("#"+input_list[x].id).focusout();
-                    console.log(input_list[x].id);
+                    
                     is_valid=false;
                 }
             }

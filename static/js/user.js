@@ -300,7 +300,7 @@ $(document).ready(function(){
 
     $('#grdAdminUsers').DataTable().on( 'select', function ( e, dt, type, index ) {
         var record = $('#grdAdminUsers').DataTable().rows(index).data()[0];
-        console.log(record);
+
     } );
 
 
@@ -379,7 +379,7 @@ $(document).ready(function(){
                         action: function () {
                             var ind=table.row('.selected').index();
                             var data=table.rows(ind).data()[0];
-                            console.log(data);
+
                             $.ajax({
                                 url:'/users/disableUser',
                                 method:'POST',
@@ -752,12 +752,7 @@ $(document).ready(function(){
     });
 
     $("#switch-sm").click(function(){
-        // if ($("#switch-sm")[0].checked){
-        //     console.log("on");
-        // }
-        // else{
-        //     console.log("off");
-        // }
+        
         $("#grdUserManager").DataTable({
             "scrollY": "255px",
             "scrollCollapse":true,

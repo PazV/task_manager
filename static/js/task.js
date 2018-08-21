@@ -328,11 +328,11 @@ $(document).ready(function(){
                     console.log("ERROR");
                 }
             },
-            error:function(xhr,textStatus,error){
-                console.log(xhr);
-                console.log(textStatus);
-                console.log(error);
-            }
+            // error:function(xhr,textStatus,error){
+            //     console.log(xhr);
+            //     console.log(textStatus);
+            //     console.log(error);
+            // }
         });
         var month_list=[{'text':'1 mes','name':1},{'text':'2 meses','name':2},{'text':'3 meses','name':3},{'text':'4 meses','name':4},
         {'text':'5 meses','name':5},{'text':'6 meses','name':6},{'text':'7 meses','name':7},{'text':'8 meses','name':8},
@@ -1357,7 +1357,7 @@ $(document).ready(function(){
                                 }
                                 else{
                                     if (res.allow_check){
-                                        console.log(record);
+
                                         $("#CHDSUPdeadline").val(res.deadlines.deadline);
                                         $("#CHDSUPsupervisor_deadline").val(res.deadlines.supervisor_deadline);
                                         $("#CHDSUPassigee_deadline").val(res.deadlines.assignee_deadline);
@@ -1476,7 +1476,7 @@ $(document).ready(function(){
         data['task_id']=record['task_id'];
         data['user_id']=me.user_info.user_id;
         data['description']="";
-        console.log(data);
+
 
         EasyLoading.show({
             text:"Cargando...",

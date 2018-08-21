@@ -4,7 +4,7 @@ $(document).ready(function(){
 
     //afterrender
     $("#win_register_company").on('shown.bs.modal',function(){
-        console.log("afterrender");
+
 
         //me.validRegisterForm=false;
     });
@@ -62,7 +62,7 @@ $(document).ready(function(){
                 method:'POST',
                 data:JSON.stringify(data),
                 success:function(response1, response2, response3){
-                    console.log("success");
+
                     try{
                         var response=JSON.parse(response1); //parsea response de petición ajax
                     }catch(err){
@@ -115,7 +115,7 @@ $(document).ready(function(){
 
     //afterrender win user admin
     $("#win_new_admin_user").on('shown.bs.modal',function(){
-        console.log("afterrender user admin");
+
         $.ajax({
             url:'/register/getCompanies',
             data:JSON.stringify({'company_id':-1}), //-1 -> todas
@@ -160,20 +160,20 @@ $(document).ready(function(){
                     });
                 }
                 else{
-                    console.log("Error");
+
                     $("#alertNAUForm").find("span").html(response.msg_response);
                     $("#alertNAUForm").css("display","block");
                 }
             },
             error:function(error){
-                console.log(error);
+
                 $("#alertNAUForm").css("display","block");
             }
         });
 
     });
     $("#win_new_admin_user").on('hidden.bs.modal',function(){
-        console.log("cerrar");
+
         resetForm("#frmNewAdminUser",["input|INPUT","select|SELECT"]);
     });
     $("#chkNAUshow_password").click(function(){
@@ -230,7 +230,7 @@ $(document).ready(function(){
             if (input_list[x].type=='text'){
                 if ($("#"+input_list[x].id).hasClass('valid-field')===false){
                     $("#"+input_list[x].id).focusout();
-                    console.log(input_list[x].id);
+
                     is_valid=false;
                 }
             }
@@ -243,7 +243,7 @@ $(document).ready(function(){
             var sel_list=[{'id':"#NAUcompany_id",'name':'company_id'},{'id':"#NAUuser_type_id",'name':'user_type_id'}];
             var frm=getDictForm("#frmNewAdminUser",sel_list);
             frm['user_id']=-1;
-            console.log(frm);
+
             $.ajax({
                 url:'/register/createUser',
                 method:'POST',

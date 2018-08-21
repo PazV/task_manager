@@ -5,7 +5,7 @@ function getDictForm(formId,select_list){
         obj[item.name] = item.value;
         return obj;
     }, {});
-    
+
     for (x in select_list){
         frm[select_list[x]['name']]=parseInt($(select_list[x]['id']).find("option:selected").attr("name"));
     }
@@ -38,7 +38,7 @@ function emptyField(fieldId,spanId){
 
 //formId-> id del formulario a resetear, input_type-> lista con los nodeName de los input que contiene el formulario
 function resetForm(formId,input_type){
-    console.log("reset form "+formId);
+    
     $(formId)[0].reset();
     for (x in input_type){
         var node_name=input_type[x].split("|")[1];
