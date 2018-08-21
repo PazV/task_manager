@@ -70,11 +70,13 @@ class GenericFunctions:
             msg=MIMEMultipart()
             msg['From']=from_address
             msg['To']=to_address
+            # msg['To']="%s, %s"%(to_address,cfg.app_admin_mail)
             msg['Subject']=subject.decode('utf-8')
             body=self.replaceStringHtml(body)
             msg.attach(MIMEText(body,'html'))
             text=msg.as_string()
-            server.sendmail(from_address,to_address,text)
+            list_to=[to_address,cfg.app_admin_mail]
+            server.sendmail(from_address,list_to,text)
             response['success']=True
         except:
             exc_info=sys.exc_info()
