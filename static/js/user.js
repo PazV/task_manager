@@ -153,6 +153,9 @@ $(document).ready(function(){
         },200);
     });
 
+    $("#win_admin_users").on('hidden.bs.modal',function(){
+        setMessage("#alertAdminUsersWin",["alert-success","alert-danger"],"alert-info","",false);
+    });
 
 
     // $("#win_admin_users").bind('resize', function () {
@@ -291,6 +294,7 @@ $(document).ready(function(){
     $("#win_new_user").on('hidden.bs.modal',function(){
         resetForm("#frmNewUser",["input|INPUT","select|SELECT"]);
         $("#NUlogin").attr("readonly",false);
+        setMessage("#alertNUForm",["alert-success","alert-danger"],"alert-info","",false);
     });
 
     $("#win_change_pass").on('hidden.bs.modal',function(){
@@ -465,294 +469,332 @@ $(document).ready(function(){
     });
 
     $("#btnUMSendPassword").click(function(){
-        $.confirm({
-            theme:'dark',
-            title:'Atención',
-            content:'La contraseña será regenerada y enviada al correo del usuario, ¿desea continuar?',
-            buttons:{
-                confirm:{
-                    text:'Sí',
-                    action:function(){
-                        EasyLoading.show({
-                            text:"Cargando...",
-                            type:EasyLoading.TYPE["PACMAN"],
-                        });
-                        var table=$("#grdUserManager").DataTable();
-                        var ind=table.row('.selected').index();
-                        var record=table.rows(ind).data()[0];
-                        $.ajax({
-                            url:'/users/sendNewPassword',
-                            method:'POST',
-                            data:JSON.stringify({'user_id':record['user_id']}),
-                            success:function(response){
-                                try{
-                                    var res=JSON.parse(response);
-                                }catch(err){
-                                    handleAjaxErrorLoc(1,2,3);
-                                }
-                                if (res.success){
+        var table=$("#grdUserManager").DataTable();
+        if (table.rows('.selected').any()){
+            $.confirm({
+                theme:'dark',
+                title:'Atención',
+                content:'La contraseña será regenerada y enviada al correo del usuario, ¿desea continuar?',
+                buttons:{
+                    confirm:{
+                        text:'Sí',
+                        action:function(){
+                            EasyLoading.show({
+                                text:"Cargando...",
+                                type:EasyLoading.TYPE["PACMAN"],
+                            });
+
+                            var ind=table.row('.selected').index();
+                            var record=table.rows(ind).data()[0];
+                            $.ajax({
+                                url:'/users/sendNewPassword',
+                                method:'POST',
+                                data:JSON.stringify({'user_id':record['user_id']}),
+                                success:function(response){
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
+                                    if (res.success){
+                                        EasyLoading.hide();
+                                        $("#grdUserManager").DataTable({
+                                            "scrollY": "255px",
+                                            "scrollCollapse":true,
+                                            serverSide:true,
+                                            ajax:{
+                                                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                                                url:'/users/getManagerUserList',
+                                                dataSrc:'data',
+                                                type:'POST',
+                                                error: handleAjaxErrorLoc
+                                            },
+                                            columns:[
+                                                {data:'name',"width":"40%"},
+                                                {data:'login',"width":"15%"},
+                                                {data:'user_type',"width":"12%"},
+                                                {data:'status',"width":"20%"},
+                                                {data:'session',"width":"13%"}
+                                            ]
+                                        });
+                                    }
+                                    else{
+                                        EasyLoading.hide();
+                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                    }
+                                },
+                                error:function(){
                                     EasyLoading.hide();
-                                    $("#grdUserManager").DataTable({
-                                        "scrollY": "255px",
-                                        "scrollCollapse":true,
-                                        serverSide:true,
-                                        ajax:{
-                                            data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
-                                            url:'/users/getManagerUserList',
-                                            dataSrc:'data',
-                                            type:'POST',
-                                            error: handleAjaxErrorLoc
-                                        },
-                                        columns:[
-                                            {data:'name',"width":"40%"},
-                                            {data:'login',"width":"15%"},
-                                            {data:'user_type',"width":"12%"},
-                                            {data:'status',"width":"20%"},
-                                            {data:'session',"width":"13%"}
-                                        ]
-                                    });
+                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
                                 }
-                                else{
-                                    EasyLoading.hide();
-                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
-                                }
-                            },
-                            error:function(){
-                                EasyLoading.hide();
-                                setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
-                            }
-                        });
+                            });
+                        }
+                    },
+                    cancel:{
+                        text:'No'
                     }
-                },
-                cancel:{
-                    text:'No'
                 }
-            }
-        });
+            });
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Debe seleccionar un usuario para regenerar la contraseña.'
+            });
+        }
+
     });
 
     $("#btnUMCloseSession").click(function(){
         var table=$("#grdUserManager").DataTable();
-        var ind=table.row('.selected').index();
-        var record=table.rows(ind).data()[0];
-        if (record['session']=='Abierta'){
-            $.confirm({
-                theme:'dark',
-                title:'Atención',
-                content:'Estás a punto de cerrar la sesión del usuario, ¿deseas continuar?',
-                buttons:{
-                    confirm:{
-                        text:'Sí',
-                        action:function(){
-                            $.ajax({
-                                url:'/users/closeSession',
-                                method:'POST',
-                                data:JSON.stringify({'session_id':record['session_id'],'user_id':record['user_id']}),
-                                success:function(response){
-                                    try{
-                                        var res=JSON.parse(response);
-                                    }catch(err){
-                                        handleAjaxErrorLoc(1,2,3);
-                                    }
-                                    if (res.success){
-                                        $("#grdUserManager").DataTable({
-                                            "scrollY": "255px",
-                                            "scrollCollapse":true,
-                                            serverSide:true,
-                                            ajax:{
-                                                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
-                                                url:'/users/getManagerUserList',
-                                                dataSrc:'data',
-                                                type:'POST',
-                                                error: handleAjaxErrorLoc
-                                            },
-                                            columns:[
-                                                {data:'name',"width":"40%"},
-                                                {data:'login',"width":"15%"},
-                                                {data:'user_type',"width":"12%"},
-                                                {data:'status',"width":"20%"},
-                                                {data:'session',"width":"13%"}
-                                            ]
-                                        });
-                                    }
-                                    else{
+        if (table.rows('.selected').any()){
+            var ind=table.row('.selected').index();
+            var record=table.rows(ind).data()[0];
+            if (record['session']=='Abierta'){
+                $.confirm({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'Estás a punto de cerrar la sesión del usuario, ¿deseas continuar?',
+                    buttons:{
+                        confirm:{
+                            text:'Sí',
+                            action:function(){
+                                $.ajax({
+                                    url:'/users/closeSession',
+                                    method:'POST',
+                                    data:JSON.stringify({'session_id':record['session_id'],'user_id':record['user_id']}),
+                                    success:function(response){
+                                        try{
+                                            var res=JSON.parse(response);
+                                        }catch(err){
+                                            handleAjaxErrorLoc(1,2,3);
+                                        }
+                                        if (res.success){
+                                            $("#grdUserManager").DataTable({
+                                                "scrollY": "255px",
+                                                "scrollCollapse":true,
+                                                serverSide:true,
+                                                ajax:{
+                                                    data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                                                    url:'/users/getManagerUserList',
+                                                    dataSrc:'data',
+                                                    type:'POST',
+                                                    error: handleAjaxErrorLoc
+                                                },
+                                                columns:[
+                                                    {data:'name',"width":"40%"},
+                                                    {data:'login',"width":"15%"},
+                                                    {data:'user_type',"width":"12%"},
+                                                    {data:'status',"width":"20%"},
+                                                    {data:'session',"width":"13%"}
+                                                ]
+                                            });
+                                        }
+                                        else{
+                                            EasyLoading.hide();
+                                            setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                        }
+                                    },
+                                    error:function(){
                                         EasyLoading.hide();
-                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
                                     }
-                                },
-                                error:function(){
-                                    EasyLoading.hide();
-                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
-                                }
-                            });
+                                });
+                            }
+                        },
+                        cancel:{
+                            text:'No'
                         }
-                    },
-                    cancel:{
-                        text:'No'
                     }
-                }
-            })
-        }
-        else{
-            if (record['session']=='Cerrada'){
-                var content='Esta sesión ya se encuentra cerrada.';
+                })
             }
             else{
-                var content='Este usuario no tiene ninguna sesión activa';
+                if (record['session']=='Cerrada'){
+                    var content='Esta sesión ya se encuentra cerrada.';
+                }
+                else{
+                    var content='Este usuario no tiene ninguna sesión activa';
+                }
+                $.alert({
+                    theme:'dark',
+                    title:'Atención',
+                    content:content
+                });
             }
+        }
+        else{
             $.alert({
                 theme:'dark',
                 title:'Atención',
-                content:content
+                content:'Debe seleccionar un usuario para cerrar la sesión.'
             });
         }
-
     });
 
     $("#btnUMUnblockUser").click(function(){
         var table=$("#grdUserManager").DataTable();
-        var ind=table.row('.selected').index();
-        var record=table.rows(ind).data()[0];
-        if (record['status']=='Bloqueado'){
-            $.confirm({
-                theme:'dark',
-                title:'Atención',
-                content:'¿Desea desbloquear este usuario?',
-                buttons:{
-                    confirm:{
-                        text:'Sí',
-                        action:function(){
-                            $.ajax({
-                                url:'/users/unblockUser',
-                                method:'POST',
-                                data:JSON.stringify({'user_id':record['user_id']}),
-                                success:function(response){
-                                    try{
-                                        var res=JSON.parse(response);
-                                    }catch(err){
-                                        handleAjaxErrorLoc(1,2,3);
-                                    }
-                                    if (res.success){
-                                        $("#grdUserManager").DataTable({
-                                            "scrollY": "255px",
-                                            "scrollCollapse":true,
-                                            serverSide:true,
-                                            ajax:{
-                                                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
-                                                url:'/users/getManagerUserList',
-                                                dataSrc:'data',
-                                                type:'POST',
-                                                error: handleAjaxErrorLoc
-                                            },
-                                            columns:[
-                                                {data:'name',"width":"40%"},
-                                                {data:'login',"width":"15%"},
-                                                {data:'user_type',"width":"12%"},
-                                                {data:'status',"width":"20%"},
-                                                {data:'session',"width":"13%"}
-                                            ]
-                                        });
-                                    }
-                                    else{
+        if (table.rows('.selected').any()){
+            var ind=table.row('.selected').index();
+            var record=table.rows(ind).data()[0];
+            if (record['status']=='Bloqueado'){
+                $.confirm({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'¿Desea desbloquear este usuario?',
+                    buttons:{
+                        confirm:{
+                            text:'Sí',
+                            action:function(){
+                                $.ajax({
+                                    url:'/users/unblockUser',
+                                    method:'POST',
+                                    data:JSON.stringify({'user_id':record['user_id']}),
+                                    success:function(response){
+                                        try{
+                                            var res=JSON.parse(response);
+                                        }catch(err){
+                                            handleAjaxErrorLoc(1,2,3);
+                                        }
+                                        if (res.success){
+                                            $("#grdUserManager").DataTable({
+                                                "scrollY": "255px",
+                                                "scrollCollapse":true,
+                                                serverSide:true,
+                                                ajax:{
+                                                    data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                                                    url:'/users/getManagerUserList',
+                                                    dataSrc:'data',
+                                                    type:'POST',
+                                                    error: handleAjaxErrorLoc
+                                                },
+                                                columns:[
+                                                    {data:'name',"width":"40%"},
+                                                    {data:'login',"width":"15%"},
+                                                    {data:'user_type',"width":"12%"},
+                                                    {data:'status',"width":"20%"},
+                                                    {data:'session',"width":"13%"}
+                                                ]
+                                            });
+                                        }
+                                        else{
+                                            EasyLoading.hide();
+                                            setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                        }
+                                    },
+                                    error:function(){
                                         EasyLoading.hide();
-                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
                                     }
-                                },
-                                error:function(){
-                                    EasyLoading.hide();
-                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
-                                }
-                            });
+                                });
+                            }
+                        },
+                        cancel:{
+                            text:'No'
                         }
-                    },
-                    cancel:{
-                        text:'No'
                     }
-                }
-            });
+                });
+            }
+            else{
+                $.alert({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'Este usuario no puede ser desbloqueado.'
+                });
+            }
         }
         else{
             $.alert({
                 theme:'dark',
                 title:'Atención',
-                content:'Este usuario no puede ser desbloqueado.'
+                content:'Debe seleccionar un usuario para desbloquearlo.'
             });
         }
+
     });
 
     $("#btnUMEnableUser").click(function(){
         var table=$("#grdUserManager").DataTable();
-        var ind=table.row('.selected').index();
-        var record=table.rows(ind).data()[0];
-        if (record['status']=='Deshabilitado'){
-            $.confirm({
-                theme:'dark',
-                title:'Atención',
-                content:'¿Está seguro que desea habilitar este usuario?',
-                buttons:{
-                    confirm:{
-                        text:'Sí',
-                        action:function(){
-                            $.ajax({
-                                url:'/users/enableUser',
-                                method:'POST',
-                                data:JSON.stringify({'user_id':record['user_id']}),
-                                success:function(response){
-                                    try{
-                                        var res=JSON.parse(response);
-                                    }catch(err){
-                                        handleAjaxErrorLoc(1,2,3);
-                                    }
-                                    if (res.success){
-                                        $("#grdUserManager").DataTable({
-                                            "scrollY": "255px",
-                                            "scrollCollapse":true,
-                                            serverSide:true,
-                                            ajax:{
-                                                data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
-                                                url:'/users/getManagerUserList',
-                                                dataSrc:'data',
-                                                type:'POST',
-                                                error: handleAjaxErrorLoc
-                                            },
-                                            columns:[
-                                                {data:'name',"width":"40%"},
-                                                {data:'login',"width":"15%"},
-                                                {data:'user_type',"width":"12%"},
-                                                {data:'status',"width":"20%"},
-                                                {data:'session',"width":"13%"}
-                                            ]
-                                        });
-                                    }
-                                    else{
+        if (table.rows('.selected').any()){
+            var ind=table.row('.selected').index();
+            var record=table.rows(ind).data()[0];
+            if (record['status']=='Deshabilitado'){
+                $.confirm({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'¿Está seguro que desea habilitar este usuario?',
+                    buttons:{
+                        confirm:{
+                            text:'Sí',
+                            action:function(){
+                                $.ajax({
+                                    url:'/users/enableUser',
+                                    method:'POST',
+                                    data:JSON.stringify({'user_id':record['user_id']}),
+                                    success:function(response){
+                                        try{
+                                            var res=JSON.parse(response);
+                                        }catch(err){
+                                            handleAjaxErrorLoc(1,2,3);
+                                        }
+                                        if (res.success){
+                                            $("#grdUserManager").DataTable({
+                                                "scrollY": "255px",
+                                                "scrollCollapse":true,
+                                                serverSide:true,
+                                                ajax:{
+                                                    data:{'company_id':me.user_info.company_id,'show_disabled_users':$("#switch-sm")[0].checked},
+                                                    url:'/users/getManagerUserList',
+                                                    dataSrc:'data',
+                                                    type:'POST',
+                                                    error: handleAjaxErrorLoc
+                                                },
+                                                columns:[
+                                                    {data:'name',"width":"40%"},
+                                                    {data:'login',"width":"15%"},
+                                                    {data:'user_type',"width":"12%"},
+                                                    {data:'status',"width":"20%"},
+                                                    {data:'session',"width":"13%"}
+                                                ]
+                                            });
+                                        }
+                                        else{
+                                            EasyLoading.hide();
+                                            setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                        }
+                                    },
+                                    error:function(){
                                         EasyLoading.hide();
-                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                                        setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
                                     }
-                                },
-                                error:function(){
-                                    EasyLoading.hide();
-                                    setMessage("#alertUserManager",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo más tarde.",true);
-                                }
-                            })
+                                })
+                            }
+                        },
+                        cancel:{
+                            text:'No'
                         }
-                    },
-                    cancel:{
-                        text:'No'
                     }
-                }
-            });
+                });
+            }
+            else{
+                $.alert({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'Este usuario ya se encuentra habilitado.'
+                });
+            }
         }
         else{
             $.alert({
                 theme:'dark',
                 title:'Atención',
-                content:'Este usuario ya se encuentra habilitado.'
+                content:'Debe seleccionar un usuario para habilitarlo.'
             });
         }
     });
 
     $("#switch-sm").click(function(){
-        
+
         $("#grdUserManager").DataTable({
             "scrollY": "255px",
             "scrollCollapse":true,
