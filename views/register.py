@@ -257,33 +257,72 @@ def createUser():
                             --and company_id=%s
                         """%(dict['login'].lower(),dict['company_id'])).dictresult()
                         if exist_login[0]['count']==0:
-                            passwd_success,passwd=generateRandomPassword(8)
-                            if passwd_success:
-                                dict['password']=generate_password_hash(passwd)
-                                login=dict['login'].strip()
-                                dict['login']=replaceString(login)
-                                dict['login']=dict['login'].lower()
-                                dict['name']=dict['name'].strip()
-                                dict['name']=dict['name'].decode('utf-8')
-                                dict['email']=dict['email'].strip()
-                                del dict['user_id']
-                                db.insert('system.user',dict)
+                            if dict['user_type_id'] in (1,6):
+                                #busca si ya existe un usuario administrador para la empresa
+                                admin_users=db.query("""
+                                    select count(*) from system.user where user_type_id in (1,6)
+                                    and company_id=%s
+                                """%dict['company_id']).dictresult()[0]['count']
+                                if admin_users==0:
+                                    passwd_success,passwd=generateRandomPassword(8)
+                                    if passwd_success:
+                                        dict['password']=generate_password_hash(passwd)
+                                        login=dict['login'].strip()
+                                        dict['login']=replaceString(login)
+                                        dict['login']=dict['login'].lower()
+                                        dict['name']=dict['name'].strip()
+                                        dict['name']=dict['name'].decode('utf-8')
+                                        dict['email']=dict['email'].strip()
+                                        del dict['user_id']
+                                        db.insert('system.user',dict)
 
-                                message=db.query("""
-                                    select * from template.generic_template where type_id=7
-                                """).dictresult()[0]
+                                        message=db.query("""
+                                            select * from template.generic_template where type_id=7
+                                        """).dictresult()[0]
 
-                                recipient=dict['email']
-                                dict['password']=passwd
-                                dict['link']=cfg.host
-                                msg=message['body'].format(**dict)
-                                GF.sendMail(message['subject'],msg,recipient)
+                                        recipient=dict['email']
+                                        dict['password']=passwd
+                                        dict['link']=cfg.host
+                                        msg=message['body'].format(**dict)
+                                        GF.sendMail(message['subject'],msg,recipient)
 
-                                response['success']=True
-                                response['msg_response']='Usuario registrado, se ha enviado un correo con los datos de acceso a la dirección de correo ingresada.'
+                                        response['success']=True
+                                        response['msg_response']='Usuario registrado, se ha enviado un correo con los datos de acceso a la dirección de correo ingresada.'
+                                    else:
+                                        response['success']=False
+                                        response['msg_response']='Ocurrió un error al intentar realizar el registro, favor de intentarlo de nuevo más tarde.'
+                                else:
+                                    response['success']=False
+                                    response['msg_response']='Ya existe un usuario administrador para esta empresa.'
                             else:
-                                response['success']=False
-                                response['msg_response']='Ocurrió un error al intentar realizar el registro, favor de intentarlo de nuevo más tarde.'
+                                passwd_success,passwd=generateRandomPassword(8)
+                                if passwd_success:
+                                    dict['password']=generate_password_hash(passwd)
+                                    login=dict['login'].strip()
+                                    dict['login']=replaceString(login)
+                                    dict['login']=dict['login'].lower()
+                                    dict['name']=dict['name'].strip()
+                                    dict['name']=dict['name'].decode('utf-8')
+                                    dict['email']=dict['email'].strip()
+                                    del dict['user_id']
+                                    db.insert('system.user',dict)
+
+                                    message=db.query("""
+                                        select * from template.generic_template where type_id=7
+                                    """).dictresult()[0]
+
+                                    recipient=dict['email']
+                                    dict['password']=passwd
+                                    dict['link']=cfg.host
+                                    msg=message['body'].format(**dict)
+                                    GF.sendMail(message['subject'],msg,recipient)
+
+                                    response['success']=True
+                                    response['msg_response']='Usuario registrado, se ha enviado un correo con los datos de acceso a la dirección de correo ingresada.'
+                                else:
+                                    response['success']=False
+                                    response['msg_response']='Ocurrió un error al intentar realizar el registro, favor de intentarlo de nuevo más tarde.'
+
                         else:
                             response['success']=False
                             response['msg_response']='El usuario (login) ingresado ya se encuentra registrado, favor de ingresar uno nuevo.'

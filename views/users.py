@@ -90,7 +90,7 @@ def getUsers():
         company_id=request.form['company_id']
         try:
             data_from=request.form['from']
-            condition=" and a.user_type_id not in (1,4,5)"
+            condition=" and a.user_type_id not in (1,4,5,6)"
         except:
             condition=""
 

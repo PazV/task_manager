@@ -44,7 +44,7 @@ def getSupervisor():
                     from
                         system.user
                     where
-                        user_type_id=2
+                        user_type_id in (2,6)
                     and company_id=%s
                     and enabled in (1,3) %s
                     order by name
@@ -110,7 +110,7 @@ def saveTask():
     try:
         flag,data=GF.toDict(request.form,'post')
         if flag:
-            
+
             valid=True
             for k,v in data.iteritems():
                 if v=="" or v==None:
@@ -259,7 +259,7 @@ def getTask():
                 filters+=" and a.created between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
 
             response['first']=False
-            if user_type_id in (1,4,5):
+            if user_type_id in (1,4,5,6):
                 user=""
                 deadline="to_char(a.deadline,'DD-MM-YYYY') as deadline"
                 if filter['date_type']==2:
@@ -314,7 +314,7 @@ def getTask():
             if filter['date_type']==1:
                 order_by="a.created"
             else:
-                if user_type_id in (1,4,5):
+                if user_type_id in (1,4,5,6):
                     order_by="a.deadline"
                 elif user_type_id == 2:
                     order_by="a.supervisor_deadline"
@@ -380,7 +380,7 @@ def getTaskDetails():
         flag,data=GF.toDict(request.form,'post')
         if flag:
             deadline=""
-            if data['user_type_id'] in (1,4,5):
+            if data['user_type_id'] in (1,4,5,6):
                 deadline="a.deadline"
             elif data['user_type_id']==2:
                 deadline="a.supervisor_deadline"
@@ -454,7 +454,7 @@ def getTaskDetails():
                         where
                             task_id=%s
                     """%data['task_id']).dictresult()[0]
-                    if data['user_type_id'] in (1,4,5):
+                    if data['user_type_id'] in (1,4,5,6):
                         str_other_dates="<b>Fecha límite auxiliar:</b> %s<br><b>Fecha límite supervisor:</b> %s<br>"%(other_dates['assignee_deadline'],other_dates['supervisor_deadline'])
                     else:
                         str_other_dates="<b>Fecha límite auxiliar:</b> %s<br>"%other_dates['assignee_deadline']

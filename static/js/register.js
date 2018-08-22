@@ -244,6 +244,9 @@ $(document).ready(function(){
             var sel_list=[{'id':"#NAUcompany_id",'name':'company_id'},{'id':"#NAUuser_type_id",'name':'user_type_id'}];
             var frm=getDictForm("#frmNewAdminUser",sel_list);
             frm['user_id']=-1;
+            if ($("#NAUcheck_supervisor")[0].checked==true){
+                frm['user_type_id']=6;
+            }
 
             $.ajax({
                 url:'/register/createUser',
