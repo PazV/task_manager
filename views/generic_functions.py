@@ -162,3 +162,12 @@ class GenericFunctions:
         pattern = re.compile("|".join(rep.keys()))
         new_text = pattern.sub(lambda m: rep[re.escape(m.group(0))], text)
         return new_text
+
+    def as_text(self,value):
+        if value is None:
+            return ""
+        else:
+            try:
+                return str(value)
+            except:
+                return value

@@ -1,13 +1,20 @@
 //Funcion que obtiene datos de un formulario y los regresa en forma de diccionario, se envía id del formulario y en caso de contener select, una lista con diccionarios: {id,name}
-function getDictForm(formId,select_list){
+function getDictForm(formId,select_list,check_list=null){
     //var frmId='#'+formId;
     var frm = $(formId).serializeArray().reduce(function(obj, item) {
         obj[item.name] = item.value;
         return obj;
     }, {});
-
     for (x in select_list){
         frm[select_list[x]['name']]=parseInt($(select_list[x]['id']).find("option:selected").attr("name"));
+    }
+    if (check_list!==null){
+        var all_checks=$(formId).find("input[type=checkbox]");
+        for (a in all_checks){
+            if (all_checks[a].type=='checkbox'){
+                frm[all_checks[a].name]=all_checks[a].checked;
+            }
+        }
     }
     return frm;
 };
@@ -38,7 +45,7 @@ function emptyField(fieldId,spanId){
 
 //formId-> id del formulario a resetear, input_type-> lista con los nodeName de los input que contiene el formulario
 function resetForm(formId,input_type){
-    
+
     $(formId)[0].reset();
     for (x in input_type){
         var node_name=input_type[x].split("|")[1];

@@ -1,0 +1,64 @@
+<div class="modal fade" id="win_create_report" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header user-header header-win-title">
+                    <span>Crear reporte</span>
+                    <button type="button" class="btn-close-modal" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="frmCreateReport">
+                        <fieldset style="border:solid; border-width:thin; border-color:#cbcccd; margin:10px;">
+                            <legend  style="width:inherit; margin:5px; padding-right:5px; padding-left:5px; font-size:large; color:#004080;">Seleccionar periodo</legend>
+                                <div class="row" style="padding:1rem;">
+                                    <label for="CRdate_from" style="width:8%; margin-left:2%;" class="col-form-label">De:</label>
+                                    <input type="date" required id="CRdate_from" style="width:35%; margin-right:5%;" class="form-control" name="from"/>
+                                    <label for="CRdate_to" style="width:8%;" class="col-form-label">A:</label>
+                                    <input type="date" required id="CRdate_to" style="width:35%; margin-right:5%;" class="form-control" name="to"/>
+                                </div>
+                        </fieldset>
+                        <fieldset style="border:solid; border-width:thin; border-color:#cbcccd; margin:10px;">
+                            <legend  style="width:inherit; margin:5px; padding-right:5px; padding-left:5px; font-size:large; color:#004080;">Seleccionar tareas a incluir en el reporte</legend>
+                            <div class="custom-control custom-checkbox" style="margin-left:10px;">
+                                <input type="checkbox" class="custom-control-input" id="CRcheck_created_tasks" name="created_tasks">
+                                <label class="custom-control-label" for="CRcheck_created_tasks">Tareas creadas</label>
+                            </div>
+                            <div class="custom-control custom-checkbox" style="margin-left:10px;">
+                                <input type="checkbox" class="custom-control-input" id="CRcheck_assignee_tasks" name="assignee_tasks">
+                                <label class="custom-control-label" for="CRcheck_assignee_tasks">Tareas por expirar para auxiliar</label>
+                            </div>
+                            <div class="custom-control custom-checkbox" style="margin-left:10px;">
+                                <input type="checkbox" class="custom-control-input" id="CRcheck_supervisor_tasks" name="supervisor_tasks">
+                                <label class="custom-control-label" for="CRcheck_supervisor_tasks">Tareas por expirar para supervisor</label>
+                            </div>
+                            <div class="custom-control custom-checkbox" style="margin-left:10px;">
+                                <input type="checkbox" class="custom-control-input" id="CRcheck_admin_tasks" name="admin_tasks">
+                                <label class="custom-control-label" for="CRcheck_admin_tasks">Tareas por expirar para administrador</label>
+                            </div>
+                            <div class="custom-control custom-checkbox" style="margin-left:10px;">
+                                <input type="checkbox" class="custom-control-input" id="CRcheck_resolved_tasks" name="resolved_tasks">
+                                <label class="custom-control-label" for="CRcheck_resolved_tasks">Tareas resueltas</label>
+                            </div>
+                            <div class="custom-control custom-checkbox" style="margin-left:10px;">
+                                <input type="checkbox" class="custom-control-input" id="CRcheck_closed_tasks" name="closed_tasks">
+                                <label class="custom-control-label" for="CRcheck_closed_tasks">Tareas cerradas</label>
+                            </div>
+                            <div class="custom-control custom-checkbox" style="margin-left:10px;">
+                                <input type="checkbox" class="custom-control-input" id="CRcheck_declined_tasks" name="declined_tasks">
+                                <label class="custom-control-label" for="CRcheck_declined_tasks">Tareas declinadas</label>
+                            </div>
+                            <div class="custom-control custom-checkbox" style="margin-left:10px; margin-bottom:10px;">
+                                <input type="checkbox" class="custom-control-input" id="CRcheck_canceled_tasks" name="canceled_tasks">
+                                <label class="custom-control-label" for="CRcheck_canceled_tasks">Tareas canceladas</label>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnDoReport">Generar reporte <i class="fa fa-file"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCloseCreateReport">Salir <i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

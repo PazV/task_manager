@@ -2077,6 +2077,96 @@ $(document).ready(function(){
         getTasks(me.user_info);
     });
 
+    $("#win_create_report").on('show.bs.modal',function(){
+        $("#CRdate_from").val(first_day);
+        $("#CRdate_to").val(today);
+
+    });
+
+    $("#win_create_report").on('hide.bs.modal',function(){
+        var checks=$("#frmCreateReport").find("input[type=checkbox]");
+        for (c in checks){
+            if (checks[c].type=='checkbox'){
+                $("#"+checks[c].id).prop("checked",false);
+            }
+        }
+    });
+
+    $("#btnDoReport").click(function(){
+        var report_data=getDictForm("#frmCreateReport",[],"all");
+        var do_report=false;
+        Object.keys(report_data).forEach(function(key) {
+            if (key.split("_").length==2){
+                if (report_data[key]==true){
+                    do_report=true;
+                }
+            }
+        });
+        if (do_report==true){
+            EasyLoading.show({
+                text:"Cargando...",
+                type:EasyLoading.TYPE["PACMAN"]
+            });
+            report_data['user_id']=me.user_info.user_id;
+            report_data['user_type_id']=me.user_info.user_type_id;
+            report_data['company_id']=me.user_info.company_id;
+            $.ajax({
+                url:'/task/doReport',
+                method:'POST',
+                data:JSON.stringify(report_data),
+                success:function(response){
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
+                    EasyLoading.hide();
+                    if (res.success){
+                        $.alert({
+                            theme:'dark',
+                            title:'Atención',
+                            content:res.msg_response,
+                            buttons:{
+                                confirm:{
+                                    text:'Descargar',
+                                    action:function(){
+                                        window.open(res.filename,"_blank");
+                                        $("#win_create_report").modal("hide");
+                                    }
+                                }
+                            }
+                        })
+                    }
+                    else{
+                        $.alert({
+                            theme:'dark',
+                            title:'Atención',
+                            content:res.msg_response
+                        });
+                    }
+                },
+                error:function(){
+                    $.alert({
+                        theme:'dark',
+                        title:'Atención',
+                        content:'Ocurrió un error, favor de intentarlo de nuevo.'
+                    });
+                }
+            });
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Debe seleccionar al menos un tipo de tarea para incluir en el reporte.'
+            });
+        }
+    });
+
+    $("#btnCloseCreateReport").click(function(){
+        $("#win_create_report").modal("hide");
+    });
+
 });
 
 

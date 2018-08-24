@@ -24,6 +24,9 @@ import random
 import app_config as cfg
 import datetime
 import time
+from openpyxl import Workbook
+from openpyxl.styles import colors
+from openpyxl.styles import Font, Color
 bp = Blueprint('task', __name__, url_prefix='/task')
 
 @bp.route('/getSupervisor',methods=['GET','POST'])
@@ -1249,3 +1252,315 @@ def checkAssigneeTasks():
         exc_info=sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))
     return json.dumps(response)
+
+
+@bp.route('/doReport',methods=['GET','POST'])
+@is_logged_in
+def doReport():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            today=str(datetime.date.today())
+            #assign dates in case from an to are empty
+            if data['from']=="":
+                if data['to']!="":
+                    data['from']=data['to']
+                else:
+                    data['from']="%s-%s-01"%(today.split("-")[0],today.split("-")[1])
+            if data['to']=="":
+                if ['from']!="":
+                    data['to']=data['from']
+                else:
+                    data['to']=today
+
+            #validate that date from is before o equal to date to
+            date_from=datetime.date(int(data['from'].split("-")[0]),int(data['from'].split("-")[1]),int(data['from'].split("-")[2]))
+            date_to=datetime.date(int(data['to'].split("-")[0]),int(data['to'].split("-")[1]),int(data['to'].split("-")[2]))
+            if date_from>date_to:
+                #if date to is older than date from, assigns date from the same value as date to
+                data['from']=data['to']
+
+            list_list=[]
+
+
+            if data['created_tasks']==True:
+                created_tasks=db.query("""
+                    select
+                        a.name,
+                        a.description,
+                        to_char(a.deadline,'DD-MM-YYYY') as deadline,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY') as supervisor_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                        to_char(a.created,'DD-MM-YYYY') as created,
+                        (select name from system.user where user_id=a.created_by) as created_by
+                    from
+                        task.task a
+                    where
+                        company_id=%s
+                    and created between '%s 00:00:00' and '%s 23:59:59'
+                """%(data['company_id'],data['from'],data['to'])).dictresult()
+                created_tasks_title=['Nombre','Descripción','Fecha límite','Supervisor','Fecha límite supervisor','Auxiliar','Fecha límite auxiliar','Fecha de creación','Creado por']
+                created_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by']
+                list_list.append({'title':created_tasks_title,'data':created_tasks,'sheet_name':'Tareas creadas','data_order':created_tasks_d_order,'color':"000040ff"})
+
+            if data['assignee_tasks']==True:
+                expired_assignee_tasks=db.query("""
+                    select
+                        a.name,
+                        a.description,
+                        to_char(a.deadline,'DD-MM-YYYY') as deadline,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY') as supervisor_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                        to_char(a.created,'DD-MM-YYYY') as created,
+                        (select name from system.user where user_id=a.created_by) as created_by,
+                        to_char(a.last_updated, 'DD-MM-YYYY') as last_updated,
+                        (select name from system.user where user_id=a.user_last_updated) as user_last_updated
+                    from
+                        task.task a
+                    where
+                        company_id=%s
+                    and assignee_deadline between '%s 00:00:00' and '%s 23:59:59'
+                    and status_id in (1,6)
+                """%(data['company_id'],data['from'],data['to'])).dictresult()
+
+                expired_assignee_tasks_title=['Nombre','Descripción','Fecha límite','Supervisor','Fecha límite supervisor','Auxiliar','Fecha límite auxiliar','Fecha de creación','Creado por','Actualizado por última vez','Actualizado por']
+                expired_assignee_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by','last_updated','user_last_updated']
+                list_list.append({'title':expired_assignee_tasks_title, 'data':expired_assignee_tasks,'sheet_name':'Tareas aux exp','data_order':expired_assignee_tasks_d_order,'color':"00ffd11a"})
+
+            if data['supervisor_tasks']==True:
+                expired_supervisor_tasks=db.query("""
+                    select
+                        a.name,
+                        a.description,
+                        to_char(a.deadline,'DD-MM-YYYY') as deadline,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY') as supervisor_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                        to_char(a.created,'DD-MM-YYYY') as created,
+                        (select name from system.user where user_id=a.created_by) as created_by,
+                        to_char(a.last_updated, 'DD-MM-YYYY') as last_updated,
+                        (select name from system.user where user_id=a.user_last_updated) as user_last_updated
+                    from
+                        task.task a
+                    where
+                        company_id=%s
+                    and supervisor_deadline between '%s 00:00:00' and '%s 23:59:59'
+                    and status_id in (1,6)
+                """%(data['company_id'],data['from'],data['to'])).dictresult()
+
+                expired_supervisor_tasks_title=['Nombre','Descripción','Fecha límite','Supervisor','Fecha límite supervisor','Auxiliar','Fecha límite auxiliar','Fecha de creación','Creado por','Actualizado por última vez','Actualizado por']
+                expired_supervisor_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by','last_updated','user_last_updated']
+                list_list.append({'title':expired_supervisor_tasks_title, 'data':expired_supervisor_tasks, 'sheet_name':'Tareas sup exp','data_order':expired_supervisor_tasks_d_order,'color':"00ff8000"})
+
+            if data['admin_tasks']==True:
+                expired_admin_tasks=db.query("""
+                    select
+                        a.name,
+                        a.description,
+                        to_char(a.deadline,'DD-MM-YYYY') as deadline,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY') as supervisor_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                        to_char(a.created,'DD-MM-YYYY') as created,
+                        (select name from system.user where user_id=a.created_by) as created_by,
+                        to_char(a.last_updated, 'DD-MM-YYYY') as last_updated,
+                        (select name from system.user where user_id=a.user_last_updated) as user_last_updated
+                    from
+                        task.task a
+                    where
+                        company_id=%s
+                    and deadline between '%s 00:00:00' and '%s 23:59:59'
+                    and status_id in (1,6)
+                """%(data['company_id'],data['from'],data['to'])).dictresult()
+
+                expired_admin_tasks_title=['Nombre','Descripción','Fecha límite','Supervisor','Fecha límite supervisor','Auxiliar','Fecha límite auxiliar','Fecha de creación','Creado por','Actualizado por última vez','Actualizado por']
+                expired_admin_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by','last_updated','user_last_updated']
+                list_list.append({'title':expired_admin_tasks_title, 'data':expired_admin_tasks,'sheet_name':'Tareas exp','data_order':expired_admin_tasks_d_order,'color':"00e62e00"})
+
+            if data['resolved_tasks']==True:
+                resolved_tasks=db.query("""
+                    select
+                        a.name,
+                        a.description,
+                        to_char(a.deadline,'DD-MM-YYYY') as deadline,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY') as supervisor_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                        to_char(a.created,'DD-MM-YYYY') as created,
+                        (select name from system.user where user_id=a.created_by) as created_by,
+                        to_char(a.last_updated, 'DD-MM-YYYY') as last_updated,
+                        (select name from system.user where user_id=a.user_last_updated) as user_last_updated,
+                        to_char(a.resolved_date,'DD-MM-YYYY') as resolved_date,
+                        a.comments
+                    from
+                        task.task a
+                    where
+                        company_id=%s
+                    and resolved_date between '%s 00:00:00' and '%s 23:59:59'
+                    and status_id = 2
+                """%(data['company_id'],data['from'],data['to'])).dictresult()
+
+                resolved_tasks_title=['Nombre','Descripción','Fecha límite','Supervisor','Fecha límite supervisor','Auxiliar','Fecha límite auxiliar','Fecha de creación','Creado por','Actualizado por última vez','Actualizado por','Fecha en que se resolvió','Comentarios']
+                resolved_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by','last_updated','user_last_updated','resolved_date','comments']
+                list_list.append({'title':resolved_tasks_title, 'data':resolved_tasks,'sheet_name':'Resueltas','data_order':resolved_tasks_d_order,'color':"0000e6b8"})
+
+            if data['closed_tasks']==True:
+                closed_tasks=db.query("""
+                    select
+                        a.name,
+                        a.description,
+                        to_char(a.deadline,'DD-MM-YYYY') as deadline,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY') as supervisor_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                        to_char(a.created,'DD-MM-YYYY') as created,
+                        (select name from system.user where user_id=a.created_by) as created_by,
+                        to_char(a.last_updated, 'DD-MM-YYYY') as last_updated,
+                        (select name from system.user where user_id=a.user_last_updated) as user_last_updated,
+                        to_char(a.resolved_date,'DD-MM-YYYY') as resolved_date,
+                        a.comments,
+                        a.supervisor_comments
+                    from
+                        task.task a
+                    where
+                        company_id=%s
+                    and last_updated between '%s 00:00:00' and '%s 23:59:59'
+                    and status_id = 4
+                """%(data['company_id'],data['from'],data['to'])).dictresult()
+
+                closed_tasks_title=['Nombre','Descripción','Fecha límite','Supervisor','Fecha límite supervisor','Auxiliar','Fecha límite auxiliar','Fecha de creación','Creado por','Actualizado por última vez','Actualizado por','Fecha en que se resolvió','Comentarios','Comentarios del supervisor']
+                closed_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by','last_updated','user_last_updated','resolved_date','comments','supervisor_comments']
+                list_list.append({'title':closed_tasks_title, 'data':closed_tasks,'sheet_name':'Cerradas','data_order':closed_tasks_d_order,'color':"0000b300"})
+
+            if data['declined_tasks']==True:
+                declined_tasks=db.query("""
+                    select
+                        a.name,
+                        a.description,
+                        to_char(a.deadline,'DD-MM-YYYY') as deadline,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY') as supervisor_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                        to_char(a.created,'DD-MM-YYYY') as created,
+                        (select name from system.user where user_id=a.created_by) as created_by,
+                        to_char(a.last_updated, 'DD-MM-YYYY') as last_updated,
+                        (select name from system.user where user_id=a.user_last_updated) as user_last_updated,
+                        a.declining_cause
+                    from
+                        task.task a
+                    where
+                        company_id=%s
+                    and last_updated between '%s 00:00:00' and '%s 23:59:59'
+                    and status_id = 3
+                """%(data['company_id'],data['from'],data['to'])).dictresult()
+
+                declined_tasks_title=['Nombre','Descripción','Fecha límite','Supervisor','Fecha límite supervisor','Auxiliar','Fecha límite auxiliar','Fecha de creación','Creado por','Actualizado por última vez','Actualizado por','Motivo para declinar']
+                declined_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by','last_updated','user_last_updated','declining_cause']
+                list_list.append({'title':declined_tasks_title, 'data':declined_tasks,'sheet_name':'Declinadas','data_order':declined_tasks_d_order,'color':"00cc00cc"})
+
+            if data['canceled_tasks']==True:
+                canceled_tasks=db.query("""
+                    select
+                        a.name,
+                        a.description,
+                        to_char(a.deadline,'DD-MM-YYYY') as deadline,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        to_char(a.supervisor_deadline,'DD-MM-YYYY') as supervisor_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        to_char(a.assignee_deadline,'DD-MM-YYYY') as assignee_deadline,
+                        to_char(a.created,'DD-MM-YYYY') as created,
+                        (select name from system.user where user_id=a.created_by) as created_by,
+                        to_char(a.last_updated, 'DD-MM-YYYY') as last_updated,
+                        (select name from system.user where user_id=a.user_last_updated) as user_last_updated,
+                        a.declining_cause
+                    from
+                        task.task a
+                    where
+                        company_id=%s
+                    and last_updated between '%s 00:00:00' and '%s 23:59:59'
+                    and status_id = 5
+                """%(data['company_id'],data['from'],data['to'])).dictresult()
+
+                canceled_tasks_title=['Nombre','Descripción','Fecha límite','Supervisor','Fecha límite supervisor','Auxiliar','Fecha límite auxiliar','Fecha de creación','Creado por','Actualizado por última vez','Actualizado por','Motivo para declinar']
+                canceled_tasks_d_order=['name','description','deadline','supervisor','supervisor_deadline','assignee','assignee_deadline','created','created_by','last_updated','user_last_updated','declining_cause']
+                list_list.append({'title':canceled_tasks_title, 'data':canceled_tasks,'sheet_name':'Canceladas','data_order':canceled_tasks_d_order,'color':"00999999"})
+
+            wb = Workbook()
+            sheet_number = 0
+            for ll in list_list:
+                app.logger.info("------------Haciendo %s-----------------"%ll['sheet_name'])
+                ws = wb.create_sheet("%s"%ll['sheet_name'],sheet_number)
+                ws.sheet_properties.tabColor = ll['color']
+                sheet_number+=1
+
+                for i in range(1,len(ll['title'])+1):
+                    ws.cell(row=1,column=i,value=ll['title'][i-1])
+                    ws.cell(row=1,column=i).font=Font(name='Arial', size=12, bold=True)
+                row=2
+                if ll['data']!=[]:
+                    for x in ll['data']:
+                        for r in range(0,len(ll['data_order'])):
+                            ws.cell(row=row,column=r+1,value=x[ll['data_order'][r]])
+                            ws.cell(row=row,column=r+1).font=Font(name='Arial',size=11)
+                        row+=1
+
+            for w in wb.sheetnames:
+                sheet=wb[w]
+                for column_cells in sheet.columns:
+                    length = max(len(GF.as_text(cell.value))+5 for cell in column_cells)
+                    sheet.column_dimensions[column_cells[0].column].width = length
+
+            fecha=str(datetime.datetime.today())
+            fecha=fecha.replace(" ","_")
+            fecha=fecha.replace(":","_")
+            fecha=fecha.replace(".","_")
+
+
+
+            if len(wb.sheetnames)>1:
+                wb.remove(wb['Sheet'])
+                wb.save('%sReporte_%s.xlsx'%(cfg.report_path,fecha))
+
+                response['success']=True
+                response['msg_response']="El reporte ha sido generado."
+                response['filename']='/task/downloadReport/Reporte_%s.xlsx'%fecha
+
+            else:
+                response['msg_response']="No existe información en el periodo seleccionado."
+                response['success']=False
+        else:
+            response['success']=False
+            response['msg_response']="Ocurrió un error al intentar obtener los datos, favor de intentarlo de nuevo."
+
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error, favor de intentarlo de nuevo.'
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+@bp.route('/downloadReport/<filename>', methods=['GET','POST'])
+@is_logged_in
+def downloadReport(filename):
+    response={}
+    try:
+        path="%s%s"%(cfg.report_path,filename)
+        name="%s"%filename
+        return send_file(path,attachment_filename=name)
+
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error'
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+        return response
