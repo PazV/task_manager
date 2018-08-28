@@ -434,7 +434,8 @@ def getTaskDetails():
                     a.name,
                     b.document_type,
                     a.file_path,
-                    to_char(a.loaded,'DD-MM-YYYY HH24:MI:SS') as loaded
+                    to_char(a.loaded,'DD-MM-YYYY HH24:MI:SS') as loaded,
+                    a.file_name
                 from
                     task.document_type b,
                     task.document a
@@ -452,9 +453,10 @@ def getTaskDetails():
                             # doc_list+="<li>%s (%s) <br> cargado %s</li>"%(x['name'],x['document_type'],x['loaded'])
                             if task['status_id']==4:
                                 random_number=int(random.random()*100000)
+                                fname,ext=os.path.splitext(x['file_name'])
                                 doc_list+="""
-                                    <div style="display:inline-block"><li>%s (%s) <br> cargado %s</li><a href="/task/downloadEvidence/%s_%s" target="_blank" role="button" class="btn btn-danger detail-ev-buttons" data-toggle="tooltip" title="Descargar %s"><i class="fa fa-file-text-o"></i></a></div>
-                                """%(x['name'],x['document_type'],x['loaded'],random_number,x['document_id'],x['name'])
+                                    <div style="display:inline-block"><li>%s (%s) <br> cargado %s</li><a href="/task/downloadEvidence/%s_%s%s" target="_blank" role="button" class="btn btn-danger detail-ev-buttons" data-toggle="tooltip" title="Descargar %s"><i class="fa fa-file-text-o"></i></a></div>
+                                """%(x['name'],x['document_type'],x['loaded'],random_number,ext,x['document_id'],x['name'])
                             else:
                                 doc_list+="<li>%s (%s) <br> cargado %s</li>"%(x['name'],x['document_type'],x['loaded'])
 
@@ -521,8 +523,10 @@ def getTaskDetails():
                         else:
                             classes='file-input'
                             data_size='data-size="0"'
+                        document_type_name=d['document_type']
+                        d['document_type']=d['document_type'].replace(" ","_")
 
-                        input="""<div><label for="input%s%s" class="file-input-label">%s (%s) %s</label><input type="file" id="input%s%s" name="file_%s" lang="es" pattern="%s" class="file-evidence %s" data-toggle="tooltip" title="%s" %s><span id="spninput%s%s" class="error-msg">Error</span><div>"""%(d['document_type'],d['document_id'],d['name'],d['document_type'],loaded_date,d['document_type'],d['document_id'],d['document_id'],str_doc_ext,classes,d['description'],data_size,d['document_type'],d['document_id'])
+                        input="""<div><label for="input%s%s" class="file-input-label">%s (%s) %s</label><input type="file" id="input%s%s" name="file_%s" lang="es" pattern="%s" class="file-evidence %s" data-toggle="tooltip" title="%s" %s><span id="spninput%s%s" class="error-msg">Error</span><div>"""%(d['document_type'],d['document_id'],d['name'],document_type_name,loaded_date,d['document_type'],d['document_id'],d['document_id'],str_doc_ext,classes,d['description'],data_size,d['document_type'],d['document_id'])
                         html_docs.append(input)
                 response['html_docs']=html_docs
                 response['comments']=task['comments']
@@ -540,16 +544,17 @@ def getTaskDetails():
                 """%(task['name'],task['description'],task['deadline'],task['supervisor'],task['assignee'],assignee_info['date'],task['resolved_date'],assignee_info['comments'])
 
                 documents=db.query("""
-                    select name, document_id
+                    select name, document_id,file_name
                     from task.document
                     where task_id=%s
                 """%data['task_id']).dictresult()
                 buttons=""
                 random_number=int(random.random()*100000)
                 for d in documents:
+                    fname,ext=os.path.splitext(d['file_name'])
                     buttons+="""
-                        <a href="/task/downloadEvidence/%s_%s" target="_blank" role="button" class="btn btn-success" data-toggle="tooltip" title="Descargar %s">%s</a>
-                    """%(random_number,d['document_id'],d['name'],d['name'])
+                        <a href="/task/downloadEvidence/%s_%s%s" target="_blank" role="button" class="btn btn-success" data-toggle="tooltip" title="Descargar %s">%s</a>
+                    """%(random_number,d['document_id'],ext,d['name'],d['name'])
                 response['evidence']=buttons
 
             elif data['from']=='check_declined':
@@ -849,9 +854,12 @@ def downloadEvidence(document_id):
                 task.document
             where
                 document_id=%s
-        """%doc_id).dictresult()
+        """%doc_id.split(".")[0]).dictresult()
+
         path="%s%s"%(evidence[0]['file_path'],evidence[0]['file_name'])
         name=evidence[0]['file_name']
+        app.logger.info(path)
+        app.logger.info(name)
         return send_file(path,attachment_filename=name)
     except:
         response['success']=False
