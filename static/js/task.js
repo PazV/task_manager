@@ -1290,172 +1290,182 @@ $(document).ready(function(){
             var data={};
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
+            console.log(record);
             if (record['status_id']==2 || record['status_id']==3){
-                data['task_id']=record['task_id'];
-                data['user_id']=me.user_info.user_id;
-                data['company_id']=me.user_info.company_id;
-                data['user_type_id']=me.user_info.user_type_id;
-                if (record['status_id']==2){
-                    data['from']='check';
-                    $.ajax({
-                        url:'/task/getTaskDetails',
-                        method:'POST',
-                        data:JSON.stringify(data),
-                        success:function(response){
-                            try{
-                                var res=JSON.parse(response);
-                            }catch(err){
-                                handleAjaxErrorLoc(1,2,3);
-                            }
-                            if (res.success){
-                                $("#CHTtask_info").html(res.data);
-                                $("#CHTevidences").append(res.evidence);
-                            }
-                        }
-                    });
-                    $("#win_check_task").modal("show");
-                }
-                else{
-                    data['from']='check_declined';
-                    $.ajax({
-                        url:'/task/getTaskDetails',
-                        method:'POST',
-                        data:JSON.stringify(data),
-                        success:function(response){
-                            try{
-                                var res=JSON.parse(response);
-                            }catch(err){
-                                handleAjaxErrorLoc(1,2,3);
-                            }
-                            if (res.success){
-                                if (res.declined_by=='assignee'){
-                                    $("#CHDTtask_info").html(res.data);
-                                    $.ajax({
-                                        url:'/task/getAssignee',
-                                        method:'POST',
-                                        data:JSON.stringify({
-                                          'company_id':me.user_info.company_id,
-                                          'user_id':me.user_info['user_id'],
-                                          'user_type_id':me.user_info['user_type_id']
-                                        }),
-                                        success:function(assignee_response){
-                                            try{
-                                                var assig_res=JSON.parse(assignee_response);
-                                            }catch(err){
-                                                handleAjaxErrorLoc(1,2,3);
-                                            }
-                                            if (assig_res.success){
-                                                var items=assig_res.data;
-                                                $.each(items,function(i, item){
-                                                    if (item.assignee_id==record['assignee_id']){
-                                                        $("#CHDTassignee_id").append($('<option>',{
-                                                            text:item.name,
-                                                            name:item.assignee_id,
-                                                            selected:true
-                                                        }));
-                                                    }
-                                                    else{
-                                                        $("#CHDTassignee_id").append($('<option>',{
-                                                            text:item.name,
-                                                            name:item.assignee_id,
-                                                            selected:false
-                                                        }));
-                                                    }
-                                                });
-                                                $("#CHDTdescription").html(record['description']);
-                                            }
-                                        }
-                                    });
-                                    $("#win_check_declined_task").modal("show");
+                if (parseInt(record['assignee_id'])!=parseInt(me.user_info.user_id)) {
+                    data['task_id']=record['task_id'];
+                    data['user_id']=me.user_info.user_id;
+                    data['company_id']=me.user_info.company_id;
+                    data['user_type_id']=me.user_info.user_type_id;
+                    if (record['status_id']==2){
+                        data['from']='check';
+                        $.ajax({
+                            url:'/task/getTaskDetails',
+                            method:'POST',
+                            data:JSON.stringify(data),
+                            success:function(response){
+                                try{
+                                    var res=JSON.parse(response);
+                                }catch(err){
+                                    handleAjaxErrorLoc(1,2,3);
                                 }
-                                else{
-                                    if (res.allow_check){
-
-                                        $("#CHDSUPdeadline").val(res.deadlines.deadline);
-                                        $("#CHDSUPsupervisor_deadline").val(res.deadlines.supervisor_deadline);
-                                        $("#CHDSUPassigee_deadline").val(res.deadlines.assignee_deadline);
+                                if (res.success){
+                                    $("#CHTtask_info").html(res.data);
+                                    $("#CHTevidences").append(res.evidence);
+                                }
+                            }
+                        });
+                        $("#win_check_task").modal("show");
+                    }
+                    else{
+                        data['from']='check_declined';
+                        $.ajax({
+                            url:'/task/getTaskDetails',
+                            method:'POST',
+                            data:JSON.stringify(data),
+                            success:function(response){
+                                try{
+                                    var res=JSON.parse(response);
+                                }catch(err){
+                                    handleAjaxErrorLoc(1,2,3);
+                                }
+                                if (res.success){
+                                    if (res.declined_by=='assignee'){
+                                        $("#CHDTtask_info").html(res.data);
                                         $.ajax({
-                                            url:'/task/getSupervisor',
+                                            url:'/task/getAssignee',
                                             method:'POST',
                                             data:JSON.stringify({
-                                                'company_id':me.user_info['company_id'],
-                                                'user_id':me.user_info['user_id'],
-                                                'user_type_id':me.user_info['user_type_id']
+                                              'company_id':me.user_info.company_id,
+                                              'user_id':me.user_info['user_id'],
+                                              'user_type_id':me.user_info['user_type_id']
                                             }),
-                                            success:function(response){
+                                            success:function(assignee_response){
                                                 try{
-                                                    var res_sup=JSON.parse(response);
+                                                    var assig_res=JSON.parse(assignee_response);
                                                 }catch(err){
                                                     handleAjaxErrorLoc(1,2,3);
                                                 }
-                                                if (res_sup.success){
-                                                    $.each(res_sup.data,function(i, item){
-                                                        if (item.supervisor_id==record['supervisor_id']){
-                                                            $("#CHDSUPsupervisor_id").append($('<option>',{
+                                                if (assig_res.success){
+                                                    var items=assig_res.data;
+                                                    $.each(items,function(i, item){
+                                                        if (item.assignee_id==record['assignee_id']){
+                                                            $("#CHDTassignee_id").append($('<option>',{
                                                                 text:item.name,
-                                                                name:item.supervisor_id,
+                                                                name:item.assignee_id,
                                                                 selected:true
                                                             }));
                                                         }
                                                         else{
-                                                            $("#CHDSUPsupervisor_id").append($('<option>',{
+                                                            $("#CHDTassignee_id").append($('<option>',{
                                                                 text:item.name,
-                                                                name:item.supervisor_id,
+                                                                name:item.assignee_id,
                                                                 selected:false
                                                             }));
                                                         }
-
                                                     });
-                                                    $.ajax({
-                                                        url:'/task/getAssignee',
-                                                        method:'POST',
-                                                        data:JSON.stringify({
-                                                            'company_id':me.user_info['company_id'],
-                                                            'user_id':me.user_info['user_id'],
-                                                            'user_type_id':me.user_info['user_type_id']
-                                                        }),
-                                                        success:function(responseA){
-                                                            try{
-                                                                var res_as=JSON.parse(responseA);
-                                                            }catch(err){
-                                                                handleAjaxErrorLoc(1,2,3);
-                                                            }
-                                                            if (res_as.success){
-                                                                $.each(res_as.data,function(i,item){
-                                                                    if (record['assignee_id']==item.assignee_id){
-                                                                        $("#CHDSUPassignee_id").append($('<option>',{
-                                                                            text:item.name,
-                                                                            name:item.assignee_id,
-                                                                            selected:true
-                                                                        }));
-                                                                    }
-                                                                    else{
-                                                                        $("#CHDSUPassignee_id").append($('<option>',{
-                                                                            text:item.name,
-                                                                            name:item.assignee_id,
-                                                                            selected:false
-                                                                        }));
-                                                                    }
-                                                                });
-                                                            }
-                                                        }
-                                                    });
+                                                    $("#CHDTdescription").html(record['description']);
                                                 }
                                             }
                                         });
-                                        $("#win_check_declined_task_supervisor").modal("show");
-                                        $("#CHDSUPTtask_info").html(res.data);
+                                        $("#win_check_declined_task").modal("show");
                                     }
                                     else{
-                                        $.alert({
-                                            theme:'dark',
-                                            title:'Atención',
-                                            content:'No tienes permisos para revisar esta tarea.'
-                                        })
+                                        if (res.allow_check){
+
+                                            $("#CHDSUPdeadline").val(res.deadlines.deadline);
+                                            $("#CHDSUPsupervisor_deadline").val(res.deadlines.supervisor_deadline);
+                                            $("#CHDSUPassigee_deadline").val(res.deadlines.assignee_deadline);
+                                            $.ajax({
+                                                url:'/task/getSupervisor',
+                                                method:'POST',
+                                                data:JSON.stringify({
+                                                    'company_id':me.user_info['company_id'],
+                                                    'user_id':me.user_info['user_id'],
+                                                    'user_type_id':me.user_info['user_type_id']
+                                                }),
+                                                success:function(response){
+                                                    try{
+                                                        var res_sup=JSON.parse(response);
+                                                    }catch(err){
+                                                        handleAjaxErrorLoc(1,2,3);
+                                                    }
+                                                    if (res_sup.success){
+                                                        $.each(res_sup.data,function(i, item){
+                                                            if (item.supervisor_id==record['supervisor_id']){
+                                                                $("#CHDSUPsupervisor_id").append($('<option>',{
+                                                                    text:item.name,
+                                                                    name:item.supervisor_id,
+                                                                    selected:true
+                                                                }));
+                                                            }
+                                                            else{
+                                                                $("#CHDSUPsupervisor_id").append($('<option>',{
+                                                                    text:item.name,
+                                                                    name:item.supervisor_id,
+                                                                    selected:false
+                                                                }));
+                                                            }
+
+                                                        });
+                                                        $.ajax({
+                                                            url:'/task/getAssignee',
+                                                            method:'POST',
+                                                            data:JSON.stringify({
+                                                                'company_id':me.user_info['company_id'],
+                                                                'user_id':me.user_info['user_id'],
+                                                                'user_type_id':me.user_info['user_type_id']
+                                                            }),
+                                                            success:function(responseA){
+                                                                try{
+                                                                    var res_as=JSON.parse(responseA);
+                                                                }catch(err){
+                                                                    handleAjaxErrorLoc(1,2,3);
+                                                                }
+                                                                if (res_as.success){
+                                                                    $.each(res_as.data,function(i,item){
+                                                                        if (record['assignee_id']==item.assignee_id){
+                                                                            $("#CHDSUPassignee_id").append($('<option>',{
+                                                                                text:item.name,
+                                                                                name:item.assignee_id,
+                                                                                selected:true
+                                                                            }));
+                                                                        }
+                                                                        else{
+                                                                            $("#CHDSUPassignee_id").append($('<option>',{
+                                                                                text:item.name,
+                                                                                name:item.assignee_id,
+                                                                                selected:false
+                                                                            }));
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                            $("#win_check_declined_task_supervisor").modal("show");
+                                            $("#CHDSUPTtask_info").html(res.data);
+                                        }
+                                        else{
+                                            $.alert({
+                                                theme:'dark',
+                                                title:'Atención',
+                                                content:'No tienes permisos para revisar esta tarea.'
+                                            })
+                                        }
                                     }
                                 }
                             }
-                        }
+                        });
+                    }
+                }
+                else{
+                    $.alert({
+                        theme:'dark',
+                        title:'Atención',
+                        content:'Usted no tiene permisos para revisar esta tarea.'
                     });
                 }
             }
