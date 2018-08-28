@@ -1290,7 +1290,7 @@ $(document).ready(function(){
             var data={};
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
-            console.log(record);
+            
             if (record['status_id']==2 || record['status_id']==3){
                 if (parseInt(record['assignee_id'])!=parseInt(me.user_info.user_id)) {
                     data['task_id']=record['task_id'];
