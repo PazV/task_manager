@@ -280,10 +280,21 @@ $(document).ready(function(){
                 }
                 if (res_sup.success){
                     $.each(res_sup.data,function(i, item){
-                        $("#NTsupervisor_id").append($('<option>',{
-                            text:item.name,
-                            name:item.supervisor_id
-                        }));
+                        if (item.supervisor_id==me.user_info['user_id']){
+                            $("#NTsupervisor_id").append($('<option>',{
+                                text:item.name,
+                                name:item.supervisor_id,
+                                selected:true
+                            }));
+                        }
+                        else{
+                            $("#NTsupervisor_id").append($('<option>',{
+                                text:item.name,
+                                name:item.supervisor_id,
+                                selected:false
+                            }));
+                        }
+
                     });
                     $.ajax({
                         url:'/task/getAssignee',
@@ -1478,6 +1489,7 @@ $(document).ready(function(){
         data['task_id']=record['task_id'];
         data['user_id']=me.user_info.user_id;
         data['description']="";
+        data['from']="admin"
 
 
         EasyLoading.show({
@@ -1829,6 +1841,7 @@ $(document).ready(function(){
         data['task_id']=record['task_id'];
         data['user_id']=me.user_info.user_id;
         data['supervisor_id']=record['supervisor_id'];
+        data['from']='supervisor';
         if (data['description']==""){
             $.confirm({
                 theme:'dark',

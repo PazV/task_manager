@@ -77,8 +77,13 @@ def getAssignee():
             flag,data=GF.toDict(request.form,'post')
             if flag:
                 condition=""
+                user_type=""
                 if int(data['user_type_id'])==3:
                     condition=" and user_id=%s"%data['user_id']
+                if int(data['user_type_id'])==6:
+                    user_type=" user_type_id in (2,3) "
+                else:
+                    user_type=" user_type_id = 3 "
                 assignee=db.query("""
                     select
                         user_id as assignee_id,
@@ -86,11 +91,12 @@ def getAssignee():
                     from
                         system.user
                     where
-                        user_type_id=3
+                        --user_type_id=3
+                        %s
                     and company_id=%s %s
                     and enabled in (1,3)
                     order by name
-                """%(int(data['company_id']),condition)).dictresult()
+                """%(user_type,int(data['company_id']),condition)).dictresult()
                 response['data']=assignee
                 response['success']=True
             else:
@@ -227,7 +233,11 @@ def getTask():
             for key,value in filter.iteritems():
                 if value!=-1:
                     if key[-3:]=='_id':
-                        filters+=" and a.%s = %s"%(key,value)
+                        if user_type_id!=2:
+                            filters+=" and a.%s = %s"%(key,value)
+                        else:
+                            if key!='supervisor_id':
+                                filters+=" and a.%s = %s"%(key,value)
                     elif key=='to' or key=='from':
                         if value=="":
                             if key=="to" and filter['from']!="":
@@ -280,7 +290,8 @@ def getTask():
                     else:
                         filters+=" and a.deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
             elif user_type_id==2:
-                user=" and supervisor_id=%s"%user_id
+                user=" and (supervisor_id=%s or assignee_id=%s)"%(user_id,user_id)
+                #user= "and supervisor_id=%s"%user_id
                 deadline="to_char(a.supervisor_deadline,'DD-MM-YYYY') as deadline"
                 if filter['date_type']==2:
                     if first=='true':
@@ -306,13 +317,13 @@ def getTask():
                             where assignee_id=%s and company_id=%s and status_id in (1,6) order by assignee_deadline asc limit 1
                         """%(int(request.form['user_id']),int(request.form['company_id']))).dictresult()
                         if older_task!=[]:
-                            filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(older_task[0]['assignee_deadline'],filter['to'])
+                            filters+=" and a.assignee_deadline between '%s 00:00:00' and '%s 23:59:59'"%(older_task[0]['assignee_deadline'],filter['to'])
                             response['first']=True
                             response['older_task']=older_task[0]['assignee_deadline']
                         else:
-                            filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+                            filters+=" and a.assignee_deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
                     else:
-                        filters+=" and a.assignee_deadline '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
+                        filters+=" and a.assignee_deadline between '%s 00:00:00' and '%s 23:59:59'"%(filter['from'],filter['to'])
 
             if filter['date_type']==1:
                 order_by="a.created"
@@ -324,6 +335,7 @@ def getTask():
                 else:
                     order_by="a.assignee_deadline"
 
+            
             task=db.query("""
                 select
                     a.task_id,
@@ -1087,27 +1099,35 @@ def updateDeclinedTask():
     try:
         flag,data=GF.toDict(request.form,'post')
         if flag:
-            if data['description']=="":
+            if data['from']=='supervisor':
+                if data['description']=="":
+                    description=""
+                else:
+                    description="description='%s',"%data['description']
+
                 db.query("""
                     update task.task
                     set assignee_id=%s,
                     supervisor_id=%s,
+                    %s
                     status_id=1,
                     last_updated='now',
                     user_last_updated=%s
                     where task_id=%s
-                """%(data['assignee_id'],data['supervisor_id'],data['user_id'],data['task_id']))
+                """%(data['assignee_id'],data['supervisor_id'],description,data['user_id'],data['task_id']))
             else:
                 db.query("""
                     update task.task
                     set assignee_id=%s,
                     supervisor_id=%s,
-                    description='%s',
                     status_id=1,
+                    deadline='%s',
+                    assignee_deadline='%s',
+                    supervisor_deadline='%s',
                     last_updated='now',
                     user_last_updated=%s
                     where task_id=%s
-                """%(data['assignee_id'],data['supervisor_id'],data['description'],data['user_id'],data['task_id']))
+                """%(data['assignee_id'],data['supervisor_id'],data['deadline'],data['assignee_deadline'],data['supervisor_deadline'],data['user_id'],data['task_id']))
 
             task_info=db.query("""
                 select

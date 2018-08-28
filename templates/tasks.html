@@ -55,9 +55,7 @@
         <div class="btn-toolbar float-right" role="toolbar" style="padding-top:5px; padding-right: 15px;">
             <div class="btn-group " role="group">
                 <button type="button" class="btn btn-outline-primary" id="btnTaskDetails">Ver detalles <i class="fa fa-search"></i></button>
-                {% if g.template_user_info.user_type_id!=2 %}
-                    <button type="button" class="btn btn-outline-primary" id="btnResolveTaskList">Resolver <i class="fa fa-check-square-o"></i></button>
-                {% endif %}
+                <button type="button" class="btn btn-outline-primary" id="btnResolveTaskList">Resolver <i class="fa fa-check-square-o"></i></button>
                 <button type="button" class="btn btn-outline-primary" id="btnDeclineTaskList">Declinar <i class="fa fa-minus-circle"></i></button>
                 {% if g.template_user_info.user_type_id!=3 %}
                     <button type="button" class="btn btn-outline-primary" id="btnCheckTaskList">Revisar <i class="fa fa-edit"></i></button>
