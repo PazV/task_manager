@@ -183,15 +183,19 @@ def saveTask():
                     msg_sup=message_sup['body'].format(**task_info)
                     GF.sendMail(message_sup['subject'],msg_sup,recipient_sup)
 
-                    message_admin=db.query("""
-                        select * from template.generic_template where type_id=24
-                    """).dictresult()[0]
-                    recipient_admin=db.query("""
-                        select name, email from system.user where company_id=%s and user_type_id=1
-                    """%data['company_id']).dictresult()[0]
-                    task_info['admin']=recipient_admin['name']
-                    msg_admin=message_admin['body'].format(**task_info)
-                    GF.sendMail(message_admin['subject'],msg_admin,recipient_admin['email'])
+                    supervisor_type=db.query("""
+                        select user_type_id from system.user where user_id=%s
+                    """%data['supervisor_id']).dictresult()[0]['user_type_id']
+                    if supervisor_type==2: #si es solo supervisor, si es supervisor/admin, no es necesario enviar correo a administrador
+                        message_admin=db.query("""
+                            select * from template.generic_template where type_id=24
+                        """).dictresult()[0]
+                        recipient_admin=db.query("""
+                            select name, email from system.user where company_id=%s and user_type_id=1
+                        """%data['company_id']).dictresult()[0]
+                        task_info['admin']=recipient_admin['name']
+                        msg_admin=message_admin['body'].format(**task_info)
+                        GF.sendMail(message_admin['subject'],msg_admin,recipient_admin['email'])
 
                     response['success']=True
                     response['msg_response']='La tarea ha sido creada.'
@@ -335,7 +339,7 @@ def getTask():
                 else:
                     order_by="a.assignee_deadline"
 
-            
+
             task=db.query("""
                 select
                     a.task_id,
