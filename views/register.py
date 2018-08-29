@@ -283,6 +283,7 @@ def createUser():
                                         recipient=dict['email']
                                         dict['password']=passwd
                                         dict['link']=cfg.host
+                                        dict['mail_img']=cfg.mail_img
                                         msg=message['body'].format(**dict)
                                         GF.sendMail(message['subject'],msg,recipient)
 
@@ -314,6 +315,7 @@ def createUser():
                                     recipient=dict['email']
                                     dict['password']=passwd
                                     dict['link']=cfg.host
+                                    dict['mail_img']=cfg.mail_img
                                     msg=message['body'].format(**dict)
                                     GF.sendMail(message['subject'],msg,recipient)
 

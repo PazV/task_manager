@@ -141,7 +141,7 @@ def main():
                     company_id=%s
                 and recurrent=True
             """%c['company_id']).dictresult()
-            
+
             if tasks!=[]:
                 for x in tasks:
                     frequency=int(x['recurrent_frequency'])
@@ -183,6 +183,7 @@ def main():
                                     new_task['link']=cfg.host
                                     new_task['assignee']=assignee['name']
                                     new_task['supervisor']=supervisor['name']
+                                    new_task['mail_img']=cfg.mail_img
                                     assignee_msg=assignee_template['body'].format(**new_task)
                                     DF.sendMail(assignee['email'],'Tarea nueva',assignee_msg)
                                     supervisor_msg=supervisor_template['body'].format(**new_task)

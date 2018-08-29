@@ -171,6 +171,7 @@ def saveTask():
                         select email from system.user where user_id=%s
                     """%data['assignee_id']).dictresult()[0]['email']
                     task_info['link']=cfg.host
+                    task_info['mail_img']=cfg.mail_img
                     msg=message['body'].format(**task_info)
                     GF.sendMail(message['subject'],msg,recipient)
 
@@ -194,6 +195,7 @@ def saveTask():
                             select name, email from system.user where company_id=%s and user_type_id=1
                         """%data['company_id']).dictresult()[0]
                         task_info['admin']=recipient_admin['name']
+                        task_info['mail_img']=cfg.mail_img
                         msg_admin=message_admin['body'].format(**task_info)
                         GF.sendMail(message_admin['subject'],msg_admin,recipient_admin['email'])
 
@@ -734,6 +736,7 @@ def resolveTask():
             select * from template.generic_template where type_id=2
         """).dictresult()[0]
         task_info['link']=cfg.host
+        task_info['mail_img']=cfg.mail_img
         msg=message['body'].format(**task_info)
         GF.sendMail(message['subject'],msg,supervisor)
         if task_info['notify_admin']==True: #si está indicado que se debe notificar al administrador al resolver la tarea
@@ -747,6 +750,7 @@ def resolveTask():
                 select * from template.generic_template where type_id=3
             """).dictresult()[0]
             task_info['link']=cfg.host
+            task_info['mail_img']=cfg.mail_img
             msg_admin=message_admin['body'].format(**task_info)
             GF.sendMail(message_admin['subject'],msg_admin,admin['email'])
 
@@ -911,6 +915,7 @@ def completeTask():
                 select * from template.generic_template where type_id=4
             """).dictresult()[0]
             task_info['link']=cfg.host
+            task_info['mail_img']=cfg.mail_img
             msg=message['body'].format(**task_info)
             GF.sendMail(message['subject'],msg,assignee)
 
@@ -988,6 +993,7 @@ def incompleteTask():
                 select * from template.generic_template where type_id=5
             """).dictresult()[0]
             task_info['link']=cfg.host
+            task_info['mail_img']=cfg.mail_img
             msg=message['body'].format(**task_info)
             GF.sendMail(message['subject'],msg,assignee)
 
@@ -1048,6 +1054,7 @@ def declineTask():
                     select * from template.generic_template where type_id=6
                 """).dictresult()[0]
                 task_info['link']=cfg.host
+                task_info['mail_img']=cfg.mail_img
                 msg=message['body'].format(**task_info)
                 GF.sendMail(message['subject'],msg,recipient)
             else:
@@ -1066,7 +1073,7 @@ def declineTask():
                     where a.task_id=%s
                 """%data['task_id']).dictresult()[0]
                 task_info['link']=cfg.host
-
+                task_info['mail_img']=cfg.mail_img
                 assignee=db.query("""
                     select
                         email
@@ -1157,6 +1164,7 @@ def updateDeclinedTask():
                     task_id=%s
             """%data['task_id']).dictresult()[0]
             task_info['link']=cfg.host
+            task_info['mail_img']=cfg.mail_img
             #Send mail to assignee
             msg_info_a=db.query("""
                 select * from template.generic_template where type_id=10
@@ -1213,6 +1221,7 @@ def cancelTask():
                     task_id=%s
             """%data['task_id']).dictresult()[0]
             task_info['link']=cfg.host
+            task_info['mail_img']=cfg.mail_img
 
             #send mail to assignee
             message_info_a=db.query("""
@@ -1596,3 +1605,44 @@ def downloadReport(filename):
         exc_info=sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))
         return response
+
+@bp.route('/editTask', methods=['GET','POST'])
+@is_logged_in
+def editTask():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            app.logger.info(data)
+            deadline=time.strptime(data['deadline'],"%Y-%m-%d")
+            supervisor_deadline=time.strptime(data['supervisor_deadline'],"%Y-%m-%d")
+            assignee_deadline=time.strptime(data['assignee_deadline'],"%Y-%m-%d")
+            if assignee_deadline<=supervisor_deadline and supervisor_deadline<=deadline:
+                db.query("""
+                    update task.task
+                    set deadline='%s 23:59:59',
+                    supervisor_deadline='%s 23:59:59',
+                    assignee_deadline='%s 23:59:59',
+                    assignee_id=%s,
+                    supervisor_id=%s,
+                    user_last_updated=%s,
+                    last_updated='now'
+                    where task_id=%s
+                    and company_id=%s
+                """%(data['deadline'],data['supervisor_deadline'],data['assignee_deadline'],data['assignee_id'],data['supervisor_id'],data['user_id'],data['task_id'],data['company_id']))
+
+
+                response['success']=True
+                response['msg_response']='La tarea ha sido actualizada.'
+            else:
+                response['success']=False
+                response['msg_response']='La tarea no pudo ser actualizada, favor de revisar las fechas.'
+        else:
+            response['success']=False
+            response['msg_response']='Ocurrió un error al intentar obtener los datos.'
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error, favor de intentarlo de nuevo.'
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)

@@ -267,6 +267,7 @@ def sendNewPassword():
                 template=db.query("""
                     select * from template.generic_template where type_id=21
                 """).dictresult()[0]
+                user_data[0]['mail_img']=cfg.mail_img
                 msg=template['body'].format(**user_data[0])
                 GF.sendMail(template['subject'],msg,user_data[0]['email'])
                 response['success']=True

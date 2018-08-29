@@ -164,7 +164,8 @@ def recoverPassword():
                     msg_info={
                         'login':exists[0]['login'],
                         'passwd':passwd,
-                        'link':cfg.host
+                        'link':cfg.host,
+                        'mail_img':cfg.mail_img
                     }
 
                     msg=message['body'].format(**msg_info)

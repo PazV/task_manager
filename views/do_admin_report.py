@@ -399,7 +399,8 @@ def main():
                         'company':a['company'],
                         'from':'%s-%s-%s'%(new_from[2],new_from[1],new_from[0]),
                         'to':'%s-%s-%s'%(new_to[2],new_to[1],new_to[0]),
-                        'link':cfg.host
+                        'link':cfg.host,
+                        'mail_img':cfg.mail_img
                     }
                     if len(wb.sheetnames)>1:
                         wb.remove(wb['Sheet'])

@@ -148,6 +148,7 @@ def main():
                             select email from system.user where user_id=%s
                         """%pa['assignee_id']).dictresult()[0]['email']
                         pa['link']=cfg.host
+                        pa['mail_img']=cfg.mail_img
                         msg=assignee_template['body'].format(**pa)
                         MF.sendMail(recipient,assignee_template['subject'],msg)
 
@@ -182,6 +183,7 @@ def main():
                             select email from system.user where user_id=%s
                         """%ps['supervisor_id']).dictresult()[0]['email']
                         ps['link']=cfg.host
+                        ps['mail_img']=cfg.mail_img
                         msg=supervisor_template['body'].format(**ps)
                         MF.sendMail(recipient,supervisor_template['subject'],msg)
 
@@ -216,6 +218,7 @@ def main():
                             select email from system.user where company_id=%s and user_type_id=1
                         """%x['company_id']).dictresult()[0]['email']
                         pad['link']=cfg.host
+                        pad['mail_img']=cfg.mail_img
                         msg=admin_template['body'].format(**pad)
                         MF.sendMail(recipient,admin_template['subject'],msg)
 
