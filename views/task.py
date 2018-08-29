@@ -192,7 +192,7 @@ def saveTask():
                             select * from template.generic_template where type_id=24
                         """).dictresult()[0]
                         recipient_admin=db.query("""
-                            select name, email from system.user where company_id=%s and user_type_id=(1,6)
+                            select name, email from system.user where company_id=%s and user_type_id in (1,6)
                         """%data['company_id']).dictresult()[0]
                         task_info['admin']=recipient_admin['name']
                         task_info['mail_img']=cfg.mail_img
