@@ -1613,11 +1613,20 @@ def editTask():
     try:
         flag,data=GF.toDict(request.form,'post')
         if flag:
-            app.logger.info(data)
+            
             deadline=time.strptime(data['deadline'],"%Y-%m-%d")
             supervisor_deadline=time.strptime(data['supervisor_deadline'],"%Y-%m-%d")
             assignee_deadline=time.strptime(data['assignee_deadline'],"%Y-%m-%d")
             if assignee_deadline<=supervisor_deadline and supervisor_deadline<=deadline:
+                original_task=db.query("""
+                    select
+                        a.assignee_id, a.supervisor_id,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        (select email from system.user where user_id=a.assignee_id) as assignee_mail,
+                        (select email from system.user where user_id=a.supervisor_id) as supervisor_mail
+                    from task.task a where a.task_id=%s
+                """%data['task_id']).dictresult()[0]
                 db.query("""
                     update task.task
                     set deadline='%s 23:59:59',
@@ -1631,6 +1640,74 @@ def editTask():
                     and company_id=%s
                 """%(data['deadline'],data['supervisor_deadline'],data['assignee_deadline'],data['assignee_id'],data['supervisor_id'],data['user_id'],data['task_id'],data['company_id']))
 
+                task_info=db.query("""
+                    select
+                        to_char(a.deadline,'DD-MM-YYYY HH24:MI:SS') as deadline,
+                        to_char(a.supervisor_deadline, 'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                        to_char(a.assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                        (select name from system.user where user_id=a.assignee_id) as assignee,
+                        (select email from system.user where user_id=a.assignee_id) as assignee_mail,
+                        (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                        (select email from system.user where user_id=a.supervisor_id) as supervisor_mail,
+                        a.name,
+                        a.description,
+                        a.notify_admin
+                    from
+                        task.task a
+                    where
+                        a.task_id=%s
+                """%data['task_id']).dictresult()[0]
+
+                task_info['link']=cfg.host
+                task_info['mail_img']=cfg.mail_img
+
+                #send notification to new assignee
+                new_aux_message=db.query("""
+                    select * from template.generic_template where type_id=27
+                """).dictresult()[0]
+
+                task_info['assignee_to']=task_info['assignee']
+                new_aux_msg=new_aux_message['body'].format(**task_info)
+                GF.sendMail(new_aux_message['subject'].format(**task_info),new_aux_msg,task_info['assignee_mail'])
+
+                if int(data['assignee_id'])!=int(original_task['assignee_id']):
+                    task_info['assignee_to']=original_task['assignee']
+                    new_aux_msg=new_aux_message['body'].format(**task_info)
+                    GF.sendMail(new_aux_message['subject'].format(**task_info),new_aux_msg,original_task['assignee_mail'])
+
+                new_sup_message=db.query("""
+                    select * from template.generic_template where type_id=26
+                """).dictresult()[0]
+                task_info['supervisor_to']=task_info['supervisor']
+                new_sup_msg=new_sup_message['body'].format(**task_info)
+                GF.sendMail(new_sup_message['subject'].format(**task_info),new_sup_msg,task_info['supervisor_mail'])
+
+                if int(data['supervisor_id'])!=int(original_task['supervisor_id']):
+                    task_info['supervisor_to']=original_task['supervisor']
+                    new_sup_msg=new_sup_message['body'].format(**task_info)
+                    GF.sendMail(new_sup_message['subject'].format(**task_info),new_sup_msg,original_task['supervisor_mail'])
+
+                if task_info['notify_admin']==True:
+                    admin_type=db.query("""
+                        select user_id, user_type_id, name as admin, email as admin_mail  from system.user where company_id=%s and user_type_id in (1,6)
+                    """%data['company_id']).dictresult()[0]
+                    if int(admin_type['user_type_id'])==1:
+                        task_info['admin_to']=admin_type['admin']
+                        task_info['admin']=admin_type['admin']
+                        admin_message=db.query("""
+                            select * from template.generic_template where type_id=25
+                        """).dictresult()[0]
+                        admin_msg=admin_message['body'].format(**task_info)
+                        GF.sendMail(admin_message['subject'].format(**task_info),admin_msg,admin_type['admin_mail'])
+                    else:
+                        if int(admin_type['user_id'])!=int(data['supervisor_id']):
+                            task_info['admin_to']=admin_type['admin']
+                            task_info['admin']=admin_type['admin']
+                            admin_message=db.query("""
+                                select * from template.generic_template where type_id=25
+                            """).dictresult()[0]
+                            admin_msg=admin_message['body'].format(**task_info)
+                            GF.sendMail(admin_message['subject'].format(**task_info),admin_msg,admin_type['admin_mail'])
 
                 response['success']=True
                 response['msg_response']='La tarea ha sido actualizada.'

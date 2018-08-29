@@ -1290,7 +1290,7 @@ $(document).ready(function(){
             var data={};
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
-            
+
             if (record['status_id']==2 || record['status_id']==3){
                 if (parseInt(record['assignee_id'])!=parseInt(me.user_info.user_id)) {
                     data['task_id']=record['task_id'];
@@ -1372,7 +1372,6 @@ $(document).ready(function(){
                                     }
                                     else{
                                         if (res.allow_check){
-
                                             $("#CHDSUPdeadline").val(res.deadlines.deadline);
                                             $("#CHDSUPsupervisor_deadline").val(res.deadlines.supervisor_deadline);
                                             $("#CHDSUPassigee_deadline").val(res.deadlines.assignee_deadline);
@@ -2190,6 +2189,228 @@ $(document).ready(function(){
         $("#win_create_report").modal("hide");
     });
 
+    $("#btnEditTaskList").click(function(){
+        var table=$("#grdTask").DataTable();
+        if (table.rows('.selected').any()){
+            var ind=table.row('.selected').index();
+            var record=table.rows(ind).data()[0];
+
+            var data={};
+            // $("#win_edit_task").modal("show");
+            data['task_id']=record['task_id'];
+            data['user_id']=me.user_info.user_id;
+            data['company_id']=me.user_info.company_id;
+            data['user_type_id']=me.user_info.user_type_id;
+            data['from']='check_declined';
+            $.ajax({
+                url:'/task/getTaskDetails',
+                method:'POST',
+                data:JSON.stringify(data),
+                success:function(response){
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
+                    if (res.success){
+                        if (res.allow_check){
+                            $("#EdTaskdeadline").val(res.deadlines.deadline);
+                            $("#EdTasksupervisor_deadline").val(res.deadlines.supervisor_deadline);
+                            $("#EdTaskassigee_deadline").val(res.deadlines.assignee_deadline);
+                            $.ajax({
+                                url:'/task/getSupervisor',
+                                method:'POST',
+                                data:JSON.stringify({
+                                    'company_id':me.user_info['company_id'],
+                                    'user_id':me.user_info['user_id'],
+                                    'user_type_id':me.user_info['user_type_id']
+                                }),
+                                success:function(response){
+                                    try{
+                                        var res_sup=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
+                                    if (res_sup.success){
+                                        $.each(res_sup.data,function(i, item){
+                                            if (item.supervisor_id==record['supervisor_id']){
+                                                $("#EdTasksupervisor_id").append($('<option>',{
+                                                    text:item.name,
+                                                    name:item.supervisor_id,
+                                                    selected:true
+                                                }));
+                                            }
+                                            else{
+                                                $("#EdTasksupervisor_id").append($('<option>',{
+                                                    text:item.name,
+                                                    name:item.supervisor_id,
+                                                    selected:false
+                                                }));
+                                            }
+
+                                        });
+                                        $.ajax({
+                                            url:'/task/getAssignee',
+                                            method:'POST',
+                                            data:JSON.stringify({
+                                                'company_id':me.user_info['company_id'],
+                                                'user_id':me.user_info['user_id'],
+                                                'user_type_id':me.user_info['user_type_id']
+                                            }),
+                                            success:function(responseA){
+                                                try{
+                                                    var res_as=JSON.parse(responseA);
+                                                }catch(err){
+                                                    handleAjaxErrorLoc(1,2,3);
+                                                }
+                                                if (res_as.success){
+                                                    $.each(res_as.data,function(i,item){
+                                                        if (record['assignee_id']==item.assignee_id){
+                                                            $("#EdTaskassignee_id").append($('<option>',{
+                                                                text:item.name,
+                                                                name:item.assignee_id,
+                                                                selected:true
+                                                            }));
+                                                        }
+                                                        else{
+                                                            $("#EdTaskassignee_id").append($('<option>',{
+                                                                text:item.name,
+                                                                name:item.assignee_id,
+                                                                selected:false
+                                                            }));
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                            $("#win_edit_task").modal("show");
+                            $("#Edtask_info").html(res.data);
+                        }
+                        else{
+                            $.alert({
+                                theme:'dark',
+                                title:'Atención',
+                                content:'No tienes permisos para revisar esta tarea.'
+                            })
+                        }
+
+                    }
+                }
+            });
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Debe seleccionar una tarea para editarla.'
+            });
+        }
+
+    });
+
+    $("#btnCloseEditTask").click(function(){
+        $("#win_edit_task").modal("hide");
+    });
+
+    $("#EdTaskdeadline").focusout(function(){
+        var valid_empty=emptyField("#EdTaskdeadline","#spnEdTaskdeadline");
+    });
+    $("#EdTasksupervisor_deadline").focusout(function(){
+        var valid_empty=emptyFieldRow("#EdTasksupervisor_deadline","#spnEdTasksupervisor_deadline");
+        if (valid_empty){
+            if ($("#EdTaskdeadline")[0].value!=""){
+                if ($("#EdTasksupervisor_deadline")[0].value>$("#EdTaskdeadline")[0].value){
+                    $("#EdTasksupervisor_deadline").removeClass("valid-field").addClass("invalid-field");
+                    $("#spnEdTasksupervisor_deadline").removeClass("error-msg-row").addClass("show-error-msg-row");
+                    $("#spnEdTasksupervisor_deadline").html("Fecha de supervisor debe ser menor o igual a la fecha de vencimiento");
+                }
+            }
+        }
+    });
+    $("#EdTaskassigee_deadline").focusout(function(){
+        var valid_empty=emptyFieldRow("#EdTaskassigee_deadline","#spnEdTaskassigee_deadline");
+        if (valid_empty){
+            //validar que fecha de auxiliar sea menor o igual a fecha límite
+            if ($("#EdTasksupervisor_deadline")[0].value!=""){
+                if ($("#EdTaskassigee_deadline")[0].value>$("#EdTasksupervisor_deadline")[0].value){
+                    $("#EdTaskassigee_deadline").removeClass("valid-field").addClass("invalid-field");
+                    $("#spnEdTaskassigee_deadline").removeClass("error-msg-row").addClass("show-error-msg-row");
+                    $("#spnEdTaskassigee_deadline").html("Fecha de auxiliar debe ser menor o igual a fecha de supervisor");
+                }
+            }
+        }
+    });
+
+    $("#btnSaveEditTask").click(function(){
+
+        var input_list=$("#frmEditTask").find(":input");
+        var is_valid=true;
+        $("#EdTaskdeadline").focusout();
+        $("#EdTasksupervisor_deadline").focusout();
+        $("#EdTaskassigee_deadline").focusout();
+        for (x in input_list){
+            if (input_list[x].type=='date'){
+                if ($("#"+input_list[x].id).hasClass('valid-field')===false){
+                    $("#"+input_list[x].id).focusout();
+                    is_valid=false;
+                }
+            }
+        }
+        if (is_valid){
+            EasyLoading.show({
+                text:"Cargando...",
+                type:EasyLoading.TYPE["PACMAN"],
+            });
+            var sel_list=[{'id':"#EdTasksupervisor_id",'name':"supervisor_id"},{'id':"#EdTaskassignee_id",'name':"assignee_id"}];
+            var data=getDictForm("#frmEditTask",sel_list);
+            data['company_id']=me.user_info['company_id'];
+            data['user_id']=me.user_info['user_id'];
+            var table=$("#grdTask").DataTable();
+            var ind=table.row('.selected').index();
+            var record=table.rows(ind).data()[0];
+            data['task_id']=record['task_id'];
+
+            $.ajax({
+                url:'/task/editTask',
+                method:'POST',
+                data:JSON.stringify(data),
+                success:function(response){
+                    try{
+                        var res=JSON.parse(response);
+                    }
+                    catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
+                    if (res.success){
+                        EasyLoading.hide();
+                        $("#alertLayout").find('p').html(res.msg_response);
+                        $("#alertLayout").css("display","block");
+                        $("#win_edit_task").modal("hide");
+                        getTasks(me.user_info);
+                    }
+                    else{
+                        EasyLoading.hide();
+                        setMessage("#alertEdTask",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
+                    }
+                },
+                error:function(){
+                    EasyLoading.hide();
+                    setMessage("#alertEdTask",["alert-info","alert-success"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo.",true);
+                }
+            });
+        }
+        else{
+            setMessage("#alertEdTask",["alert-info","alert-success"],"alert-danger","Existen campos incorrectos, favor de revisar los datos.",true);
+        }
+    });
+
+    $("#win_edit_task").on('hidden.bs.modal',function(){
+        resetForm("#frmEditTask",["input|INPUT","select|SELECT"]);
+        setMessage("#alertEdTask",["alert-success","alert-danger"],"alert-info","",false);
+    });
 });
 
 
