@@ -192,7 +192,7 @@ def saveTask():
                             select * from template.generic_template where type_id=24
                         """).dictresult()[0]
                         recipient_admin=db.query("""
-                            select name, email from system.user where company_id=%s and user_type_id=1
+                            select name, email from system.user where company_id=%s and user_type_id=(1,6)
                         """%data['company_id']).dictresult()[0]
                         task_info['admin']=recipient_admin['name']
                         task_info['mail_img']=cfg.mail_img
@@ -742,7 +742,7 @@ def resolveTask():
         if task_info['notify_admin']==True: #si está indicado que se debe notificar al administrador al resolver la tarea
             admin=db.query("""
                 select name,email from system.user
-                where company_id=%s and user_type_id=1
+                where company_id=%s and user_type_id in (1,6)
             """%data['company_id']).dictresult()[0]
             task_info['admin']=admin['name']
 
@@ -1090,7 +1090,7 @@ def declineTask():
                 GF.sendMail(message_assignee['subject'],msg_assignee,assignee)
 
                 admin=db.query("""
-                    select email,name from system.user where user_type_id=1 and company_id=%s
+                    select email,name from system.user where user_type_id in (1,6) and company_id=%s
                 """%data['company_id']).dictresult()[0]
                 task_info['admin']=admin['name']
                 message_admin=db.query("""
