@@ -185,9 +185,9 @@ def main():
                                     new_task['supervisor']=supervisor['name']
                                     new_task['mail_img']=cfg.mail_img
                                     assignee_msg=assignee_template['body'].format(**new_task)
-                                    DF.sendMail(assignee['email'],'Tarea nueva',assignee_msg)
+                                    DF.sendMail(assignee['email'],'Tarea nueva: %s'%x['name'],assignee_msg)
                                     supervisor_msg=supervisor_template['body'].format(**new_task)
-                                    DF.sendMail(supervisor['email'],'Tarea nueva',supervisor_msg)
+                                    DF.sendMail(supervisor['email'],'Tarea nueva: %s'%x['name'],supervisor_msg)
 
                                     db.query("""
                                         update task.task set recurrent=False where task_id=%s

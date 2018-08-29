@@ -150,7 +150,7 @@ def main():
                         pa['link']=cfg.host
                         pa['mail_img']=cfg.mail_img
                         msg=assignee_template['body'].format(**pa)
-                        MF.sendMail(recipient,assignee_template['subject'],msg)
+                        MF.sendMail(recipient,assignee_template['subject'].format(**pa),msg)
 
                 #SUPERVISOR'S NOTIFICATIONS
                 supervisor_days=int(x['supervisor_days'].split("_")[0])
@@ -185,7 +185,7 @@ def main():
                         ps['link']=cfg.host
                         ps['mail_img']=cfg.mail_img
                         msg=supervisor_template['body'].format(**ps)
-                        MF.sendMail(recipient,supervisor_template['subject'],msg)
+                        MF.sendMail(recipient,supervisor_template['subject'].format(**ps),msg)
 
                 #ADMIN NOTIFICATIONS
                 admin_days=int(x['admin_days'].split("_")[0])
@@ -220,7 +220,7 @@ def main():
                         pad['link']=cfg.host
                         pad['mail_img']=cfg.mail_img
                         msg=admin_template['body'].format(**pad)
-                        MF.sendMail(recipient,admin_template['subject'],msg)
+                        MF.sendMail(recipient,admin_template['subject'].format(**pad),msg)
 
 
 

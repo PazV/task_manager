@@ -173,7 +173,7 @@ def saveTask():
                     task_info['link']=cfg.host
                     task_info['mail_img']=cfg.mail_img
                     msg=message['body'].format(**task_info)
-                    GF.sendMail(message['subject'],msg,recipient)
+                    GF.sendMail(message['subject'].format(**task_info),msg,recipient)
 
                     message_sup=db.query("""
                         select * from template.generic_template where type_id=18
@@ -182,7 +182,7 @@ def saveTask():
                         select email from system.user where user_id=%s
                     """%data['supervisor_id']).dictresult()[0]['email']
                     msg_sup=message_sup['body'].format(**task_info)
-                    GF.sendMail(message_sup['subject'],msg_sup,recipient_sup)
+                    GF.sendMail(message_sup['subject'].format(**task_info),msg_sup,recipient_sup)
 
                     supervisor_type=db.query("""
                         select user_type_id from system.user where user_id=%s
@@ -197,7 +197,7 @@ def saveTask():
                         task_info['admin']=recipient_admin['name']
                         task_info['mail_img']=cfg.mail_img
                         msg_admin=message_admin['body'].format(**task_info)
-                        GF.sendMail(message_admin['subject'],msg_admin,recipient_admin['email'])
+                        GF.sendMail(message_admin['subject'].format(**task_info),msg_admin,recipient_admin['email'])
 
                     response['success']=True
                     response['msg_response']='La tarea ha sido creada.'
@@ -587,8 +587,7 @@ def getTaskDetails():
                     """%(task['name'],task['description'],task['deadline'],task['supervisor'],task['assignee'],assignee_info['date'],assignee_info['last_updated'],assignee_info['declining_cause'])
                 else:
                     response['declined_by']='supervisor'
-                    app.logger.info("user_id %s"%data['user_id'])
-                    app.logger.info("declined_by %s"%declined_by['declined_by'])
+
                     if data['user_id']==declined_by['declined_by']:
                         response['allow_check']=False
                         html=""
@@ -738,7 +737,7 @@ def resolveTask():
         task_info['link']=cfg.host
         task_info['mail_img']=cfg.mail_img
         msg=message['body'].format(**task_info)
-        GF.sendMail(message['subject'],msg,supervisor)
+        GF.sendMail(message['subject'].format(**task_info),msg,supervisor)
         if task_info['notify_admin']==True: #si está indicado que se debe notificar al administrador al resolver la tarea
             admin=db.query("""
                 select name,email from system.user
@@ -752,7 +751,7 @@ def resolveTask():
             task_info['link']=cfg.host
             task_info['mail_img']=cfg.mail_img
             msg_admin=message_admin['body'].format(**task_info)
-            GF.sendMail(message_admin['subject'],msg_admin,admin['email'])
+            GF.sendMail(message_admin['subject'].format(**task_info),msg_admin,admin['email'])
 
         response['success']=True
         response['msg_response']='La tarea ha sido actualizada'
@@ -848,7 +847,7 @@ def pauseResolveTask():
 def downloadEvidence(document_id):
     response={}
     try:
-        app.logger.info(" document_id %s"%document_id)
+
         doc_id=document_id.split("_")[1]
         evidence=db.query("""
             select
@@ -862,8 +861,7 @@ def downloadEvidence(document_id):
 
         path="%s%s"%(evidence[0]['file_path'],evidence[0]['file_name'])
         name=evidence[0]['file_name']
-        app.logger.info(path)
-        app.logger.info(name)
+
         return send_file(path,attachment_filename=name)
     except:
         response['success']=False
@@ -917,7 +915,7 @@ def completeTask():
             task_info['link']=cfg.host
             task_info['mail_img']=cfg.mail_img
             msg=message['body'].format(**task_info)
-            GF.sendMail(message['subject'],msg,assignee)
+            GF.sendMail(message['subject'].format(**task_info),msg,assignee)
 
             response['success']=True
             response['msg_response']='La tarea ha sido cerrada.'
@@ -995,7 +993,7 @@ def incompleteTask():
             task_info['link']=cfg.host
             task_info['mail_img']=cfg.mail_img
             msg=message['body'].format(**task_info)
-            GF.sendMail(message['subject'],msg,assignee)
+            GF.sendMail(message['subject'].format(**task_info),msg,assignee)
 
         else:
             response['success']=False
@@ -1056,7 +1054,7 @@ def declineTask():
                 task_info['link']=cfg.host
                 task_info['mail_img']=cfg.mail_img
                 msg=message['body'].format(**task_info)
-                GF.sendMail(message['subject'],msg,recipient)
+                GF.sendMail(message['subject'].format(**task_info),msg,recipient)
             else:
                 task_info=db.query("""
                     select
@@ -1087,7 +1085,7 @@ def declineTask():
                     select * from template.generic_template where type_id=16
                 """).dictresult()[0]
                 msg_assignee=message_assignee['body'].format(**task_info)
-                GF.sendMail(message_assignee['subject'],msg_assignee,assignee)
+                GF.sendMail(message_assignee['subject'].format(**task_info),msg_assignee,assignee)
 
                 admin=db.query("""
                     select email,name from system.user where user_type_id in (1,6) and company_id=%s
@@ -1097,7 +1095,7 @@ def declineTask():
                     select * from template.generic_template where type_id=17
                 """).dictresult()[0]
                 msg_admin=message_admin['body'].format(**task_info)
-                GF.sendMail(message_admin['subject'],msg_admin,admin['email'])
+                GF.sendMail(message_admin['subject'].format(**task_info),msg_admin,admin['email'])
 
             response['success']=True
             response['msg_response']='La tarea ha sido declinada.'
@@ -1170,14 +1168,14 @@ def updateDeclinedTask():
                 select * from template.generic_template where type_id=10
             """).dictresult()[0]
             msg_a=msg_info_a['body'].format(**task_info)
-            GF.sendMail(msg_info_a['subject'],msg_a,task_info['assignee_mail'])
+            GF.sendMail(msg_info_a['subject'].format(**task_info),msg_a,task_info['assignee_mail'])
 
             #Send mail supervisor
             msg_info_s=db.query("""
                 select * from template.generic_template where type_id=19
             """).dictresult()[0]
             msg_s=msg_info_s['body'].format(**task_info)
-            GF.sendMail(msg_info_s['subject'],msg_s,task_info['supervisor_mail'])
+            GF.sendMail(msg_info_s['subject'].format(**task_info),msg_s,task_info['supervisor_mail'])
             response['success']=True
             response['msg_response']='La tarea ha sido reasignada.'
         else:
@@ -1228,13 +1226,13 @@ def cancelTask():
                 select * from template.generic_template where type_id=11
             """).dictresult()[0]
             msg_a=message_info_a['body'].format(**task_info)
-            GF.sendMail(message_info_a['subject'],msg_a,task_info['assignee_mail'])
+            GF.sendMail(message_info_a['subject'].format(**task_info),msg_a,task_info['assignee_mail'])
 
             message_info_s=db.query("""
                 select * from template.generic_template where type_id=20
             """).dictresult()[0]
             msg_s=message_info_s['body'].format(**task_info)
-            GF.sendMail(message_info_s['subject'],msg_s,task_info['supervisor_mail'])
+            GF.sendMail(message_info_s['subject'].format(**task_info),msg_s,task_info['supervisor_mail'])
 
             response['success']=True
             response['msg_response']="La tarea ha sido cancelada."
@@ -1613,7 +1611,7 @@ def editTask():
     try:
         flag,data=GF.toDict(request.form,'post')
         if flag:
-            
+
             deadline=time.strptime(data['deadline'],"%Y-%m-%d")
             supervisor_deadline=time.strptime(data['supervisor_deadline'],"%Y-%m-%d")
             assignee_deadline=time.strptime(data['assignee_deadline'],"%Y-%m-%d")
