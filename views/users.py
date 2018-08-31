@@ -14,6 +14,7 @@ import json
 from . import generic_functions
 import traceback
 import sys
+import app_config as cfg
 from flask import current_app as app
 GF=generic_functions.GenericFunctions()
 #app=Flask(__name__)
