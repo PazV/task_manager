@@ -1798,20 +1798,21 @@ def getNotificationInfo():
                         system.user
                     where
                         company_id=%s
-                    and user_type_id=1
+                    and user_type_id in (1,6)
                 """%data['company_id']).dictresult()[0]
                 select_list.append({
                     'name':'%s - Aux'%assignee['name'],
                     'user_id':'%s'%assignee['user_id']
                 })
-                select_list.append({
-                    'name':'%s - Admin'%admin['name'],
-                    'user_id':'%s'%admin['user_id']
-                })
-                select_list.append({
-                    'name':'%s - Aux, CC: %s - Admin'%(assignee['name'],admin['name']),
-                    'user_id':'%s,%s'%(assignee['user_id'],admin['user_id'])
-                })
+                if int(admin['user_id'])!=int(supervisor['user_id']):
+                    select_list.append({
+                        'name':'%s - Admin'%admin['name'],
+                        'user_id':'%s'%admin['user_id']
+                    })
+                    select_list.append({
+                        'name':'%s - Aux, CC: %s - Admin'%(assignee['name'],admin['name']),
+                        'user_id':'%s,%s'%(assignee['user_id'],admin['user_id'])
+                    })
                 response['msg_from']=supervisor['name']
 
             elif data['user_type_id']==6: #if sender is supervisor-admin
@@ -1900,7 +1901,7 @@ def getNotificationInfo():
                         system.user
                     where
                         company_id=%s
-                    and user_type_id=1
+                    and user_type_id in (1,6)
                 """%data['company_id']).dictresult()[0]
                 select_list.append({
                     'name':'%s - Aux'%assignee['name'],
@@ -1922,10 +1923,11 @@ def getNotificationInfo():
                     'name':'%s - Aux, CC: %s - Admin'%(assignee['name'],admin['name']),
                     'user_id':'%s,%s'%(assignee['user_id'],admin['user_id'])
                 })
-                select_list.append({
-                    'name':'%s - Sup, CC: %s - Admin'%(supervisor['name'],admin['name']),
-                    'user_id':'%s,%s'%(supervisor['user_id'],admin['user_id'])
-                })
+                if int(supervisor['user_id'])!=int(admin['user_id']):
+                    select_list.append({
+                        'name':'%s - Sup, CC: %s - Admin'%(supervisor['name'],admin['name']),
+                        'user_id':'%s,%s'%(supervisor['user_id'],admin['user_id'])
+                    })
                 consultant=db.query("""
                     select name from system.user where user_id=%s
                 """%data['user_id']).dictresult()[0]
