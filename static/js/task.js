@@ -2345,7 +2345,6 @@ $(document).ready(function(){
     });
 
     $("#btnSaveEditTask").click(function(){
-
         var input_list=$("#frmEditTask").find(":input");
         var is_valid=true;
         $("#EdTaskdeadline").focusout();
@@ -2372,7 +2371,6 @@ $(document).ready(function(){
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
             data['task_id']=record['task_id'];
-
             $.ajax({
                 url:'/task/editTask',
                 method:'POST',
@@ -2411,6 +2409,158 @@ $(document).ready(function(){
         resetForm("#frmEditTask",["input|INPUT","select|SELECT"]);
         setMessage("#alertEdTask",["alert-success","alert-danger"],"alert-info","",false);
     });
+
+    $("#btnSendNotificationList").click(function(){
+        var table=$("#grdTask").DataTable();
+        if (table.rows('.selected').any()){
+            var ind=table.row('.selected').index();
+            var record=table.rows(ind).data()[0];
+            var data={};
+            data['user_id']=me.user_info.user_id;
+            data['user_type_id']=me.user_info.user_type_id;
+            data['task_id']=record.task_id;
+            data['company_id']=me.user_info.company_id;
+            $.ajax({
+                url:'/task/getNotificationInfo',
+                method:'POST',
+                data:JSON.stringify(data),
+                success:function(response){
+                    try{
+                        var res=JSON.parse(response);
+                    }
+                    catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
+                    if (res.success){
+                        $("#STNfrom").val(res.msg_from);
+                        $.each(res.select_list,function(i, item){
+                            $("#STNto").append($('<option>',{
+                                text:item.name,
+                                name:item.user_id
+                            }));
+                        });
+                    }
+                }
+            });
+            $("#win_send_task_notification").modal("show");
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Debe seleccionar una tarea para enviar una notificación.'
+            });
+        }
+
+    });
+
+    $("#btnCloseSendNotification").click(function(){
+        $("#win_send_task_notification").modal("hide");
+    });
+
+    $("#win_send_task_notification").on('hidden.bs.modal',function(){
+        resetForm("#frmSendTaskNotif",["input|INPUT","select|SELECT","textarea|TEXTAREA"]);
+        setMessage("#alertSTNForm",["alert-success","alert-danger"],"alert-info","",false);
+    });
+
+    $("#btnSendTaskNotification").click(function(){
+        var table=$("#grdTask").DataTable();
+        var ind=table.row('.selected').index();
+        var record=table.rows(ind).data()[0];
+        var sel_list=[{'id':"#STNto",'name':"msg_to"}];
+        var form_data=getDictForm("#frmSendTaskNotif",[]);
+        form_data['msg_to']=$("#STNto").find("option:selected").attr("name");
+        form_data['msg_from']=me.user_info.user_id;
+        form_data['task_id']=record['task_id'];
+
+        if (form_data['message']!=""){
+            EasyLoading.show({
+                text:"Cargando...",
+                type:EasyLoading.TYPE["PACMAN"],
+            });
+            $.ajax({
+                url:'/task/sendNotification',
+                method:'POST',
+                data:JSON.stringify(form_data),
+                success:function(response){
+                    try{
+                        var res=JSON.parse(response);
+                    }
+                    catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
+                    EasyLoading.hide();
+                    if (res.success){
+                        setMessage("#alertLayout",["alert-success","alert-danger"],"alert-info",res.msg_response,true);
+                        $("#win_send_task_notification").modal("hide");
+                    }
+                    else{
+                        setMessage("#alertSTNForm",["alert-success","alert-info"],"alert-danger",res.msg_response,true);
+                    }
+                },
+                error:function(){
+                    EasyLoading.hide();
+                    setMessage("#alertSTNForm",["alert-success","alert-info"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo.",true);
+                }
+            })
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'¡Debes agregar un mensaje!'
+            });
+        }
+    });
+
+    $("#btnShowkNotificationHistory").click(function(){
+        var table=$("#grdTask").DataTable();
+        var ind=table.row('.selected').index();
+        var record=table.rows(ind).data()[0];
+        EasyLoading.show({
+            text:"Cargando...",
+            type:EasyLoading.TYPE["PACMAN"],
+        });
+        $.ajax({
+            url:'/task/getNotificationHistory',
+            method:'POST',
+            data:JSON.stringify({'task_id':record['task_id']}),
+            success:function(response){
+                try{
+                    var res=JSON.parse(response);
+                }
+                catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
+                if (res.success){
+                    EasyLoading.hide();
+                    if (res.has_messages==true){
+                        $("#divNotifications").append(res.mail_divs);
+                    }
+                    else{
+                        $("#divNotifications").append('<h4>No existen mensajes para esta tarea.</h4>');
+                    }
+                    $("#win_notification_history").modal("show");
+                }
+                else{
+                    EasyLoading.hide();
+                    setMessage("#alertSTNForm",["alert-success","alert-info"],"alert-danger",res.msg_response,true);
+                }
+            },
+            error:function(){
+                EasyLoading.hide();
+                setMessage("#alertSTNForm",["alert-success","alert-info"],"alert-danger","Ocurrió un error, favor de intentarlo de nuevo.",true);
+            }
+        });
+    })
+
+    $("#btnCloseNotificationHistory").click(function(){
+        $("#win_notification_history").modal("hide");
+    });
+
+    $("#win_notification_history").on('hidden.bs.modal',function(){
+        $("#divNotifications").empty();
+    })
 });
 
 

@@ -1721,3 +1721,322 @@ def editTask():
         exc_info=sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))
     return json.dumps(response)
+
+@bp.route('/getAdminName', methods=['GET','POST'])
+@is_logged_in
+def getAdminName():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            if data['use']=='user':
+                name=db.query("""
+                    select name from system.user where user_id=%s
+                """%data['user_id']).dictresult()
+                if name!=[]:
+                    response['name']=name[0]['name']
+                    response['success']=True
+                else:
+                    response['success']=False
+                    response['msg_response']="Ocurrió un error al intentar obtener los datos del usuario."
+            elif data['use']=='company':
+                name=db.query("""
+                    select name from system.user where company_id=%s and user_type_id=1
+                """%data['company_id']).dictresult()
+                if name!=[]:
+                    response['name']=name[0]['name']
+                    response['success']=True
+                else:
+                    response['success']=False
+                    response['msg_response']="Ocurrió un error al intentar obtener los datos del usuario."
+        else:
+            response['success']=False
+            response['msg_response']="Ocurrió un error al intentar obtener los datos."
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error, favor de intentarlo de nuevo.'
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+@bp.route('/getNotificationInfo', methods=['GET','POST'])
+@is_logged_in
+def getNotificationInfo():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            assignee=db.query("""
+                select
+                    a.user_id,
+                    a.name
+                from
+                    system.user a,
+                    task.task b
+                where
+                    b.task_id=%s
+                and a.user_id=b.assignee_id
+            """%data['task_id']).dictresult()[0]
+            select_list=[]
+            if data['user_type_id']==2: #if sender is supervisor
+                supervisor=db.query("""
+                    select
+                        a.user_id,
+                        a.name
+                    from
+                        system.user a,
+                        task.task b
+                    where
+                        a.user_id=b.supervisor_id
+                    and b.task_id=%s
+                """%data['task_id']).dictresult()[0]
+                admin=db.query("""
+                    select
+                        name,
+                        user_id
+                    from
+                        system.user
+                    where
+                        company_id=%s
+                    and user_type_id=1
+                """%data['company_id']).dictresult()[0]
+                select_list.append({
+                    'name':'%s - Aux'%assignee['name'],
+                    'user_id':'%s'%assignee['user_id']
+                })
+                select_list.append({
+                    'name':'%s - Admin'%admin['name'],
+                    'user_id':'%s'%admin['user_id']
+                })
+                select_list.append({
+                    'name':'%s - Aux, CC: %s - Admin'%(assignee['name'],admin['name']),
+                    'user_id':'%s,%s'%(assignee['user_id'],admin['user_id'])
+                })
+                response['msg_from']=supervisor['name']
+
+            elif data['user_type_id']==6: #if sender is supervisor-admin
+                select_list.append({
+                    'name':'%s - Aux'%assignee['name'],
+                    'user_id':'%s'%assignee['user_id']
+                })
+                admin=db.query("""
+                    select name from system.user where company_id=%s and user_type_id=6
+                """%data['company_id']).dictresult()[0]
+                response['msg_from']=admin['name']
+
+            elif data['user_type_id']==1: #if sender is admin
+                supervisor=db.query("""
+                    select
+                        a.user_id,
+                        a.name
+                    from
+                        system.user a,
+                        task.task b
+                    where
+                        a.user_id=b.supervisor_id
+                    and b.task_id=%s
+                """%data['task_id']).dictresult()[0]
+                admin=db.query("""
+                    select
+                        name,
+                        user_id
+                    from
+                        system.user
+                    where
+                        company_id=%s
+                    and user_type_id=1
+                """%data['company_id']).dictresult()[0]
+                select_list.append({
+                    'name':'%s - Aux'%assignee['name'],
+                    'user_id':'%s'%assignee['user_id']
+                })
+                select_list.append({
+                    'name':'%s - Sup'%supervisor['name'],
+                    'user_id':'%s'%supervisor['user_id']
+                })
+                select_list.append({
+                    'name':'%s - Aux, CC: %s - Sup'%(assignee['name'],supervisor['name']),
+                    'user_id':'%s,%s'%(assignee['user_id'],supervisor['user_id'])
+                })
+                response['msg_from']=admin['name']
+
+            elif data['user_type_id']==4:
+                supervisor=db.query("""
+                    select
+                        a.user_id,
+                        a.name
+                    from
+                        system.user a,
+                        task.task b
+                    where
+                        a.user_id=b.supervisor_id
+                    and b.task_id=%s
+                """%data['task_id']).dictresult()[0]
+                admin=db.query("""
+                    select
+                        name,
+                        user_id
+                    from
+                        system.user
+                    where
+                        company_id=%s
+                    and user_type_id=1
+                """%data['company_id']).dictresult()[0]
+                select_list.append({
+                    'name':'%s - Aux'%assignee['name'],
+                    'user_id':'%s'%assignee['user_id']
+                })
+                select_list.append({
+                    'name':'%s - Sup'%supervisor['name'],
+                    'user_id':'%s'%supervisor['user_id']
+                })
+                select_list.append({
+                    'name':'%s - Admin'%admin['name'],
+                    'user_id':'%s'%admin['user_id']
+                })
+                select_list.append({
+                    'name':'%s - Aux, CC: %s - Sup'%(assignee['name'],supervisor['name']),
+                    'user_id':'%s,%s'%(assignee['user_id'],supervisor['user_id'])
+                })
+                select_list.append({
+                    'name':'%s - Aux, CC: %s - Admin'%(assignee['name'],admin['name']),
+                    'user_id':'%s,%s'%(assignee['user_id'],admin['user_id'])
+                })
+                select_list.append({
+                    'name':'%s - Sup, CC: %s - Admin'%(supervisor['name'],admin['name']),
+                    'user_id':'%s,%s'%(supervisor['user_id'],admin['user_id'])
+                })
+                consultant=db.query("""
+                    select name from system.user where user_id=%s
+                """%data['user_id']).dictresult()[0]
+
+                response['msg_from']=consultant['name']
+
+            response['select_list']=select_list
+            response['success']=True
+
+        else:
+            response['success']=False
+            response['msg_response']="Ocurrió un error al intentar obtener los datos."
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+
+@bp.route('/sendNotification', methods=['GET','POST'])
+@is_logged_in
+def sendNotification():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            template=db.query("""
+                select * from template.generic_template where type_id=28
+            """).dictresult()[0]
+            task_info=db.query("""
+                select
+                    a.task_id,
+                    a.name,
+                    a.description,
+                    (select name from system.user where user_id=a.assignee_id) as assignee,
+                    (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                    to_char(a.deadline, 'DD-MM-YYYY HH24:MI:SS') as deadline,
+                    to_char(a.supervisor_deadline, 'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    to_char(a.assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline
+                from
+                    task.task a
+                where
+                    a.task_id=%s
+            """%data['task_id']).dictresult()[0]
+            task_info['msg']=data['message']
+            msg_from=db.query("""
+                select name from system.user where user_id=%s
+            """%data['msg_from']).dictresult()[0]
+            recipients=data['msg_to'].split(",")
+            if len(recipients)==1:
+                msg_to=db.query("""
+                    select name as msg_to, email from system.user where user_id=%s
+                """%data['msg_to']).dictresult()[0]
+                mail_recipients=[msg_to['email']]
+            else:
+                msg_to=db.query("""
+                    select name as msg_to from system.user where user_id=%s
+                """%recipients[0]).dictresult()[0]
+                cc=db.query("""
+                    select email from system.user where user_id in (%s)
+                """%data['msg_to']).dictresult()
+                mail_recipients=[]
+                for c in cc:
+                    mail_recipients.append(c['email'])
+
+            task_info['msg_to']=msg_to['msg_to']
+            task_info['msg_from']=msg_from['name']
+            task_info['msg']=data['message'].encode('utf-8')
+            task_info['link']=cfg.host
+            task_info['mail_img']=cfg.mail_img
+            message=template['body'].format(**task_info)
+
+            GF.sendMail(template['subject'].format(**task_info),message,mail_recipients)
+            task_notification={
+                'task_id':data['task_id'],
+                'msg_from':data['msg_from'],
+                'msg_to':data['msg_to'],
+                'message':data['message'].encode('utf-8'),
+                'send_date':'now'
+            }
+            db.insert("task.notification",task_notification)
+            response['success']=True
+            response['msg_response']="La notificación ha sido enviada."
+
+        else:
+            response['success']=False
+            response['msg_response']="Ocurrió un error al intentar obtener los datos."
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+@bp.route('/getNotificationHistory', methods=['GET','POST'])
+@is_logged_in
+def getNotificationHistory():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            notif=db.query("""
+                select *,
+                    to_char(send_date,'DD-MM-YYYY HH24:MI:SS') as send_date
+                from task.notification where task_id=%s order by notification_id desc
+            """%data['task_id']).dictresult()
+            if notif!=[]:
+                response['has_messages']=True
+                divs=''
+                for x in notif:
+                    msg_from=db.query("""
+                        select name from system.user where user_id = %s
+                    """%x['msg_from']).dictresult()[0]
+                    msg_to_list=db.query("""
+                        select name from system.user where user_id in (%s)
+                    """%x['msg_to']).dictresult()
+                    msg_to=', '.join(e['name'] for e in msg_to_list)
+                    divs+='''
+                        <div class="card card-mail"><div class="card-header card-header-mail"><h6><b>De:</b> %s</h6><h6><b>A:</b> %s</h6></div><div class="card-body card-body-mail"><span class="span-mail-date">Enviado:%s</span><hr class="hr-mail-date" /><p class="card-text">%s</p></div></div>
+                    '''%(msg_from['name'],msg_to,x['send_date'],x['message'])
+                response['mail_divs']=divs
+            else:
+                response['has_messages']=False
+            response['success']=True
+        else:
+            response['success']=False
+            response['msg_response']="Ocurrió un error al intentar obtener los datos, favor de intentarlo de nuevo."
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)

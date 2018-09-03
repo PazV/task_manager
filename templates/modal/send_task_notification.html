@@ -1,0 +1,37 @@
+<div class="modal fade" id="win_send_task_notification" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header user-header header-win-title">
+                    <span>Enviar notificación</span>
+                    <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info alert-dismissible" id="alertSTNForm" style="display:none;" role="alert">
+                        <p>Ocurrió un error.</p>
+                        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                    </div>
+                    <form method="POST" id="frmSendTaskNotif" style="padding:.25rem;">
+                        <div class="row form-group" style="width:inherit;">
+                            <label for="STNfrom" class="col-sm-2 col-form-label">De:</label>
+                            <input type="text" readonly id="STNfrom" class="col-sm-9 form-control" name="msg_from"/>
+                        </div>
+                        <div class="row form-group" style="width:inherit;">
+                            <label for="STNto" class="col-form-label col-sm-2">A:</label>
+                            <select id="STNto" class="form-control col-sm-9" name="msg_to"></select>
+                        </div>
+                        <div class="row form-group" style="width:inherit;">
+                            <label for="STNmessage" class="col-form-label" style="width:18%; margin-left:2%;">Mensaje:</label>
+                            <textarea type="text" name="message" class="form-control" id="STNmessage" style="width:72%; height:100px; margin-right:3%;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnShowkNotificationHistory" data-toggle="tooltip" title="Muestra historial de mensajes de la tarea">Ver historial <i class="fa fa-history"></i></button>
+                    <button type="button" class="btn btn-light" id="btnSendTaskNotification" data-toggle="tooltip" title="Enviar notificación">Enviar <i class="fa fa-send-o"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCloseSendNotification" data-toggle="tooltip" title="Salir">Salir <i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

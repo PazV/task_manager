@@ -69,13 +69,19 @@ class GenericFunctions:
             from_address=cfg.mail_username
             msg=MIMEMultipart()
             msg['From']=from_address
-            msg['To']=to_address
+            if type(to_address)==list:
+                msg['To']=','.join(to_address)
+                to_address.append(cfg.app_admin_mail)
+                list_to=to_address
+            else:
+                msg['To']=to_address
+                list_to=[to_address,cfg.app_admin_mail]
             # msg['To']="%s, %s"%(to_address,cfg.app_admin_mail)
             msg['Subject']=subject.decode('utf-8')
             body=self.replaceStringHtml(body)
             msg.attach(MIMEText(body,'html'))
             text=msg.as_string()
-            list_to=[to_address,cfg.app_admin_mail]
+
             server.sendmail(from_address,list_to,text)
             response['success']=True
         except:

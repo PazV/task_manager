@@ -166,3 +166,27 @@ input[type="date"]
     -moz-appearance: textfield;
     min-height: 1.2em;
 }
+
+
+.card-header-mail{
+    padding:5px 15px 2px;
+    background-color:#d9d9d9;
+    border:1px solid #f2f2f2;
+}
+
+.card-mail{
+    margin:0.3em;
+}
+
+.hr-mail-date{
+    margin-top:0.25rem;
+    margin-bottom:0.25rem;
+}
+
+.card-body-mail{
+    padding:.25rem 1.25rem 1.25rem 1.25rem;
+}
+
+.span-mail-date{
+    font-size:.8rem;
+}
