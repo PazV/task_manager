@@ -1815,10 +1815,30 @@ def getNotificationInfo():
                 response['msg_from']=supervisor['name']
 
             elif data['user_type_id']==6: #if sender is supervisor-admin
+                supervisor=db.query("""
+                    select
+                        a.user_id,
+                        a.name
+                    from
+                        system.user a,
+                        task.task b
+                    where
+                        a.user_id=b.supervisor_id
+                    and b.task_id=%s
+                """%data['task_id']).dictresult()[0]
                 select_list.append({
                     'name':'%s - Aux'%assignee['name'],
                     'user_id':'%s'%assignee['user_id']
                 })
+                if int(supervisor['user_id'])!=int(data['user_id']):
+                    select_list.append({
+                        'name':'%s - Sup'%supervisor['name'],
+                        'user_id':'%s'%supervisor['user_id']
+                    })
+                    select_list.append({
+                        'name':'%s - Aux, %s - Sup'%(assignee['name'],supervisor['name']),
+                        'user_id':'%s,%s'%(assignee['user_id'],supervisor['user_id'])
+                    })
                 admin=db.query("""
                     select name from system.user where company_id=%s and user_type_id=6
                 """%data['company_id']).dictresult()[0]
