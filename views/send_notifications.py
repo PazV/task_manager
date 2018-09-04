@@ -95,48 +95,20 @@ def main():
                 assignee_date=str(now_date-timedelta(days=assignee_days))
                 logger.info("assignee date %s"%assignee_date)
 
-                # pending_tasks_assignee=db.query("""
-                #     select
-                #         task_id,
-                #         name,
-                #         description,
-                #         assignee_id,
-                #         to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
-                #         (select a.name from system.user a where a.user_id=assignee_id) as assignee,
-                #         (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
-                #     from task.task
-                #     where status_id in (1,6)
-                #     and company_id=%s
-                #     and assignee_deadline between '%s 00:00:00' and '%s 23:59:59'
-                # """%(x['company_id'],assignee_date.split(" ")[0],now_str)).dictresult()
                 pending_tasks_assignee=db.query("""
                     select
-                            task_id,
-                            name,
-                            description,
-                            assignee_id,
-                            to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
-                            (select a.name from system.user a where a.user_id=assignee_id) as assignee,
-                            (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
-                        from task.task
-                        where status_id in (1,6)
-                        and company_id=%s
-                        and now() between assignee_deadline - INTERVAL '%s DAYS' and assignee_deadline
+                        task_id,
+                        name,
+                        description,
+                        assignee_id,
+                        to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                        (select a.name from system.user a where a.user_id=assignee_id) as assignee,
+                        (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
+                    from task.task
+                    where status_id in (1,6)
+                    and company_id=%s
+                    and now() between assignee_deadline - INTERVAL '%s DAYS' and assignee_deadline
                 """%(x['company_id'],assignee_days)).dictresult()
-                # """
-                # select
-                #         task_id,
-                #         name,
-                #         description,
-                #         assignee_id,
-                #         to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
-                #         (select a.name from system.user a where a.user_id=assignee_id) as assignee,
-                #         (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
-                #     from task.task
-                #     where status_id in (1,6)
-                #     and company_id=3
-                # and now() between assignee_deadline - INTERVAL '4 DAYS' and assignee_deadline;
-                # """
 
                 if pending_tasks_assignee!=[]:
                     assignee_template=db.query("""
@@ -222,11 +194,8 @@ def main():
                         msg=admin_template['body'].format(**pad)
                         MF.sendMail(recipient,admin_template['subject'].format(**pad),msg)
 
-
-
                 logger.info("pending tasks assigne")
                 logger.info(pending_tasks_assignee)
-
 
         logger.info(notif_list)
     except:
