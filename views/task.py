@@ -1975,7 +1975,7 @@ def sendNotification():
             """%data['task_id']).dictresult()[0]
             task_info['msg']=data['message']
             msg_from=db.query("""
-                select name from system.user where user_id=%s
+                select name,email from system.user where user_id=%s
             """%data['msg_from']).dictresult()[0]
             recipients=data['msg_to'].split(",")
             if len(recipients)==1:
@@ -1993,6 +1993,7 @@ def sendNotification():
                 mail_recipients=[]
                 for c in cc:
                     mail_recipients.append(c['email'])
+            mail_recipients.append(msg_from['email'])
 
             task_info['msg_to']=msg_to['msg_to']
             task_info['msg_from']=msg_from['name']
