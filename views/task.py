@@ -123,7 +123,8 @@ def saveTask():
             valid=True
             for k,v in data.iteritems():
                 if v=="" or v==None:
-                    valid=False
+                    if k!='description':
+                        valid=False
             if valid:
                 deadline=time.strptime(data['deadline'],"%Y-%m-%d")
                 supervisor_deadline=time.strptime(data['supervisor_deadline'],"%Y-%m-%d")
@@ -1251,6 +1252,7 @@ def cancelTask():
 def checkAssigneeTasks():
     response={}
     try:
+        # app.logger.info(request.form)
         flag,data=GF.toDict(request.form,'post')
         if flag:
             response['overlaps']=False
