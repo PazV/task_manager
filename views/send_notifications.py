@@ -124,6 +124,34 @@ def main():
                         msg=assignee_template['body'].format(**pa)
                         MF.sendMail(recipient,assignee_template['subject'].format(**pa),msg)
 
+                expired_tasks_assignee=db.query("""
+                    select
+                        task_id,
+                        name,
+                        description,
+                        assignee_id,
+                        to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                        (select a.name from system.user a where a.user_id=assignee_id) as assignee,
+                        (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
+                    from task.task
+                    where status_id in (1,6)
+                    and company_id=%s
+                    and assignee_deadline<now()
+                """%(x['company_id'])).dictresult()
+                if expired_tasks_assignee!=[]:
+                    exp_assignee_template=db.query("""
+                        select * from template.generic_template where type_id=29
+                    """).dictresult()[0]
+                    for eta in expired_tasks_assignee:
+                        logger.info("Tarea: %s, fecha limite auxiliar:%s"%(eta['name'],eta['assignee_deadline']))
+                        recipient=db.query("""
+                            select email from system.user where user_id=%s
+                        """%eta['assignee_id']).dictresult()[0]['email']
+                        eta['link']=cfg.host
+                        eta['mail_img']=cfg.mail_img
+                        msg=exp_assignee_template['body'].format(**eta)
+                        MF.sendMail(recipient,exp_assignee_template['subject'].format(**eta),msg)
+
                 #SUPERVISOR'S NOTIFICATIONS
                 supervisor_days=int(x['supervisor_days'].split("_")[0])
                 logger.info("supervisor days %s"%supervisor_days)
@@ -158,6 +186,35 @@ def main():
                         ps['mail_img']=cfg.mail_img
                         msg=supervisor_template['body'].format(**ps)
                         MF.sendMail(recipient,supervisor_template['subject'].format(**ps),msg)
+
+                expired_tasks_supervisor=db.query("""
+                    select
+                        task_id,
+                        name,
+                        description,
+                        supervisor_id,
+                        to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                        to_char(supervisor_deadline, 'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                        (select a.name from system.user a where a.user_id=assignee_id) as assignee,
+                        (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
+                    from task.task
+                    where status_id in (1,6)
+                    and company_id=%s
+                    and supervisor_deadline<now()
+                """%(x['company_id'])).dictresult()
+                if expired_tasks_supervisor!=[]:
+                    exp_supervisor_template=db.query("""
+                        select * from template.generic_template where type_id=30
+                    """).dictresult()[0]
+                    for ets in expired_tasks_supervisor:
+                        logger.info("Tarea: %s, fecha limite supervisor:%s"%(ets['name'],ets['supervisor_deadline']))
+                        recipient=db.query("""
+                            select email from system.user where user_id=%s
+                        """%ets['supervisor_id']).dictresult()[0]['email']
+                        ets['link']=cfg.host
+                        ets['mail_img']=cfg.mail_img
+                        msg=exp_supervisor_template['body'].format(**ets)
+                        MF.sendMail(recipient,exp_supervisor_template['subject'].format(**ets),msg)
 
                 #ADMIN NOTIFICATIONS
                 admin_days=int(x['admin_days'].split("_")[0])
@@ -194,8 +251,37 @@ def main():
                         msg=admin_template['body'].format(**pad)
                         MF.sendMail(recipient,admin_template['subject'].format(**pad),msg)
 
-                logger.info("pending tasks assigne")
-                logger.info(pending_tasks_assignee)
+                expired_tasks_admin=db.query("""
+                    select
+                        task_id,
+                        name,
+                        description,
+                        to_char(assignee_deadline, 'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                        to_char(supervisor_deadline, 'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                        to_char(deadline, 'DD-MM-YYYY HH24:MI:SS') as deadline,
+                        (select a.name from system.user a where a.user_id=assignee_id) as assignee,
+                        (select a.name from system.user a where a.user_id=supervisor_id) as supervisor
+                    from task.task
+                    where status_id in (1,6)
+                    and company_id=%s
+                    and deadline<now()
+                """%(x['company_id'])).dictresult()
+
+                if expired_tasks_admin!=[]:
+                    exp_admin_template=db.query("""
+                        select * from template.generic_template where type_id=31
+                    """).dictresult()[0]
+                    for etad in expired_tasks_admin:
+                        logger.info("Tarea: %s, fecha limite administrador:%s"%(etad['name'],etad['deadline']))
+                        recipient=db.query("""
+                            select email from system.user where company_id=%s and user_type_id=1
+                        """%x['company_id']).dictresult()[0]['email']
+                        etad['link']=cfg.host
+                        etad['mail_img']=cfg.mail_img
+                        msg=exp_admin_template['body'].format(**etad)
+                        MF.sendMail(recipient,exp_admin_template['subject'].format(**etad),msg)
+
+
 
         logger.info(notif_list)
     except:
