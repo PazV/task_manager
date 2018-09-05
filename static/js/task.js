@@ -366,9 +366,9 @@ $(document).ready(function(){
     $("#NTname").focusout(function(){
         emptyField("#NTname","#spnNTname");
     });
-    $("#NTdescription").focusout(function(){
-        emptyField("#NTdescription","#spnNTdescription");
-    });
+    // $("#NTdescription").focusout(function(){
+    //     emptyField("#NTdescription","#spnNTdescription");
+    // });
     $("#NTdeadline").focusout(function(){
         var valid_empty=emptyField("#NTdeadline","#spnNTdeadline");
         // if (valid_empty){
@@ -416,15 +416,19 @@ $(document).ready(function(){
         $("#NTdeadline").focusout();
         $("#NTsupervisor_deadline").focusout();
         $("#NTassigee_deadline").focusout();
+        console.log(input_list);
         for (x in input_list){
-            if (input_list[x].type=='text' || input_list[x].type=='date' || input_list[x].type=='textarea'){
+            // if (input_list[x].type=='text' || input_list[x].type=='date' || input_list[x].type=='textarea'){
+            if (input_list[x].type=='text' || input_list[x].type=='date'){
+                console.log(input_list[x].id);
                 if ($("#"+input_list[x].id).hasClass('valid-field')===false){
+                    console.log("invalid "+input_list[x].id);
                     $("#"+input_list[x].id).focusout();
-
                     is_valid=false;
                 }
             }
         }
+        console.log("is valid "+is_valid);
         if (is_valid){
             EasyLoading.show({
                 text:"Cargando...",
@@ -437,7 +441,9 @@ $(document).ready(function(){
             data['company_id']=me.user_info['company_id'];
             data['user_id']=me.user_info['user_id'];
             data['document']=JSON.stringify(me.evidence_list);
-
+            // console.log(data);
+            data['name']=encodeURIComponent(data['name']);
+            data['description']=encodeURIComponent(data['description']);
             $.ajax({
                 url:'/task/checkAssigneeTasks',
                 method:'POST',
