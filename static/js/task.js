@@ -441,7 +441,7 @@ $(document).ready(function(){
             data['company_id']=me.user_info['company_id'];
             data['user_id']=me.user_info['user_id'];
             data['document']=JSON.stringify(me.evidence_list);
-            
+
             data['name']=encodeURIComponent(data['name']);
             data['description']=encodeURIComponent(data['description']);
             $.ajax({
@@ -1245,17 +1245,18 @@ $(document).ready(function(){
         }
     });
 
-    $("#TEdescription").focusout(function(){
-        emptyField("#TEdescription","#spnTEdescription");
-    });
+    // $("#TEdescription").focusout(function(){
+    //     emptyField("#TEdescription","#spnTEdescription");
+    // });
 
     $("#btnSaveEvidence").click(function(){
         var input_list=$("#frmAddEvidence").find(":input");
         var is_valid=true;
         $("#TEname").focusout();
-        $("#TEdescription").focusout();
+        // $("#TEdescription").focusout();
         for (x in input_list){
-            if (input_list[x].type=='text' || input_list[x].type=='textarea'){
+            // if (input_list[x].type=='text' || input_list[x].type=='textarea'){
+            if (input_list[x].type=='text'){
                 if ($("#"+input_list[x].id).hasClass('valid-field')===false){
                     $("#"+input_list[x].id).focusout();
 
