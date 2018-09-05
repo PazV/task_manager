@@ -165,40 +165,72 @@ def saveTask():
                         where a.task_id=%s
                     """%new_task['task_id']).dictresult()[0]
 
+
                     message=db.query("""
-                        select * from template.generic_template where type_id=1
+                        select * from template.generic_template where type_id=24
                     """).dictresult()[0]
-                    recipient=db.query("""
-                        select email from system.user where user_id=%s
-                    """%data['assignee_id']).dictresult()[0]['email']
                     task_info['link']=cfg.host
                     task_info['mail_img']=cfg.mail_img
                     msg=message['body'].format(**task_info)
-                    GF.sendMail(message['subject'].format(**task_info),msg,recipient)
 
-                    message_sup=db.query("""
-                        select * from template.generic_template where type_id=18
-                    """).dictresult()[0]
-                    recipient_sup=db.query("""
-                        select email from system.user where user_id=%s
-                    """%data['supervisor_id']).dictresult()[0]['email']
-                    msg_sup=message_sup['body'].format(**task_info)
-                    GF.sendMail(message_sup['subject'].format(**task_info),msg_sup,recipient_sup)
+                    if data['notify_admin']==True:
+                        check_sup_type=db.query("""
+                            select user_type_id from system.user where user_id=%s
+                        """%data['supervisor_id']).dictresult()[0]
+                        if check_sup_type['user_type_id']==2:
+                            recipients=db.query("""
+                                select email from system.user
+                                where (company_id=%s and user_type_id in (1,6)) or (user_id in (%s,%s))
+                            """%(data['company_id'],data['assignee_id'],data['supervisor_id'])).dictresult()
+                        else:
+                            recipients=db.query("""
+                                select email from system.user where user_id in (%s,%s)
+                            """%(data['assignee_id'],data['supervisor_id'])).dictresult()
+                    else:
+                        recipients=db.query("""
+                            select email from system.user where user_id in (%s,%s)
+                        """%(data['assignee_id'],data['supervisor_id'])).dictresult()
+                    mail_recipients=[]
+                    for r in recipients:
+                        mail_recipients.append(r['email'])
+                    GF.sendMail(message['subject'].format(**task_info),msg,mail_recipients)
 
-                    supervisor_type=db.query("""
-                        select user_type_id from system.user where user_id=%s
-                    """%data['supervisor_id']).dictresult()[0]['user_type_id']
-                    if supervisor_type==2: #si es solo supervisor, si es supervisor/admin, no es necesario enviar correo a administrador
-                        message_admin=db.query("""
-                            select * from template.generic_template where type_id=24
-                        """).dictresult()[0]
-                        recipient_admin=db.query("""
-                            select name, email from system.user where company_id=%s and user_type_id in (1,6)
-                        """%data['company_id']).dictresult()[0]
-                        task_info['admin']=recipient_admin['name']
-                        task_info['mail_img']=cfg.mail_img
-                        msg_admin=message_admin['body'].format(**task_info)
-                        GF.sendMail(message_admin['subject'].format(**task_info),msg_admin,recipient_admin['email'])
+                    # #assignee
+                    # message=db.query("""
+                    #     select * from template.generic_template where type_id=1
+                    # """).dictresult()[0]
+                    # recipient=db.query("""
+                    #     select email from system.user where user_id=%s
+                    # """%data['assignee_id']).dictresult()[0]['email']
+                    # task_info['link']=cfg.host
+                    # task_info['mail_img']=cfg.mail_img
+                    # msg=message['body'].format(**task_info)
+                    # GF.sendMail(message['subject'].format(**task_info),msg,recipient)
+                    #
+                    # #supervisor
+                    # message_sup=db.query("""
+                    #     select * from template.generic_template where type_id=18
+                    # """).dictresult()[0]
+                    # recipient_sup=db.query("""
+                    #     select email from system.user where user_id=%s
+                    # """%data['supervisor_id']).dictresult()[0]['email']
+                    # msg_sup=message_sup['body'].format(**task_info)
+                    # GF.sendMail(message_sup['subject'].format(**task_info),msg_sup,recipient_sup)
+                    #
+                    # supervisor_type=db.query("""
+                    #     select user_type_id from system.user where user_id=%s
+                    # """%data['supervisor_id']).dictresult()[0]['user_type_id']
+                    # if supervisor_type==2: #si es solo supervisor, si es supervisor/admin, no es necesario enviar correo a administrador
+                    #     message_admin=db.query("""
+                    #         select * from template.generic_template where type_id=24
+                    #     """).dictresult()[0]
+                    #     recipient_admin=db.query("""
+                    #         select name, email from system.user where company_id=%s and user_type_id in (1,6)
+                    #     """%data['company_id']).dictresult()[0]
+                    #     task_info['admin']=recipient_admin['name']
+                    #     task_info['mail_img']=cfg.mail_img
+                    #     msg_admin=message_admin['body'].format(**task_info)
+                    #     GF.sendMail(message_admin['subject'].format(**task_info),msg_admin,recipient_admin['email'])
 
                     response['success']=True
                     response['msg_response']='La tarea ha sido creada.'
@@ -661,8 +693,7 @@ def resolveTask():
         """%data['company_id']).dictresult()[0]['task_folder']
         task_folder="task_%s"%data['task_id']
         task_path='%s%s/%s/'%(cfg.task_path,folder,task_folder)
-        app.logger.info("files list %s"%files_list)
-        app.logger.info(frm)
+
         if not os.path.exists(task_path):
             #en caso de no existir la carpeta, crea una nueva
             os.makedirs(task_path)
@@ -680,7 +711,7 @@ def resolveTask():
                 document_id=x.split("_")[1]
                 file=frm[x]
                 filename = secure_filename(file.filename)
-                app.logger.info("filename %s"%filename)
+
                 if os.path.exists("%s%s"%(task_path,filename)):
                     name,ext=os.path.splitext(filename)
                     filename="%s_%s%s"%(name,ev_cont,ext)
@@ -771,8 +802,7 @@ def pauseResolveTask():
         data=request.form.to_dict()
         files_list=eval(data['files_list'])
         files=request.files
-        app.logger.info("len files")
-        app.logger.info(len(files))
+
         if len(files_list)>0: #if there are files to save
             #check if folder exists
             company_folder=db.query("""
@@ -1272,10 +1302,7 @@ def checkAssigneeTasks():
                 msg=""
                 for x in tasks:
                     msg+="<li>%s</li>"%GF.replaceStringHtml(x['name'])
-                app.logger.info(name[0]['name'])
-                app.logger.info(GF.replaceStringHtml(name[0]['name']))
-                app.logger.info(data['assignee_deadline'])
-                app.logger.info(msg)
+
                 split_date=data['assignee_deadline'].split("-")
                 new_name=GF.replaceStringHtml(name[0]['name'])
                 new_date="%s-%s-%s"%(split_date[2],split_date[1],split_date[0])
