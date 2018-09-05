@@ -441,7 +441,7 @@ $(document).ready(function(){
             data['company_id']=me.user_info['company_id'];
             data['user_id']=me.user_info['user_id'];
             data['document']=JSON.stringify(me.evidence_list);
-            // console.log(data);
+            
             data['name']=encodeURIComponent(data['name']);
             data['description']=encodeURIComponent(data['description']);
             $.ajax({
