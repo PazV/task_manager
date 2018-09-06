@@ -89,6 +89,7 @@ def main():
         """).dictresult()
         if notif_list!=[]:
             for x in notif_list:
+                logger.info("Empezando empresa %s"%x['company_id'])
                 # ASSIGNEE'S NOTIFICATIONS
                 assignee_days=int(x['assignee_days'].split("_")[0])
                 logger.info("assignee days %s"%assignee_days)
@@ -244,7 +245,7 @@ def main():
                     for pad in pending_tasks_admin:
                         logger.info("Tarea: %s, fecha limite administrador:%s"%(pad['name'],pad['deadline']))
                         recipient=db.query("""
-                            select email from system.user where company_id=%s and user_type_id=1
+                            select email from system.user where company_id=%s and user_type_id in (1,6)
                         """%x['company_id']).dictresult()[0]['email']
                         pad['link']=cfg.host
                         pad['mail_img']=cfg.mail_img
@@ -274,7 +275,7 @@ def main():
                     for etad in expired_tasks_admin:
                         logger.info("Tarea: %s, fecha limite administrador:%s"%(etad['name'],etad['deadline']))
                         recipient=db.query("""
-                            select email from system.user where company_id=%s and user_type_id=1
+                            select email from system.user where company_id=%s and user_type_id in (1,6)
                         """%x['company_id']).dictresult()[0]['email']
                         etad['link']=cfg.host
                         etad['mail_img']=cfg.mail_img
