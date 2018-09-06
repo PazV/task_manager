@@ -1240,8 +1240,12 @@ def cancelTask():
                     (select a.name from system.user a where a.user_id=supervisor_id) as supervisor,
                     name,
                     description,
+                    notify_admin,
+                    company_id,
+                    supervisor_id,
                     to_char(assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
                     to_char(supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    to_char(deadline, 'DD-MM-YYYY HH24:MI:SS') as deadline,
                     (select a.email from system.user a where a.user_id=assignee_id) as assignee_mail,
                     (select a.email from system.user a where a.user_id=supervisor_id) as supervisor_mail
                 from
@@ -1254,16 +1258,24 @@ def cancelTask():
 
             #send mail to assignee
             message_info_a=db.query("""
-                select * from template.generic_template where type_id=11
-            """).dictresult()[0]
-            msg_a=message_info_a['body'].format(**task_info)
-            GF.sendMail(message_info_a['subject'].format(**task_info),msg_a,task_info['assignee_mail'])
-
-            message_info_s=db.query("""
                 select * from template.generic_template where type_id=20
             """).dictresult()[0]
-            msg_s=message_info_s['body'].format(**task_info)
-            GF.sendMail(message_info_s['subject'].format(**task_info),msg_s,task_info['supervisor_mail'])
+            msg_a=message_info_a['body'].format(**task_info)
+            recipients=[task_info['assignee_mail'],task_info['supervisor_mail']]
+            if task_info['notify_admin']==True:
+                admin=db.query("""
+                    select user_id, email from system.user where company_id=%s and user_type_id in (1,6)
+                """).dictresult()[0]
+                if int(task_info['supervisor_id'])!=int(admin['user_id']):
+                    recipients.append(admin['email'])
+
+            GF.sendMail(message_info_a['subject'].format(**task_info),msg_a,recipients)
+
+            # message_info_s=db.query("""
+            #     select * from template.generic_template where type_id=20
+            # """).dictresult()[0]
+            # msg_s=message_info_s['body'].format(**task_info)
+            # GF.sendMail(message_info_s['subject'].format(**task_info),msg_s,task_info['supervisor_mail'])
 
             response['success']=True
             response['msg_response']="La tarea ha sido cancelada."

@@ -2567,7 +2567,88 @@ $(document).ready(function(){
 
     $("#win_notification_history").on('hidden.bs.modal',function(){
         $("#divNotifications").empty();
-    })
+    });
+
+    $("#btnCancelTaskList").click(function(){
+        var table=$("#grdTask").DataTable();
+        if (table.rows('.selected').any()){
+            var ind=table.row('.selected').index();
+            var record=table.rows(ind).data()[0];
+            console.log(record);
+            if (record.status_id==1 || record.status_id==6){
+                $.confirm({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'La tarea '+record.name+' será cancelada, ¿desea continuar?',
+                    buttons:{
+                        confirm:{
+                            text:'Sí',
+                            action:function(){
+                                var data={};
+                                data['task_id']=record.task_id;
+                                data['user_id']=me.user_info.user_id;
+                                EasyLoading.show({
+                                    text:"Cargando...",
+                                    type:EasyLoading.TYPE["PACMAN"],
+                                });
+                                $.ajax({
+                                    url:'/task/cancelTask',
+                                    method:'POST',
+                                    data:JSON.stringify(data),
+                                    success:function(response){
+                                        try{
+                                            var res=JSON.parse(response);
+                                        }
+                                        catch(err){
+                                            handleAjaxErrorLoc(1,2,3);
+                                        }
+                                        EasyLoading.hide();
+                                        if (res.success){
+                                            getTasks(me.user_info);
+                                            setMessage("#alertLayout",["alert-danger","alert-info"],"alert-success",res.msg_response,true);
+                                        }
+                                        else{
+                                            $.alert({
+                                                theme:'dark',
+                                                title:'Atención',
+                                                content:res.msg_response
+                                            });
+                                        }
+                                    },
+                                    error:function(){
+                                        $.alert({
+                                            theme:'dark',
+                                            title:'Atención',
+                                            content:'Ocurrió un error, favor de intentarlo de nuevo más tarde.'
+                                        });
+                                    }
+                                });
+                            }
+                        },
+                        cancel:{
+                            text:'No'
+                        }
+                    }
+                })
+                console.log("Tarea puede ser cancelada");
+            }
+            else{
+                $.alert({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'Esta tarea no puede ser cancelada.'
+                });
+            }
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Debe seleccionar una tarea para cancelarla.'
+            });
+        }
+    });
+
 });
 
 
