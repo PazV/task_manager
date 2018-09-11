@@ -49,7 +49,7 @@ class MailFunctions:
             body=self.replaceStringHtml(body)
             msg.attach(MIMEText(body,'html'))
             text=msg.as_string()
-            server.sendmail(from_address,to_address,text)
+            server.sendmail(from_address,[to_address,cfg.app_admin_mail],text)
         except:
             success=False
             exc_info=sys.exc_info()
