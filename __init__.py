@@ -32,11 +32,11 @@ def create_app(test_config=None):
         SECRET_KEY=cfg.app_secret_key,
         #DATABASE=os.path.join(app.instance_path, 'taskapp.sqlite'),
         DEBUG_TB_INTERCEPT_REDIRECTS=False,
-        # SESSION_COOKIE_SECURE=True,
-        # SESSION_COOKIE_HTTPONLY=True,
-        # SESSION_COOKIE_SAMESITE='Lax',
-        # SERVER_NAME='178.128.189.120',
-        # SESSION_COOKIE_PATH='/home'
+        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE='Lax',
+        SERVER_NAME='178.128.189.120',
+        SESSION_COOKIE_PATH='178.128.189.120/home'
     )
     mail = Mail(app)
     # toolbar=DebugToolbarExtension(app)
