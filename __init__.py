@@ -32,6 +32,8 @@ def create_app(test_config=None):
         SECRET_KEY=cfg.app_secret_key,
         #DATABASE=os.path.join(app.instance_path, 'taskapp.sqlite'),
         DEBUG_TB_INTERCEPT_REDIRECTS=False,
+        SERVER_NAME=cfg.host,
+        # SESSION_COOKIE_PATH='/home'
     )
     mail = Mail(app)
     # toolbar=DebugToolbarExtension(app)
@@ -60,7 +62,9 @@ def create_app(test_config=None):
     app.register_blueprint(register.bp)
     from views import dashboard
     app.register_blueprint(dashboard.bp)
-    app.add_url_rule('/',endpoint='index')
+    app.add_url_rule('/home',endpoint='index')
+    app.add_url_rule('/',endpoint='index2')
+    # app.add_url_rule('/',endpoint='index')
     from views import users
     app.register_blueprint(users.bp)
     from views import task
