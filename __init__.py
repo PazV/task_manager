@@ -32,7 +32,7 @@ def create_app(test_config=None):
         SECRET_KEY=cfg.app_secret_key,
         #DATABASE=os.path.join(app.instance_path, 'taskapp.sqlite'),
         DEBUG_TB_INTERCEPT_REDIRECTS=False,
-        SERVER_NAME=cfg.host,
+        SERVER_NAME='178.128.189.120',
         SESSION_COOKIE_PATH='/home'
     )
     mail = Mail(app)
