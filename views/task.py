@@ -24,9 +24,10 @@ import random
 import app_config as cfg
 import datetime
 import time
-from openpyxl import Workbook
-from openpyxl.styles import colors
-from openpyxl.styles import Font, Color
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, Color, colors, PatternFill, Border, Alignment
+from openpyxl.cell import Cell
+
 bp = Blueprint('task', __name__, url_prefix='/task')
 
 @bp.route('/getSupervisor',methods=['GET','POST'])
@@ -489,9 +490,10 @@ def getTaskDetails():
                             if task['status_id']==4:
                                 random_number=int(random.random()*100000)
                                 fname,ext=os.path.splitext(x['file_name'])
+
                                 doc_list+="""
                                     <div style="display:inline-block"><li>%s (%s) <br> cargado %s</li><a href="/task/downloadEvidence/%s_%s%s" target="_blank" role="button" class="btn btn-danger detail-ev-buttons" data-toggle="tooltip" title="Descargar %s"><i class="fa fa-file-text-o"></i></a></div>
-                                """%(x['name'],x['document_type'],x['loaded'],random_number,ext,x['document_id'],x['name'])
+                                """%(x['name'],x['document_type'],x['loaded'],random_number,x['document_id'],ext,x['name'])
                             else:
                                 doc_list+="<li>%s (%s) <br> cargado %s</li>"%(x['name'],x['document_type'],x['loaded'])
 
@@ -878,7 +880,7 @@ def pauseResolveTask():
 def downloadEvidence(document_id):
     response={}
     try:
-
+        app.logger.info(document_id)
         doc_id=document_id.split("_")[1]
         evidence=db.query("""
             select
@@ -893,7 +895,7 @@ def downloadEvidence(document_id):
         path="%s%s"%(evidence[0]['file_path'],evidence[0]['file_name'])
         name=evidence[0]['file_name']
 
-        return send_file(path,attachment_filename=name)
+        return send_file(path,attachment_filename=name,as_attachment=True)
     except:
         response['success']=False
         response['msg_response']='Ocurrió un error'
@@ -1699,54 +1701,41 @@ def editTask():
 
                 task_info['link']=cfg.host
                 task_info['mail_img']=cfg.mail_img
-
+                recipient_list=[]
                 #send notification to new assignee
-                new_aux_message=db.query("""
-                    select * from template.generic_template where type_id=27
-                """).dictresult()[0]
 
-                task_info['assignee_to']=task_info['assignee']
-                new_aux_msg=new_aux_message['body'].format(**task_info)
-                GF.sendMail(new_aux_message['subject'].format(**task_info),new_aux_msg,task_info['assignee_mail'])
+
+                recipient_list.append(task_info['assignee_mail'])
 
                 if int(data['assignee_id'])!=int(original_task['assignee_id']):
-                    task_info['assignee_to']=original_task['assignee']
-                    new_aux_msg=new_aux_message['body'].format(**task_info)
-                    GF.sendMail(new_aux_message['subject'].format(**task_info),new_aux_msg,original_task['assignee_mail'])
 
-                new_sup_message=db.query("""
-                    select * from template.generic_template where type_id=26
-                """).dictresult()[0]
-                task_info['supervisor_to']=task_info['supervisor']
-                new_sup_msg=new_sup_message['body'].format(**task_info)
-                GF.sendMail(new_sup_message['subject'].format(**task_info),new_sup_msg,task_info['supervisor_mail'])
+                    recipient_list.append(original_task['assignee_mail'])
+
+
+                recipient_list.append(task_info['supervisor_mail'])
 
                 if int(data['supervisor_id'])!=int(original_task['supervisor_id']):
-                    task_info['supervisor_to']=original_task['supervisor']
-                    new_sup_msg=new_sup_message['body'].format(**task_info)
-                    GF.sendMail(new_sup_message['subject'].format(**task_info),new_sup_msg,original_task['supervisor_mail'])
+
+                    recipient_list.append(original_task['supervisor_mail'])
 
                 if task_info['notify_admin']==True:
                     admin_type=db.query("""
                         select user_id, user_type_id, name as admin, email as admin_mail  from system.user where company_id=%s and user_type_id in (1,6)
                     """%data['company_id']).dictresult()[0]
                     if int(admin_type['user_type_id'])==1:
-                        task_info['admin_to']=admin_type['admin']
-                        task_info['admin']=admin_type['admin']
-                        admin_message=db.query("""
-                            select * from template.generic_template where type_id=25
-                        """).dictresult()[0]
-                        admin_msg=admin_message['body'].format(**task_info)
-                        GF.sendMail(admin_message['subject'].format(**task_info),admin_msg,admin_type['admin_mail'])
+
+                        recipient_list.append(admin_type['admin_mail'])
                     else:
                         if int(admin_type['user_id'])!=int(data['supervisor_id']):
-                            task_info['admin_to']=admin_type['admin']
-                            task_info['admin']=admin_type['admin']
-                            admin_message=db.query("""
-                                select * from template.generic_template where type_id=25
-                            """).dictresult()[0]
-                            admin_msg=admin_message['body'].format(**task_info)
-                            GF.sendMail(admin_message['subject'].format(**task_info),admin_msg,admin_type['admin_mail'])
+
+                            recipient_list.append(admin_type['admin_mail'])
+
+
+                message=db.query("""
+                    select * from template.generic_template where type_id=25
+                """).dictresult()[0]
+                msg=message['body'].format(**task_info)
+                GF.sendMail(message['subject'].format(**task_info),msg,recipient_list)
 
                 response['success']=True
                 response['msg_response']='La tarea ha sido actualizada.'
@@ -2104,3 +2093,228 @@ def getNotificationHistory():
         exc_info=sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))
     return json.dumps(response)
+
+@bp.route('/getUploadTasksButtons',methods=['GET','POST'])
+@is_logged_in
+def getUploadTasksButtons():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            buttons='''
+                <a href="/task/downloadAssigneeList/{company_id}.xlsx" role="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Descargar lista de auxiliares" style="margin-left:3%; margin-right:2.5%; width:44.5%;" target="_blank">Lista de auxiliares</a><a href="/task/downloadSupervisorList/{company_id}.xlsx" role="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Descargar lista de supervisores" style="margin-left:2.5%; margin-right:3%; width:44.5%;" target="_blank">Lista supervisores</a>
+            '''.format(**data)
+            response['success']=True
+            response['buttons']=buttons
+        else:
+            response['success']=False
+            response['msg_response']='Ocurrió un error al intentar obtener los datos.'
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo más tarde."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+@bp.route('/downloadAssigneeList/<company_id>',methods=['GET','POST'])
+@is_logged_in
+def downloadAssigneeList(company_id):
+    response={}
+    try:
+        app.logger.info(company_id)
+        assignees=db.query("""
+            select name, login from system.user where company_id=%s and user_type_id=3
+        """%company_id.split(".")[0]).dictresult()
+        wb = Workbook()
+        sheet_number = 0
+        ws = wb.create_sheet("Auxiliares")
+        ws.cell(row=1,column=1,value='Nombre').font=Font(name='Arial', size=12, bold=True)
+        ws.cell(row=1,column=2,value='Usuario').font=Font(name='Arial', size=12, bold=True)
+        row=2
+        for x in assignees:
+            ws.cell(row=row, column=1, value=x['name']).font=Font(name='Arial',size=11)
+            ws.cell(row=row, column=2, value=x['login']).font=Font(name='Arial',size=11)
+            row+=1
+
+        for column_cells in ws.columns:
+            length = max(len(GF.as_text(cell.value))+5 for cell in column_cells)
+            ws.column_dimensions[column_cells[0].column].width = length
+
+        wb.remove(wb['Sheet'])
+        wb.save('%sAuxiliares.xlsx'%cfg.report_path)
+
+        path="%sAuxiliares.xlsx"%(cfg.report_path)
+        name='Auxiliares.xlsx'
+
+        return send_file(path,attachment_filename=name,as_attachment=True)
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+        return json.dumps(response)
+
+@bp.route('/downloadSupervisorList/<company_id>',methods=['GET','POST'])
+@is_logged_in
+def downloadSupervisorList(company_id):
+    response={}
+    try:
+        app.logger.info(company_id)
+        supervisors=db.query("""
+            select name, login from system.user where company_id=%s and user_type_id=2
+        """%company_id.split(".")[0]).dictresult()
+        wb = Workbook()
+        sheet_number = 0
+        ws = wb.create_sheet("Supervisores")
+        ws.cell(row=1,column=1,value='Nombre').font=Font(name='Arial', size=12, bold=True)
+        ws.cell(row=1,column=2,value='Usuario').font=Font(name='Arial', size=12, bold=True)
+        row=2
+        for x in supervisors:
+            ws.cell(row=row, column=1, value=x['name']).font=Font(name='Arial',size=11)
+            ws.cell(row=row, column=2, value=x['login']).font=Font(name='Arial',size=11)
+            row+=1
+
+        for column_cells in ws.columns:
+            length = max(len(GF.as_text(cell.value))+5 for cell in column_cells)
+            ws.column_dimensions[column_cells[0].column].width = length
+
+        wb.remove(wb['Sheet'])
+        wb.save('%sSupervisores.xlsx'%cfg.report_path)
+
+        path="%sSupervisores.xlsx"%(cfg.report_path)
+        name='Supervisores.xlsx'
+
+        return send_file(path,attachment_filename=name,as_attachment=True)
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+        return json.dumps(response)
+
+@bp.route('/downloadTaskFormat', methods=['GET','POST'])
+@is_logged_in
+def downloadTaskFormat():
+    response={}
+    try:
+        headers=['No. tarea','Nombre','Descripción','Fecha de vencimiento','Supervisor','Fecha de supervisor','Auxiliar','Fecha auxiliar','Notificar a administrador','Tarea recurrente','Frecuencia','Nombre evidencia','Descripción evidencia','Tipo de documento']
+        wb = Workbook()
+        ws = wb.create_sheet("Tareas")
+        column=1
+        for x in headers:
+            ws.cell(row=1,column=column,value=x).font=Font(name='Arial', size=11)
+            column+=1
+
+
+
+        columna=['Columna','No. tarea', 'Nombre','Descripción','Fecha de vencimiento','Supervisor','Fecha supervisor','Auxiliar','Fecha auxiliar','Notificar administrador','Tarea recurrente','Frecuencia (meses)','Nombre evidencia*','Descripción evidencia*','Tipo de documento*']
+        descripcion=['Descripción','Número de la tarea, es un consecutivo que iniciará desde 1.','Nombre de la tarea.','Descripción de la tarea (opcional).','Fecha de vencimiento de la tarea.','Supervisor que estará a cargo de revisar la tarea.','Fecha de vencimiento de la tarea para el supervisor.','Auxiliar a quien será asignada la tarea.','Fecha de vencimiento de la tarea para el auxiliar.','Indica si se debe enviar una notificación al administrador en cuanto la tarea sea resuelta.','Indica si desea que la tarea se genere de manera automática cada determinado tiempo.','Frecuencia en meses con la que se creará la tarea seleccionada como recurrente.','Nombre de evidencia solicitada.','Descripción de evidencia solicitada.','Tipo de documento de la evidencia.']
+        valores=['Valores aceptados','1,2,3, etc.','Texto','Texto','Fecha formato dd-mm-yyyy','Usuario con el que inicia sesión','Fecha formato dd-mm-yyyy','Usuario con el que inicia sesión','Fecha formato dd-mm-yyyy','si/no','si/no','1-12| En caso de indicar "no" en recurrente, se deberá llenar esta celda con un 0 (cero).','Texto','Texto','xml, pdf, excel, texto, zip, power_point']
+        evidence='*Cuando existe más de una evidencia por tarea, se deberán agregar en las filas siguientes, dejando vacíos las columnas correspondientes a la tarea, y agregando solo el número de la tarea (sin importar el número de evidencias que se agreguen, el número de la tarea siempre es el mismo por cada tarea), el nombre de la evidencia, la descripción de la evidencia y el tipo de documento.'
+
+        ws2 = wb.create_sheet("Instrucciones")
+        instrucciones=[columna,descripcion,valores]
+        column_number=1
+        for i in instrucciones:
+            row=1
+            for x in i:
+                if row==1:
+                    ws2.cell(row=row,column=column_number,value=x).font=Font(name='Arial', size=12, color='FFFFFF')
+                else:
+                    ws2.cell(row=row,column=column_number,value=x).font=Font(name='Arial', size=11)
+                row+=1
+            column_number+=1
+
+        ws2['A1'].fill=PatternFill(start_color="8f93c7", end_color="8f93c7", fill_type = "solid")
+        ws2['B1'].fill=PatternFill(start_color="8f93c7", end_color="8f93c7", fill_type = "solid")
+        ws2['C1'].fill=PatternFill(start_color="8f93c7", end_color="8f93c7", fill_type = "solid")
+
+
+        sheetnames=wb.sheetnames
+        for sheet in sheetnames:
+            for column_cells in wb[sheet].columns:
+                length = max(len(GF.as_text(cell.value))+5 for cell in column_cells)
+                wb[sheet].column_dimensions[column_cells[0].column].width = length
+
+        ws2.merge_cells(start_row=19, start_column=1, end_row=22, end_column=2)
+        ws2['A19']=evidence
+        wrap_alignment = Alignment(wrapText=True)
+        ws2['A19'].alignment = wrap_alignment
+        ws2['A19'].font=Font(name='Arial', size=10)
+
+        wb.remove(wb['Sheet'])
+        wb.save('%sFormato_tareas.xlsx'%cfg.report_path)
+        path="%sFormato_tareas.xlsx"%(cfg.report_path)
+        name='Formato_tareas.xlsx'
+
+        return send_file(path,attachment_filename=name,as_attachment=True)
+
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+        return json.dumps(response)
+
+# @bp.route('/uploadTasks', methods=['GET','POST'])
+# @is_logged_in
+# def uploadTasks():
+#     response={}
+#     try:
+#         data=request.form.to_dict()
+#         app.logger.info(data)
+#         files=request.files
+#         file_path=cfg.report_path
+#         file=files[data['file_name']]
+#         filename = secure_filename(file.filename)
+#         file.save(os.path.join(file_path, filename))
+#
+#         read_file=load_workbook(os.path.join(file_path,filename))
+#         sheet_task=read_file['Tareas']
+#         tasks=[]
+#         task_keys=['name','description','deadline','supervisor_login','supervisor_deadline','assignee_login','assignee_deadline','notify_admin','recurrent','recurrent_frequency','doc_name','doc_description','doc_type']
+#         safe_cont=0
+#         row=2
+#         failed_rows=[]
+#         # while True:
+#         #     safe_cont+=1
+#         #     task_d={}
+#         #     do_task=True
+#         #     for i in range(1,14):
+#         #         cell=sheet_task.cell(row=row,column=i).value
+#         #         if i==1:
+#         #             if cell!=None:
+#
+#
+#
+#
+#         # while True:
+#         #     safe_cont+=1
+#         #     task_d={}
+#         #     do_task=True
+#         #     for i in range(1,14): #columnas
+#         #         cell=sheet_task.cell(row=row,column=i).value
+#         #         if i==1: #revisa primera columna que corresponde al nombre de la tarea
+#         #             if cell!=None: #valida que la celda no esté vacía
+#         #                 task_d[task_keys[i-1]]=cell #agrega llave y valor al diccionario task_d
+#         #             else: #si la celda está vacía
+#         #                 failed_rows.append(row) #agrega la fila que no se agregó a lista de filas que no se agregaron
+#         #                 do_task=False #cambia bandera  a falso
+#         #         else: #itera el resto de las columnas
+#         #             if do_task==True: #si bandera está en true
+#         #                 task_d[task_keys[i-1]]=cell
+#         #
+#         #
+#         #
+#         #     if safe_cont==30:
+#         #         break
+#
+#
+#         response['success']=True
+#
+#     except:
+#         response['success']=False
+#         response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+#         exc_info=sys.exc_info()
+#         app.logger.info(traceback.format_exc(exc_info))
+#     return json.dumps(response)
