@@ -2649,6 +2649,123 @@ $(document).ready(function(){
         }
     });
 
+    $("#btnCloseUploadTasks").click(function(){
+        $("#win_upload_tasks").modal("hide");
+    });
+
+    $("#win_upload_tasks").on('show.bs.modal',function(){
+        $.ajax({
+            url:'/task/getUploadTasksButtons',
+            method:'POST',
+            data:JSON.stringify({'company_id':me.user_info.company_id}),
+            success:function(response){
+                try{
+                    var res=JSON.parse(response);
+                }
+                catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
+                if (res.success){
+                    $("#UTdiv_buttons").append(res.buttons);
+                }
+                else{
+                    $("#win_upload_tasks").modal("hide");
+                }
+            },
+            error:function(){
+                $("#win_upload_tasks").modal("hide");
+            }
+        })
+    });
+
+    $("#win_upload_tasks").on('hidden.bs.modal',function(){
+        $("#UTdiv_buttons").empty();
+        $("#UTfile").val('');
+        $("#UTfile").removeClass("invalid-file-field");
+        $("#UTfile").removeClass("valid-file-field");
+        $("#UTfile").addClass("file-input");
+        $("#spnUTfile").removeClass("show-error-msg").addClass("error-msg");
+    });
+
+    $("#UTfile").on('change',function(){
+        var input_id=$(this)[0].id;
+        var pattern=$(this)[0].pattern.split(",");
+        var span="#spn"+input_id;
+        if (hasExtension(input_id,pattern) ) {
+            $(this).removeClass("file-input");
+            $(this).removeClass("invalid-file-field");
+            $(this).addClass("valid-file-field");
+            $(span).html("Error");
+            $(span).removeClass("show-error-msg").addClass("error-msg");
+        }
+        else{
+            $(this).removeClass("file-input");
+            $(this).removeClass("valid-file-field");
+            $(this).addClass("invalid-file-field");
+            $(span).html("Formato incorrecto");
+            $(span).removeClass("error-msg").addClass("show-error-msg");
+        }
+    });
+
+    $("#btnUploadTasks").click(function(){
+        if ($("#UTfile")[0].files.length>0){
+            var data = new FormData();
+            var file=$("#UTfile")[0].files[0];
+            var file_name=$("#UTfile")[0].files[0].name;
+            data.append(file_name,file);
+            data.append('file_name',file_name);
+            data.append('company_id',me.user_info.company_id);
+            data.append('user_id',me.user_info.user_id);
+            EasyLoading.show({
+                text:"Cargando...",
+                type:EasyLoading.TYPE["PACMAN"],
+            });
+
+            $.ajax({
+                url:'/task/uploadTasks',
+                data:data,
+                type:'POST',
+                processData: false,
+                contentType: false,
+                success:function(response){
+                    EasyLoading.hide();
+                    try{
+                        var res=JSON.parse(response);
+                    }
+                    catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
+                    if (res.success){
+                        $("#win_upload_tasks").modal("hide");
+                    }
+                    else{
+                        $.alert({
+                            theme:'dark',
+                            title:'Atención',
+                            content:res.msg_response
+                        });
+                    }
+                },
+                error:function(){
+                    EasyLoading.hide();
+                    $.alert({
+                        theme:'dark',
+                        title:'Atención',
+                        content:'Ocurrió un error, favor de intentarlo de nuevo.'
+                    });
+                }
+            })
+
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Debe seleccionar un archivo para cargar tareas.'
+            });
+        }
+    });
+
 });
 
 

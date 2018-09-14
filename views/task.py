@@ -433,6 +433,7 @@ def getTaskDetails():
     response={}
     try:
         flag,data=GF.toDict(request.form,'post')
+
         if flag:
             deadline=""
             if data['user_type_id'] in (1,4,5,6):
@@ -615,15 +616,18 @@ def getTaskDetails():
                     from task.task
                     where task_id=%s
                 """%data['task_id']).dictresult()[0]
-                if declined_by['user_type_id']==3:
+                if declined_by['user_type_id']==3 and data['user_type_id']==2: #cuando la tarea fue declinada por auxiliar y va a revisar supervisor, mostrará ventana donde solo permite cambiar auxiliar y/o descripción de la tarea
                     response['declined_by']='assignee'
                     html="""
                         <p><b>Nombre:</b> %s <br> <b>Descripción:</b> %s <br> <b>Fecha límite:</b> %s <br> <b>Supervisa:</b> %s <br> <b>Asignado a:</b> %s <br> <b>Fecha límite de auxiliar:</b> %s <br> <b>Fecha en que se declinó:</b> %s <br> <b>Comentarios auxiliar:</b> %s </p>
                     """%(task['name'],task['description'],task['deadline'],task['supervisor'],task['assignee'],assignee_info['date'],assignee_info['last_updated'],assignee_info['declining_cause'])
                 else:
+                    #en los demás casos
                     response['declined_by']='supervisor'
 
-                    if data['user_id']==declined_by['declined_by']:
+                    if data['user_id']==declined_by['declined_by'] or data['user_type_id']==2:
+                        # si el usuario que declina es el mismo que desea revisar no lo permite
+                        #si fue declinado por un supervisor, no puede ser revisado por otro supervisor
                         response['allow_check']=False
                         html=""
                     else:
