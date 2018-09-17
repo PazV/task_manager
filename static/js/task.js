@@ -47,6 +47,9 @@ $(document).ready(function(){
         if (c.first==true){
             $("#TLdateFrom").val(c.older_task);
         }
+        if (c.last==true){
+            $("#TLdateTo").val(c.last_task);
+        }
     }).dataTable();
 
     $.ajax({
