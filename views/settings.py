@@ -20,25 +20,35 @@ def saveNotificationSettings():
     try:
         flag,data=GF.toDict(request.form,'post')
         if flag:
-            exists=db.query("""
-                select count(*)
-                from system.notification_settings
-                where company_id=%s
-            """%data['company_id']).dictresult()[0]
-            if exists['count']==0:
-                db.insert('system.notification_settings',data)
-                response['msg_response']="La configuración ha sido agregada."
-            else:
-                db.query("""
-                    update system.notification_settings
-                    set admin_report_frequency='%s',
-                    assignee_days='%s',
-                    supervisor_days='%s',
-                    admin_days='%s'
+            app.logger.info(data)
+            #validar que admin days<=supervisor days <= assignee days
+
+            aux_days=int(data['assignee_days'].split("_")[0])
+            sup_days=int(data['supervisor_days'].split("_")[0])
+            admin_days=int(data['admin_days'].split("_")[0])
+            if aux_days>=sup_days>=admin_days:
+                exists=db.query("""
+                    select count(*)
+                    from system.notification_settings
                     where company_id=%s
-                """%(data['admin_report_frequency'],data['assignee_days'],data['supervisor_days'],data['admin_days'],data['company_id']))
-                response['msg_response']="La configuración ha sigo actualizada."
-            response['success']=True
+                """%data['company_id']).dictresult()[0]
+                if exists['count']==0:
+                    db.insert('system.notification_settings',data)
+                    response['msg_response']="La configuración ha sido agregada."
+                else:
+                    db.query("""
+                        update system.notification_settings
+                        set admin_report_frequency='%s',
+                        assignee_days='%s',
+                        supervisor_days='%s',
+                        admin_days='%s'
+                        where company_id=%s
+                    """%(data['admin_report_frequency'],data['assignee_days'],data['supervisor_days'],data['admin_days'],data['company_id']))
+                    response['msg_response']="La configuración ha sigo actualizada."
+                response['success']=True
+            else:
+                response['success']=False
+                response['msg_response']="No es posible guardar la configuración seleccionada, favor de considerar lo siguiente: Los días de auxiliar deben ser mayor o igual a días de supervisor, los días de supervisor deben ser mayor o igual a días de administrador."
         else:
             response['msg_response']="Ocurrió un error al intentar obtener la información, favor de intentarlo de nuevo."
             response['success']=False
