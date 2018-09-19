@@ -36,7 +36,7 @@
                   <form class="form-signin" method="POST">
                       {% with errors = get_flashed_messages(category_filter=["main_msg"]) %}
                         {% if errors %}
-                            <div  class="alert alert-success alert-dismissible" style="display:block; align-self: baseline;" role="alert">
+                            <div  class="alert alert-warning alert-dismissible" style="display:block; align-self: baseline;" role="alert">
                                 <p>{{errors[0]}}</p>
                                 <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
                             </div>

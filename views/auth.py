@@ -35,6 +35,8 @@ def login():
     error=''
     if request.method == 'POST':
         login = request.form['username']
+        login=login.strip()
+        login=login.lower()
         password = request.form['password']
         user = db.query("""
             select * from system.user where login='%s'
@@ -64,32 +66,36 @@ def login():
             logging.info("error: %s"%error)
             #return render_template('login.html', error=error)
         else:
-
-            active_sessions=db.query("""
-                select count(*) from system.user_session
+            #closes all active sessions
+            db.query("""
+                update system.user_session set logged=False
                 where user_id=%s and logged=True
-            """%user[0]['user_id']).dictresult()
-            if active_sessions[0]['count']==0:
-                new_session={
-                    'user_id':user[0]['user_id'],
-                    'start_session':'now',
-                    'logged':True
-                }
-                inserted_session=db.insert('system.user_session',new_session)
-                session['logged_in']=True
-                session['username']=login
-                session['user_id']=user[0]['user_id']
-                session['session_id']=inserted_session['session_id']
-                g.session_id=session['session_id']
-                logging.info("Inicia sesión usuario %s"%user[0]['user_id'])
-                msg='Inicio de sesión correcto'.decode('utf-8')
-                db.query("""
-                    update system.user set login_attempts=0 where user_id=%s
-                """%user[0]['user_id'])
-                return redirect(url_for('index'))
-            else:
-                error='Usted ya tiene una sesión activa.'
-                flash(u'Usted ya tiene una sesión activa.','main_msg')
+            """%user[0]['user_id'])
+            # active_sessions=db.query("""
+            #     select count(*) from system.user_session
+            #     where user_id=%s and logged=True
+            # """%user[0]['user_id']).dictresult()
+            # if active_sessions[0]['count']==0:
+            new_session={
+                'user_id':user[0]['user_id'],
+                'start_session':'now',
+                'logged':True
+            }
+            inserted_session=db.insert('system.user_session',new_session)
+            session['logged_in']=True
+            session['username']=login
+            session['user_id']=user[0]['user_id']
+            session['session_id']=inserted_session['session_id']
+            g.session_id=session['session_id']
+            logging.info("Inicia sesión usuario %s"%user[0]['user_id'])
+            msg='Inicio de sesión correcto'.decode('utf-8')
+            db.query("""
+                update system.user set login_attempts=0 where user_id=%s
+            """%user[0]['user_id'])
+            return redirect(url_for('index'))
+            # else:
+            #     error='Usted ya tiene una sesión activa.'
+            #     flash(u'Usted ya tiene una sesión activa.','main_msg')
     else:
         logging.info("no post")
         # return render_template('login.html')
@@ -143,6 +149,8 @@ def recoverPassword():
     try:
         flag,data=GF.toDict(request.form,'post')
         if flag:
+            login=data['login'].lower()
+            login=login.strip()
             exists=db.query("""
                 select * from system.user
                 where login='%s' and email='%s'
