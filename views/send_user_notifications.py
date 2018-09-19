@@ -84,7 +84,7 @@ def main():
 
         assignee_html_message="""
             <p>Estimado {user_name}:</p>
-                <p>Le recordamos que tiene pendiente por resolver las siguientes tareas:</p>
+                <p>Le recordamos que tiene pendiente por resolver las siguientes tareas de la empresa {company}:</p>
                 <table style="width: 100%; border-collapse: collapse;" border="1">
                 <tbody>
                 <tr style="height: 15px;">
@@ -153,6 +153,9 @@ def main():
                         company_id=%s
                     and enabled in (1,3)
                 """%nl['company_id']).dictresult()
+                company_name=db.query("""
+                    select name from system.company where company_id=%s
+                """%nl['company_id']).dictresult()[0]
                 if users!=[]:
                     for u in users:
                         rows=""
@@ -222,7 +225,8 @@ def main():
                                         'rows':rows,
                                         'link':cfg.host,
                                         'mail_img':cfg.mail_img,
-                                        'user_name':u['user_name']
+                                        'user_name':u['user_name'],
+                                        'company':company_name['name']
                                     }
                                     message=assignee_html_message.format(**message_dict)
                                     MF.sendMail(u['email'],'Tareas pendientes',message)
@@ -289,7 +293,7 @@ def main():
                                     message_sup='<p>Estimado {user_name}:</p>'
                                     if has_tasks==True:
                                         sup_assignee_msg="""
-                                            <p>Le recordamos que tiene pendiente por resolver las siguientes tareas:</p>
+                                            <p>Le recordamos que tiene pendiente por resolver las siguientes tareas de la empresa {company}:</p>
                                             <table style="width: 100%; border-collapse: collapse;" border="1">
                                             <tbody>
                                             <tr style="height: 15px;">
@@ -305,7 +309,7 @@ def main():
                                         """
                                     if supervisor_has_tasks==True:
                                         sup_msg="""
-                                            <p>Le recordamos que las siguientes tareas no han sido resueltas:</p>
+                                            <p>Le recordamos que las siguientes tareas no han sido resueltas de la empresa {company}:</p>
                                             <table style="width: 100%; border-collapse: collapse;" border="1">
                                             <tbody>
                                             <tr style="height: 15px;">
@@ -326,7 +330,8 @@ def main():
                                         'sup_rows':sup_rows,
                                         'mail_img':cfg.mail_img,
                                         'link':cfg.host,
-                                        'user_name':u['user_name']
+                                        'user_name':u['user_name'],
+                                        'company':company_name['name']
                                     }
                                     message_sup+=sup_assignee_msg
                                     message_sup+=sup_msg
@@ -392,7 +397,7 @@ def main():
                             if has_tasks==True:
                                 admin_msg="""
                                     <p>Estimado {user_name}:</p>
-                                        <p>Le recordamos que tiene pendientes las siguientes tareas:</p>
+                                        <p>Le recordamos que tiene pendientes las siguientes tareas de la empresa {company}:</p>
                                         <table style="width: 100%; border-collapse: collapse;" border="1">
                                         <tbody>
                                         <tr style="height: 15px;">
@@ -411,7 +416,8 @@ def main():
                                     'rows':rows,
                                     'link':cfg.host,
                                     'mail_img':cfg.mail_img,
-                                    'user_name':u['user_name']
+                                    'user_name':u['user_name'],
+                                    'company':company_name['name']
                                 }
                                 MF.sendMail(u['email'],'Tareas pendientes',admin_msg.format(**format_admin_msg))
 

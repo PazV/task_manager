@@ -184,6 +184,7 @@ def main():
                                     new_task['assignee']=assignee['name']
                                     new_task['supervisor']=supervisor['name']
                                     new_task['mail_img']=cfg.mail_img
+                                    new_task['company']=c['name']
                                     assignee_msg=assignee_template['body'].format(**new_task)
                                     DF.sendMail(assignee['email'],'Tarea nueva: %s'%x['name'],assignee_msg)
                                     supervisor_msg=supervisor_template['body'].format(**new_task)

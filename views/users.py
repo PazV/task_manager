@@ -262,13 +262,17 @@ def sendNewPassword():
                     where user_id=%s
                 """%(password,data['user_id']))
                 user_data=db.query("""
-                    select name, email, login from system.user where user_id=%s
+                    select name, email, login, company_id from system.user where user_id=%s
                 """%data['user_id']).dictresult()
+                company_name=db.query("""
+                    select name from system.company where company_id=%s
+                """%user_data[0]['company_id']).dictresult()[0]
                 user_data[0]['password']=passwd
                 template=db.query("""
                     select * from template.generic_template where type_id=21
                 """).dictresult()[0]
                 user_data[0]['mail_img']=cfg.mail_img
+                user_data[0]['company']=company_name['name']
                 msg=template['body'].format(**user_data[0])
                 GF.sendMail(template['subject'],msg,user_data[0]['email'])
                 response['success']=True

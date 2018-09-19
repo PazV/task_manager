@@ -96,6 +96,10 @@ def main():
                 assignee_date=str(now_date-timedelta(days=assignee_days))
                 logger.info("assignee date %s"%assignee_date)
 
+                company_name=db.query("""
+                    select name from system.company where company_id=%s
+                """%x['company_id']).dictresult()[0]
+
                 pending_tasks_assignee=db.query("""
                     select
                         task_id,
@@ -122,6 +126,7 @@ def main():
                         """%pa['assignee_id']).dictresult()[0]['email']
                         pa['link']=cfg.host
                         pa['mail_img']=cfg.mail_img
+                        pa['company']=company_name['name']
                         msg=assignee_template['body'].format(**pa)
                         MF.sendMail(recipient,assignee_template['subject'].format(**pa),msg)
 
@@ -150,6 +155,7 @@ def main():
                         """%eta['assignee_id']).dictresult()[0]['email']
                         eta['link']=cfg.host
                         eta['mail_img']=cfg.mail_img
+                        eta['company']=company_name['name']
                         msg=exp_assignee_template['body'].format(**eta)
                         MF.sendMail(recipient,exp_assignee_template['subject'].format(**eta),msg)
 
@@ -185,6 +191,7 @@ def main():
                         """%ps['supervisor_id']).dictresult()[0]['email']
                         ps['link']=cfg.host
                         ps['mail_img']=cfg.mail_img
+                        ps['company']=company_name['name']
                         msg=supervisor_template['body'].format(**ps)
                         MF.sendMail(recipient,supervisor_template['subject'].format(**ps),msg)
 
@@ -214,6 +221,7 @@ def main():
                         """%ets['supervisor_id']).dictresult()[0]['email']
                         ets['link']=cfg.host
                         ets['mail_img']=cfg.mail_img
+                        ets['company']=company_name['name']
                         msg=exp_supervisor_template['body'].format(**ets)
                         MF.sendMail(recipient,exp_supervisor_template['subject'].format(**ets),msg)
 
@@ -249,6 +257,7 @@ def main():
                         """%x['company_id']).dictresult()[0]['email']
                         pad['link']=cfg.host
                         pad['mail_img']=cfg.mail_img
+                        pad['company']=company_name['name']
                         msg=admin_template['body'].format(**pad)
                         MF.sendMail(recipient,admin_template['subject'].format(**pad),msg)
 
@@ -279,6 +288,7 @@ def main():
                         """%x['company_id']).dictresult()[0]['email']
                         etad['link']=cfg.host
                         etad['mail_img']=cfg.mail_img
+                        etad['company']=company_name['name']
                         msg=exp_admin_template['body'].format(**etad)
                         MF.sendMail(recipient,exp_admin_template['subject'].format(**etad),msg)
 

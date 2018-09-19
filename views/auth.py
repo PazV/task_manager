@@ -167,7 +167,10 @@ def recoverPassword():
                         'link':cfg.host,
                         'mail_img':cfg.mail_img
                     }
-
+                    company_name=db.query("""
+                        select name from system.company where company_id=%s
+                    """%exists[0]['company_id']).dictresult()[0]
+                    msg_info['company']=company_name['name']
                     msg=message['body'].format(**msg_info)
                     GF.sendMail(message['subject'],msg,exists[0]['email'])
 

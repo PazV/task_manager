@@ -166,7 +166,10 @@ def saveTask():
                         where a.task_id=%s
                     """%new_task['task_id']).dictresult()[0]
 
-
+                    company_name=db.query("""
+                        select name from system.company where company_id=%s
+                    """%data['company_id']).dictresult()[0]
+                    task_info['company']=company_name['name']
                     message=db.query("""
                         select * from template.generic_template where type_id=24
                     """).dictresult()[0]
@@ -812,6 +815,11 @@ def resolveTask():
             where a.task_id=%s
         """%data['task_id']).dictresult()[0]
 
+        company_name=db.query("""
+            select name from system.company where company_id=%s
+        """%data['company_id']).dictresult()[0]
+        task_info['company']=company_name['name']
+
         supervisor=db.query("""
             select email from system.user where user_id=(select supervisor_id from task.task
             where task_id=%s)
@@ -838,6 +846,7 @@ def resolveTask():
             # task_info['mail_img']=cfg.mail_img
             # msg_admin=message_admin['body'].format(**task_info)
             # GF.sendMail(message_admin['subject'].format(**task_info),msg_admin,admin['email'])
+
 
         GF.sendMail(message['subject'].format(**task_info),msg,recipient)
         response['success']=True
@@ -991,7 +1000,10 @@ def completeTask():
                     task.task a
                 where a.task_id=%s
             """%data['task_id']).dictresult()[0]
-
+            company_name=db.query("""
+                select name from system.company where company_id=%s
+            """%data['company_id']).dictresult()[0]
+            task_info['company']=company_name['name']
             assignee=db.query("""
                 select email from system.user where user_id=(select assignee_id from task.task
                 where task_id=%s)
@@ -1012,6 +1024,7 @@ def completeTask():
                     select email from system.user where company_id=%s and user_type_id in (1,6)
                 """%data['company_id']).dictresult()[0]
                 recipients=[assignee,admin['email']]
+
 
             GF.sendMail(message['subject'].format(**task_info),msg,recipients)
 
@@ -1081,6 +1094,10 @@ def incompleteTask():
                     task.task a
                 where a.task_id=%s
             """%data['task_id']).dictresult()[0]
+            company_name=db.query("""
+                select name from system.company where company_id=%s
+            """%data['company_id']).dictresult()[0]
+            task_info['company']=company_name['name']
 
             assignee=db.query("""
                 select email from system.user where user_id=(select assignee_id from task.task
@@ -1102,6 +1119,7 @@ def incompleteTask():
                     select email from system.user where company_id=%s and user_type_id in (1,6)
                 """%data['company_id']).dictresult()[0]
                 recipients=[assignee,admin['email']]
+
             GF.sendMail(message['subject'].format(**task_info),msg,recipients)
 
         else:
@@ -1151,6 +1169,10 @@ def declineTask():
             """%data['task_id']).dictresult()[0]
             task_info['link']=cfg.host
             task_info['mail_img']=cfg.mail_img
+            company_name=db.query("""
+                select name from system.company where company_id=%s
+            """%data['company_id']).dictresult()[0]
+            task_info['company']=company_name['name']
 
             recipient_list=[]
             if data['user_type_id']==3:
@@ -1310,6 +1332,10 @@ def updateDeclinedTask():
             """%data['task_id']).dictresult()[0]
             task_info['link']=cfg.host
             task_info['mail_img']=cfg.mail_img
+            company_name=db.query("""
+                select name from system.company where company_id=%s
+            """%task_info['company_id']).dictresult()[0]
+            task_info['company']=company_name['name']
             recipients=[]
             #Send mail to assignee
             msg_info_a=db.query("""
@@ -1380,6 +1406,10 @@ def cancelTask():
             """%data['task_id']).dictresult()[0]
             task_info['link']=cfg.host
             task_info['mail_img']=cfg.mail_img
+            company_name=db.query("""
+                select name from system.company where company_id=%s
+            """%task_info['company_id']).dictresult()[0]
+            task_info['company']=company_name['name']
 
             #send mail to assignee
             message_info_a=db.query("""
@@ -1827,7 +1857,10 @@ def editTask():
                 task_info['mail_img']=cfg.mail_img
                 recipient_list=[]
                 #send notification to new assignee
-
+                company_name=db.query("""
+                    select name from system.company where company_id=%s
+                """%data['company_id']).dictresult()[0]
+                task_info['company']=company_name['name']
 
                 recipient_list.append(task_info['assignee_mail'])
 
@@ -2117,6 +2150,7 @@ def sendNotification():
                     a.task_id,
                     a.name,
                     a.description,
+                    company_id,
                     (select name from system.user where user_id=a.assignee_id) as assignee,
                     (select name from system.user where user_id=a.supervisor_id) as supervisor,
                     to_char(a.deadline, 'DD-MM-YYYY HH24:MI:SS') as deadline,
@@ -2154,6 +2188,10 @@ def sendNotification():
             task_info['msg']=data['message'].encode('utf-8')
             task_info['link']=cfg.host
             task_info['mail_img']=cfg.mail_img
+            company_name=db.query("""
+                select name from system.company where company_id=%s
+            """%task_info['company_id']).dictresult()[0]
+            task_info['company']=company_name['name']
             message=template['body'].format(**task_info)
 
             GF.sendMail(template['subject'].format(**task_info),message,mail_recipients)

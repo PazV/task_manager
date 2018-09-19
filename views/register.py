@@ -246,6 +246,9 @@ def createUser():
                 """%(dict['email'],dict['company_id'],condition)).dictresult()
                 exist_email[0]['count']=0 #bypass email validation
                 if exist_email[0]['count']==0:
+                    company_name=db.query("""
+                        select name from system.company where company_id=%s
+                    """%dict['company_id']).dictresult()[0]
                     if dict['user_id']==-1:
                         exist_login=db.query("""
                             select
@@ -284,6 +287,7 @@ def createUser():
                                         dict['password']=passwd
                                         dict['link']=cfg.host
                                         dict['mail_img']=cfg.mail_img
+                                        dict['company']=company_name['name']
                                         msg=message['body'].format(**dict)
                                         GF.sendMail(message['subject'],msg,recipient)
 
@@ -316,6 +320,7 @@ def createUser():
                                     dict['password']=passwd
                                     dict['link']=cfg.host
                                     dict['mail_img']=cfg.mail_img
+                                    dict['company']=company_name['name']
                                     msg=message['body'].format(**dict)
                                     GF.sendMail(message['subject'],msg,recipient)
 
