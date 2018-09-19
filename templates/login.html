@@ -26,13 +26,13 @@
   <body style="padding-top: 10px; background-image:url('../static/images/fondo2.jpg'); background-size:cover; background-repeat:no-repeat;">
       <div class="container-fluid">
           <div>
-              <div class="alert alert-success alert-dismissible" id="alertLogin" style="display:none; align-self: baseline;" role="alert">
+              <div class="alert alert-success alert-dismissible login-msg" id="alertLogin" style=" display:none" role="alert">
                   <p>Mensaje</p>
                 <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
               </div>
-
           </div>
-          <div class="text-center" id="divLogin" style="background-color: rgba(179, 179, 179, 0.4); position:absolute; margin:auto; top:0;right:0;left:0;bottom:0; width:350px;height:300px; border-radius:5px;">
+
+          <div class="text-center body-test" id="divLogin" style="background-color: rgba(179, 179, 179, 0.4); position:absolute; margin:auto; top:0;right:0;left:0;bottom:0; width:350px;height:300px; border-radius:5px;">
                   <form class="form-signin" method="POST">
                       {% with errors = get_flashed_messages(category_filter=["main_msg"]) %}
                         {% if errors %}
