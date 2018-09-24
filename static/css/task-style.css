@@ -190,3 +190,36 @@ input[type="date"]
 .span-mail-date{
     font-size:.8rem;
 }
+
+.task-filters-col-1{
+    width:24%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-2{
+    width:18%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-3{
+    width:17%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-4{
+    width:64%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-5{
+    width:9%;
+    margin:0% 0.5%;
+}
+
+@media screen and (max-width: 600px){
+  .task-filters-col-1, .task-filters-col-2, .task-filters-col-3, .task-filters-col-4, .task-filters-col-5{
+    width: 98%;
+    margin-top: 10px;
+    margin-right:2%;
+  }
+}
