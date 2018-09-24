@@ -1,69 +1,72 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" id="nav_main">
-  <a class="navbar-brand" href="/home">
-    <img src="../static/images/rb.jpg" style="width:30px; height:30px; border-radius:50%;" class="d-inline-block align-top" alt=""/>  Task Manager
-  </a>
-  <div class="collapse navbar-collapse">
-    <ul class="navbar-nav mr-auto">
-        {% if g.template_user_info.user_type_id!=3%}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbaTask" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false" title="Crear tareas">
-              <i class="fa fa-list-alt" style="margin-right:5px; vertical-align:middle;"></i>Tareas
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarTask">
-              <a class="dropdown-item" data-toggle="modal" href="#win_new_task" id="a_new_task">Crear nueva</a>
-              {% if g.template_user_info.user_type_id in (1,4,5,6) %}
-                <a class="dropdown-item" data-toggle="modal" href="#win_create_report">Reporte</a>
-              {% endif %}
-              <!-- {% if g.template_user_info.user_type_id in (4,5) %}
-                <a class="dropdown-item" data-toggle="modal" href="#win_upload_tasks">Carga masiva</a>
-              {% endif %} -->
-            </div>
-          </li>
-        {% endif %}
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false" title="Administrar usuarios">
-          <i class="fa fa-group" style="margin-right:5px; vertical-align:middle;"></i>Usuarios
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarUser">
-        {% if g.template_user_info.user_type_id!=3 %}
-          <a class="dropdown-item" data-toggle="modal" href="#win_admin_users">Administrar usuarios</a>
-        {% endif %}
-          <a class="dropdown-item" data-toggle="modal" href="#win_change_pass">Cambiar contraseña</a>
-        {% if g.template_user_info.user_type_id==4 %}
-            <a class="dropdown-item" data-toggle="modal" href="#win_user_manager">Control de usuarios</a>
-        {% endif %}
-        </div>
-      </li>
-      {% if g.template_user_info.user_type_id!=3 %}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarSettings" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false" title="Configurar notificaciones y datos de la empresa">
-              <i class="fa fa-cogs" style="margin-right:5px; vertical-align:middle;"></i>Configuración
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarSettings">
-              <a class="dropdown-item" data-toggle="modal" href="#win_notification_settings">Reglas para notificaciones</a>
+<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark" id="nav_main">
+    <!-- <div class="collapse navbar-toggleable-xs" id="divNavBar"> -->
+
+
+    <a class="navbar-brand" href="/home">
+        <img src="../static/images/rb.jpg" style="width:30px; height:30px; border-radius:50%;" class="d-inline-block align-top" alt=""/>  Task Manager
+    </a>
+    <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#divNavBar">
+        &#9776;
+    </button>
+    <div class="collapse navbar-collapse navbar-toggleable-xs" id="divNavBar">
+        <ul class="navbar-nav mr-auto">
+            {% if g.template_user_info.user_type_id!=3%}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbaTask" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Crear tareas">
+                        <i class="fa fa-list-alt" style="margin-right:5px; vertical-align:middle;"></i>Tareas
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarTask">
+                        <a class="dropdown-item" data-toggle="modal" href="#win_new_task" id="a_new_task">Crear nueva</a>
+                        {% if g.template_user_info.user_type_id in (1,4,5,6) %}
+                            <a class="dropdown-item" data-toggle="modal" href="#win_create_report">Reporte</a>
+                        {% endif %}
+                        {% if g.template_user_info.user_type_id in (4,5) %}
+                            <a class="dropdown-item" data-toggle="modal" href="#win_upload_tasks">Carga masiva</a>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endif %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Administrar usuarios">
+                    <i class="fa fa-group" style="margin-right:5px; vertical-align:middle;"></i>Usuarios
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarUser">
+                    {% if g.template_user_info.user_type_id!=3 %}
+                        <a class="dropdown-item" data-toggle="modal" href="#win_admin_users">Administrar usuarios</a>
+                    {% endif %}
+                    <a class="dropdown-item" data-toggle="modal" href="#win_change_pass">Cambiar contraseña</a>
+                    {% if g.template_user_info.user_type_id==4 %}
+                        <a class="dropdown-item" data-toggle="modal" href="#win_user_manager">Control de usuarios</a>
+                    {% endif %}
+                </div>
+            </li>
+            {% if g.template_user_info.user_type_id!=3 %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarSettings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Configurar notificaciones y datos de la empresa">
+                        <i class="fa fa-cogs" style="margin-right:5px; vertical-align:middle;"></i>Configuración
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarSettings">
+                        <a class="dropdown-item" data-toggle="modal" href="#win_notification_settings">Reglas para notificaciones</a>
               <!-- <a class="dropdown-item" data-toggle="modal" href="#win_company_info">Datos empresa</a> -->
               <!-- <a class="dropdown-item" data-toggle="modal" href="#win_logo">Logotipo</a> -->
-            </div>
-          </li>
-        {% endif %}
-      {% if g.template_user_info.user_type_id in (4,5)%}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false" title="Nuevo registro">
-              <i class="fa fa-address-book-o" style="margin-right:5px; vertical-align:middle;"></i>Registro
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarUser">
-              <a class="dropdown-item" data-toggle="modal" href="#win_register_company">Empresa</a>
-              <a class="dropdown-item" data-toggle="modal" href="#win_new_admin_user">Usuario administrador</a>
-            </div>
-          </li>
-    {% endif %}
-    </ul>
+                    </div>
+                </li>
+            {% endif %}
+            {% if g.template_user_info.user_type_id in (4,5)%}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Nuevo registro">
+                        <i class="fa fa-address-book-o" style="margin-right:5px; vertical-align:middle;"></i>Registro
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarUser">
+                        <a class="dropdown-item" data-toggle="modal" href="#win_register_company">Empresa</a>
+                        <a class="dropdown-item" data-toggle="modal" href="#win_new_admin_user">Usuario administrador</a>
+                    </div>
+                </li>
+            {% endif %}
+        </ul>
     <!-- <a class="btn" role="button"  id="btnCollapseCalendar" data-toggle="tooltip" title="Mostrar/Ocultar calendario" ><i class="fa fa-calendar" style="color:white;"></i></a> -->
-    <a class="btn btn-log-off" role="button" data-toggle="tooltip" title="Cerrar sesión" style="cursor:pointer;" id="btn_log_off" ><i class="fa fa-power-off"></i></a>
+        <a class="btn btn-log-off" role="button" data-toggle="tooltip" title="Cerrar sesión" style="cursor:pointer;" id="btn_log_off" ><i class="fa fa-power-off"></i></a>
     <!-- <a class="btn btn-log-off" role="button" data-toggle="tooltip" title="Cerrar sesión" style="cursor:pointer;" href="/auth/logout" ><i class="fa fa-power-off"></i></a> -->
-  </div>
-  </nav>
+    </div>
+    <!-- </div> -->
+</nav>
