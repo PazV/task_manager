@@ -45,6 +45,9 @@ def login():
         if user==[]:
             error = 'Usuario no encontrado.'
             flash(u'Usuario no encontrado','user')
+        elif user[0]['enabled']==2:
+            error='Usuario dehabilitado.'
+            flash(u'Usuario deshabilitado','user')
         else:
             if user[0]['login_attempts']>3:
                 #bloqueado
