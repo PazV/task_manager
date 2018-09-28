@@ -259,6 +259,9 @@ $(document).ready(function(){
     $("#win_new_task").on('hidden.bs.modal',function(){
         resetForm("#frmNewTask",["input|INPUT","select|SELECT","textarea|TEXTAREA"]);
         $("#NTselRecurrentFrequency").css("display","none");
+        $("#lblNTdateStopRecurrent").css("display","none");
+        $("#NTdateStopRecurrent").css("display","none");
+        $("#NTdateStopRecurrent").val("");
         $("#NTchkRecurrentTask").prop("checked",false);
         $("#NTchkNotifyAdmin").prop("checked",false);
         $("#NTtask_evidences").empty();
@@ -407,9 +410,13 @@ $(document).ready(function(){
     $("#NTchkRecurrentTask").click(function(){
         if ($("#NTchkRecurrentTask")[0].checked){
             $("#NTselRecurrentFrequency").css("display","block");
+            $("#lblNTdateStopRecurrent").css("display","block");
+            $("#NTdateStopRecurrent").css("display","block");
         }
         else{
             $("#NTselRecurrentFrequency").css("display","none");
+            $("#lblNTdateStopRecurrent").css("display","none");
+            $("#NTdateStopRecurrent").css("display","none");
         }
     });
 
@@ -1044,7 +1051,7 @@ $(document).ready(function(){
             var data={};
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
-            if (record['status_id']==1){
+            if (record['status_id']==1 || record['status_id']==6){
                 data['task_id']=record['task_id'];
                 data['user_id']=me.user_info.user_id;
                 data['company_id']=me.user_info.company_id;
