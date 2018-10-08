@@ -36,7 +36,7 @@ def create_app(test_config=None):
         SESSION_COOKIE_HTTPONLY=True,
         # SESSION_COOKIE_SAMESITE='Lax',
         SERVER_NAME='easytask.com.mx',
-        SESSION_COOKIE_PATH='easytask.com.mx/'
+        # SESSION_COOKIE_PATH='easytask.com.mx/'
     )
     mail = Mail(app)
     # toolbar=DebugToolbarExtension(app)
