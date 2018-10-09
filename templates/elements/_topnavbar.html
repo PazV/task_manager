@@ -1,9 +1,7 @@
 <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark" id="nav_main">
     <!-- <div class="collapse navbar-toggleable-xs" id="divNavBar"> -->
-
-
     <a class="navbar-brand" href="/home">
-        <img src="../static/images/rb.jpg" style="width:30px; height:30px; border-radius:50%;" class="d-inline-block align-top" alt=""/>  Task Manager
+        <img src="../static/images/rb.jpg" style="width:30px; height:30px; border-radius:50%;" class="d-inline-block align-top" alt=""/>  EasyTask
     </a>
     <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#divNavBar">
         &#9776;
@@ -13,7 +11,7 @@
             {% if g.template_user_info.user_type_id!=3%}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbaTask" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Crear tareas">
-                        <i class="fa fa-list-alt" style="margin-right:5px; vertical-align:middle;"></i>Tareas
+                        <i class="fa fa-list-alt hidden-navbar-icon" style="margin-right:5px; vertical-align:middle;"></i>Tareas
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarTask">
                         <a class="dropdown-item" data-toggle="modal" href="#win_new_task" id="a_new_task">Crear nueva</a>
@@ -28,7 +26,7 @@
             {% endif %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Administrar usuarios">
-                    <i class="fa fa-group" style="margin-right:5px; vertical-align:middle;"></i>Usuarios
+                    <i class="fa fa-group hidden-navbar-icon" style="margin-right:5px; vertical-align:middle;"></i>Usuarios
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarUser">
                     {% if g.template_user_info.user_type_id!=3 %}
@@ -43,7 +41,7 @@
             {% if g.template_user_info.user_type_id!=3 %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarSettings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Configurar notificaciones y datos de la empresa">
-                        <i class="fa fa-cogs" style="margin-right:5px; vertical-align:middle;"></i>Configuración
+                        <i class="fa fa-cogs hidden-navbar-icon" style="margin-right:5px; vertical-align:middle;"></i>Configuración
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarSettings">
                         <a class="dropdown-item" data-toggle="modal" href="#win_notification_settings">Reglas para notificaciones</a>
@@ -55,7 +53,7 @@
             {% if g.template_user_info.user_type_id in (4,5)%}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Nuevo registro">
-                        <i class="fa fa-address-book-o" style="margin-right:5px; vertical-align:middle;"></i>Registro
+                        <i class="fa fa-address-book-o hidden-navbar-icon" style="margin-right:5px; vertical-align:middle;"></i>Registro
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarUser">
                         <a class="dropdown-item" data-toggle="modal" href="#win_register_company">Empresa</a>
