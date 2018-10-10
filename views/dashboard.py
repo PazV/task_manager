@@ -9,6 +9,7 @@ import logging
 db = getDB()
 from .auth import is_logged_in
 import json
+from flask import current_app as app
 
 
 bp = Blueprint('dashboard', __name__ )
@@ -42,15 +43,12 @@ def index():
         user_info['company_id']=-1
     g.user_info=json.dumps(user_info)
     g.template_user_info=user_info
+    logging.info(render_template('home.html'))
     return render_template('home.html')
 
 @bp.route('/')
 @is_logged_in
 def index2():
     #checks if is logged in, in case it is, redirects to home, if it's not, redirects to auth.login
+    logging.info(render_template('home.html'))
     return render_template('home.html')
-
-# @bp.route('')
-# @is_logged_in
-# def index3():
-#     return render_template('home.html')
