@@ -50,7 +50,7 @@ def index2():
     #checks if is logged in, in case it is, redirects to home, if it's not, redirects to auth.login
     return render_template('home.html')
 
-@bp.route('')
-@is_logged_in
-def index3():
-    return render_template('home.html')
+# @bp.route('')
+# @is_logged_in
+# def index3():
+#     return render_template('home.html')
