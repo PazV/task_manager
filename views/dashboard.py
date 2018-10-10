@@ -31,7 +31,7 @@ def index():
         'session_id':session['session_id']
     }
     user_type=db.query("""
-        select user_type_id,company_id from system.user where
+        select user_type_id,company_id,login from system.user where
         user_id=%s
     """%session['user_id']).dictresult()
     if user_type!=[]:
@@ -48,4 +48,9 @@ def index():
 @is_logged_in
 def index2():
     #checks if is logged in, in case it is, redirects to home, if it's not, redirects to auth.login
+    return render_template('home.html')
+
+@bp.route('')
+@is_logged_in
+def index3():
     return render_template('home.html')
