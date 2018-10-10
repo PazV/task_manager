@@ -25,6 +25,7 @@ bp = Blueprint('dashboard', __name__ )
 #     return wrap
 
 @bp.route('/home')
+
 @is_logged_in
 def index():
     user_info={
@@ -43,12 +44,12 @@ def index():
         user_info['company_id']=-1
     g.user_info=json.dumps(user_info)
     g.template_user_info=user_info
-    logging.info(render_template('home.html'))
+
     return render_template('home.html')
 
 @bp.route('/')
 @is_logged_in
 def index2():
     #checks if is logged in, in case it is, redirects to home, if it's not, redirects to auth.login
-    logging.info(render_template('home.html'))
+    
     return render_template('home.html')

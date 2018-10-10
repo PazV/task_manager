@@ -102,7 +102,6 @@ def login():
     else:
         logging.info("no post")
         # return render_template('login.html')
-    logging.info(render_template('login.html'))
     return render_template('login.html',error=error)
 
 def is_logged_in(f):
