@@ -35,9 +35,9 @@ def create_app(test_config=None):
         #DATABASE=os.path.join(app.instance_path, 'taskapp.sqlite'),
         DEBUG_TB_INTERCEPT_REDIRECTS=False,
         ###***** Deseleccionar la sección con # para subir cambios a prod******
-        SESSION_COOKIE_SECURE=True,
-        SESSION_COOKIE_HTTPONLY=True,
-        # SESSION_COOKIE_SAMESITE='Strict',
+        SESSION_COOKIE_SECURE=False,
+        SESSION_COOKIE_HTTPONLY=False,
+        SESSION_COOKIE_SAMESITE='',
         SERVER_NAME='easytask.com.mx',
         SESSION_COOKIE_PATH='/'
     )
