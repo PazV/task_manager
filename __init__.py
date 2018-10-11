@@ -37,8 +37,8 @@ def create_app(test_config=None):
         ###***** Deseleccionar la sección con # para subir cambios a prod******
         SESSION_COOKIE_SECURE=False,
         SESSION_COOKIE_HTTPONLY=False,
-        SESSION_COOKIE_SAMESITE='',
-        SERVER_NAME='easytask.com.mx',
+        # SESSION_COOKIE_SAMESITE='',
+        SERVER_NAME='https://easytask.com.mx',
         SESSION_COOKIE_PATH='/'
     )
     mail = Mail(app)
