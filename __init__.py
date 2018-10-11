@@ -11,9 +11,6 @@ from flask_mail import Mail, Message
 
 #from .db_connection import getDB
 # db = db_connection.getDB()
-def page_not_found(e):
-  return redirect(url_for('index')), 502
-
 
 
 def create_app(test_config=None):
@@ -29,7 +26,6 @@ def create_app(test_config=None):
     handler.setLevel(logging.INFO)
     app.logger.addHandler(handler)
 
-    app.register_error_handler(502, page_not_found)
 
     mail = Mail(app)
     from views import app_config as cfg
@@ -41,9 +37,9 @@ def create_app(test_config=None):
         ###***** Deseleccionar la sección con # para subir cambios a prod******
         SESSION_COOKIE_SECURE=True,
         SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_SAMESITE='Strict',
+        # SESSION_COOKIE_SAMESITE='Strict',
         SERVER_NAME='easytask.com.mx',
-        ## SESSION_COOKIE_PATH='easytask.com.mx/'
+        SESSION_COOKIE_PATH='/'
     )
     mail = Mail(app)
     # toolbar=DebugToolbarExtension(app)
