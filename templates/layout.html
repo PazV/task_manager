@@ -66,12 +66,15 @@
     {% include 'modal/edit_task.html' %}
     {% include 'modal/send_task_notification.html' %}
     {% include 'modal/notification_history.html' %}
-    
+    {% include 'modal/upload_tasks.html' %}
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="../static/jquery-ui/jquery-ui.js"></script>
     <script src="../static/js/lib/bootstrap.min.js"></script>
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
     <!-- <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/sl-1.2.5/datatables.min.js"></script> -->
 
 
