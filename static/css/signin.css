@@ -102,10 +102,21 @@ body {
     background-repeat:no-repeat;
 }
 
+#divLogin {
+    width:320px;
+    height:280px;
+}
+
+
 @media only screen and (min-device-width: 700px) {
     .login-body{
         background-image:url('../images/fondo2.jpg');
         background-size:cover;
         background-repeat:no-repeat;
     }
+    #divLogin {
+        width:350px;
+        height:300px;
+    }
+
 }
