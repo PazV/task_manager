@@ -89,3 +89,23 @@ body {
     color:#f3152a;
     text-shadow: -.5px 0 #aa0919, 0 .5px #aa0919, .5px 0 #aa0919, 0 -.5px #aa0919;
 }
+
+* {
+    box-sizing: border-box;
+}
+
+
+
+.login-body{
+    background-image:url('../images/fondo_small_screen.jpg');
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
+@media only screen and (min-device-width: 700px) {
+    .login-body{
+        background-image:url('../images/fondo2.jpg');
+        background-size:cover;
+        background-repeat:no-repeat;
+    }
+}
