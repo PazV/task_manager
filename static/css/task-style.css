@@ -242,7 +242,11 @@ input[type="date"]
         display:block;
         margin-top:35px;
         padding: 5px;
-        /* float: right; */
+        margin-left: 1.5em;
+    }
+
+    #taskContainer{
+        padding:2em 0.5em !important;
     }
 }
 
@@ -258,9 +262,12 @@ input[type="date"]
       margin-top: 35px;
       display:block;
       padding: 5px;
-      /* float: right; */
+      margin-left: 1.5em;
   }
 
+  #taskContainer{
+      padding:2em 0.5em !important;
+  }
 }
 
 /* #btnCollapseFilters>i:hover{
