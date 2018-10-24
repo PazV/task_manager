@@ -216,10 +216,58 @@ input[type="date"]
     margin:0% 0.5%;
 }
 
-@media screen and (max-width: 600px){
+#btnCollapseFilters {
+    border-radius: 50%;
+    background-color: white;
+    border: #868080;
+    border-width: 1px;
+    border-style: solid;
+    text-align: center;
+    outline:none;
+    color:#868080;
+    display:none;
+}
+
+@media screen and (max-width:980px){
+    .hidden-navbar-icon{
+        display:none
+    },
+    .task-filters-col-1, .task-filters-col-2, .task-filters-col-3, .task-filters-col-4, .task-filters-col-5{
+      width: 48%%;
+      margin-top: 10px;
+      margin-right:2%;
+      float:left;
+    }
+    #btnCollapseFilters {
+        display:block;
+        margin-top:35px;
+    }
+}
+
+
+@media screen and (max-width: 675px){
   .task-filters-col-1, .task-filters-col-2, .task-filters-col-3, .task-filters-col-4, .task-filters-col-5{
     width: 98%;
     margin-top: 10px;
     margin-right:2%;
   }
+
+  #btnCollapseFilters {
+      margin-top: 35px;
+      display:block;
+  }
+
+}
+
+#btnCollapseFilters>i:hover{
+    color:white;
+}
+#btnCollapseFilters>i{
+    color:#868080;
+}
+
+#btnCollapseFilters:hover {
+    background-color: #868080;
+    border:light;
+    color:white;
 }

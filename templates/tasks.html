@@ -1,9 +1,12 @@
 
-<div class="row content">
+<div class="row content" id="row1">
     <div style="padding:2em; width:100%;" id="taskContainer">
     <!-- <div  style="padding:2em; max-height:500px;" id="taskContainer"> -->
+    <!-- <i class="fa fa-angle-double-down"></i> -->
+    <button type="button" data-toggle="collapse" data-target="#divTaskFilters" id="btnCollapseFilters"><b>+</b></button>
       <form id="TLfrmFilters">
-        <div class="row" style="padding:.5em;">
+        <div id="divTaskFilters" class="collapse">
+        <div class="row" style="padding:0.5em;" id="row2">
             <div class="row task-filters-col-1">
                 <label for="TLselSupervisor" style="width:32%; margin:0% 2%;" class="col-form-label"><b>Supervisor:</b></label>
                 <select class="form-control" id="TLselSupervisor" name="supervisor_id" style="width:60%; margin:0% 2%; border-color:#001871;"></select>
@@ -48,6 +51,7 @@
                 <button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Buscar"  id="btnTaskSearch" style="margin-right:5px;"><i class="fa fa-search"></i></button>
                 <button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Limpiar búsqueda" id="btnClearTaskSearch" style="margin-left:5px;"><i class="fa fa-trash"></i></button>
             </div>
+        </div>
         </div>
       </form>
 

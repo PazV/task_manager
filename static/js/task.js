@@ -9,6 +9,8 @@ $(document).ready(function(){
     $("#TLdateFrom").val(first_day);
     $("#TLdateTo").val(today);
 
+    collapseFilters();
+
     $("#grdTask").DataTable({
         "scrollY": "255px",
         "scrollCollapse":true,
@@ -2821,4 +2823,13 @@ function getTasks(user_info){
             {data:'status',"width":"10%"}
         ]
     });
+}
+
+function collapseFilters(){
+    if (window.innerWidth<980){
+        $("#divTaskFilters").removeClass('show');
+    }
+    else{
+        $("#divTaskFilters").addClass('show');
+    }
 }
