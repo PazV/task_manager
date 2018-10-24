@@ -217,14 +217,14 @@ input[type="date"]
 }
 
 #btnCollapseFilters {
-    border-radius: 50%;
+    /* border-radius: 50%;
     background-color: white;
     border: #868080;
     border-width: 1px;
     border-style: solid;
     text-align: center;
     outline:none;
-    color:#868080;
+    color:#868080; */
     display:none;
 }
 
@@ -241,6 +241,8 @@ input[type="date"]
     #btnCollapseFilters {
         display:block;
         margin-top:35px;
+        padding: 5px;
+        /* float: right; */
     }
 }
 
@@ -255,11 +257,13 @@ input[type="date"]
   #btnCollapseFilters {
       margin-top: 35px;
       display:block;
+      padding: 5px;
+      /* float: right; */
   }
 
 }
 
-#btnCollapseFilters>i:hover{
+/* #btnCollapseFilters>i:hover{
     color:white;
 }
 #btnCollapseFilters>i{
@@ -270,4 +274,4 @@ input[type="date"]
     background-color: #868080;
     border:light;
     color:white;
-}
+} */
