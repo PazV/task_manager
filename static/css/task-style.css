@@ -232,6 +232,45 @@ input[type="date"]
     display:inline;
 }
 
+.new-task-size{
+    min-height:400px;
+    min-width:630px;
+    overflow-y:auto;
+}
+
+.check-task-size{
+    min-width:550px;
+}
+
+.check-dtask-left-col1{
+    width:20%;
+    padding-left: 15px;
+}
+.check-dtask-left-col2{
+    width:35%;
+    padding-right: 8px;
+}
+
+.check-dtask-right-col1{
+    width:13%;
+    padding-left:8px;
+}
+.check-dtask-right-col2{
+    width:32%;
+    padding-right:15px;
+}
+
+.txtarea-label-notif{
+    width:18%;
+    margin-left:2%;
+}
+.txtarea-box-notif{
+    width:72%;
+    height:100px;
+    margin-right:3%;
+}
+
+
 @media screen and (max-width:980px){
     .hidden-navbar-icon{
         display:none
@@ -249,12 +288,63 @@ input[type="date"]
         margin-left: 1.5em;
     }
 
-    #taskContainer{
+    #taskContainer {
         padding:2em 0.5em !important;
     }
 
-    .action-btn-text{
+    .action-btn-text {
         display:none;
+    }
+
+    .new-task-size {
+        min-height:400px;
+        min-width:300px !important;
+        overflow-y:auto;
+    }
+
+    #TEdocument_type{
+        padding-top:10px;
+    }
+
+    .check-task-size{
+        min-width:300px !important;
+    }
+
+    .check-dtask-left-col1{
+        width:35%;
+        padding-left: 15px;
+    }
+    .check-dtask-left-col2{
+        width:65%;
+        padding-right: 15px;
+    }
+
+    .check-dtask-right-col1{
+        width:35%;
+        padding-left:15px;
+    }
+    .check-dtask-right-col2{
+        width:65%;
+        padding-right:15px;
+    }
+
+    .label-msg-notif{
+        width:15%;
+    }
+
+    .ta-msg-notif{
+        width:80%;
+    }
+
+    .txtarea-label-notif{
+        width:50%;
+        margin-left:5%;
+    }
+    .txtarea-box-notif{
+        width:100%;
+        height:100px;
+        margin-left:5%;
+        margin-right:5%;
     }
 }
 
@@ -273,24 +363,44 @@ input[type="date"]
       margin-left: 1.5em;
   }
 
-  #taskContainer{
+  #taskContainer {
       padding:2em 0.5em !important;
   }
 
-  .action-btn-text{
+  .action-btn-text {
       display:none;
   }
-}
 
-/* #btnCollapseFilters>i:hover{
-    color:white;
-}
-#btnCollapseFilters>i{
-    color:#868080;
-}
+  .new-task-size {
+      min-height:400px;
+      min-width:250px !important;
+      overflow-y:auto;
+  }
 
-#btnCollapseFilters:hover {
-    background-color: #868080;
-    border:light;
-    color:white;
-} */
+  #TEdocument_type{
+      padding-top:10px;
+  }
+
+  .check-task-size{
+      min-width:300px !important;
+  }
+
+  .check-dtask-left-col1{
+      width:35%;
+      padding-left: 15px;
+  }
+  .check-dtask-left-col2{
+      width:65%;
+      padding-right: 15px;
+  }
+
+  .check-dtask-right-col1{
+      width:35%;
+      padding-left:15px;
+  }
+  .check-dtask-right-col2{
+      width:65%;
+      padding-right:15px;
+  }
+
+}

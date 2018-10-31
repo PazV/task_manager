@@ -12,24 +12,24 @@
                         <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
                     </div>
                     <form method="POST" id="frmSendTaskNotif" style="padding:.25rem;">
-                        <div class="row form-group" style="width:inherit;">
-                            <label for="STNfrom" class="col-sm-2 col-form-label">De:</label>
-                            <input type="text" readonly id="STNfrom" class="col-sm-9 form-control" name="msg_from"/>
+                        <div class="row form-group" >
+                            <label for="STNfrom" class="col-sm-2 col-form-label label-msg-notif">De:</label>
+                            <input type="text" readonly id="STNfrom" class="col-sm-9 form-control ta-msg-notif" name="msg_from"/>
                         </div>
-                        <div class="row form-group" style="width:inherit;">
-                            <label for="STNto" class="col-form-label col-sm-2">A:</label>
-                            <select id="STNto" class="form-control col-sm-9" name="msg_to"></select>
+                        <div class="row form-group" >
+                            <label for="STNto" class="col-form-label col-sm-2 label-msg-notif">A:</label>
+                            <select id="STNto" class="form-control col-sm-9 ta-msg-notif" name="msg_to"></select>
                         </div>
-                        <div class="row form-group" style="width:inherit;">
-                            <label for="STNmessage" class="col-form-label" style="width:18%; margin-left:2%;">Mensaje:</label>
-                            <textarea type="text" name="message" class="form-control" id="STNmessage" style="width:72%; height:100px; margin-right:3%;"></textarea>
+                        <div class="row form-group" >
+                            <label for="STNmessage" class="col-form-label txtarea-label-notif">Mensaje:</label>
+                            <textarea type="text" name="message" class="form-control txtarea-box-notif" id="STNmessage"></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer user-footer">
-                    <button type="button" class="btn btn-light" id="btnShowkNotificationHistory" data-toggle="tooltip" title="Muestra historial de mensajes de la tarea">Ver historial <i class="fa fa-history"></i></button>
-                    <button type="button" class="btn btn-light" id="btnSendTaskNotification" data-toggle="tooltip" title="Enviar notificación">Enviar <i class="fa fa-send-o"></i></button>
-                    <button type="button" class="btn btn-light" id="btnCloseSendNotification" data-toggle="tooltip" title="Salir">Salir <i class="fa fa-window-close"></i></button>
+                    <button type="button" class="btn btn-light" id="btnShowkNotificationHistory" data-toggle="tooltip" title="Muestra historial de mensajes de la tarea"><span class="action-btn-text">Ver historial </span><i class="fa fa-history"></i></button>
+                    <button type="button" class="btn btn-light" id="btnSendTaskNotification" data-toggle="tooltip" title="Enviar notificación"><span class="action-btn-text">Enviar </span><i class="fa fa-send-o"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCloseSendNotification" data-toggle="tooltip" title="Salir"><span class="action-btn-text">Salir </span><i class="fa fa-window-close"></i></button>
                 </div>
             </div>
         </div>

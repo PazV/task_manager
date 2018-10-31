@@ -144,3 +144,17 @@ EDIT ON
 .switch + .switch {
   margin-left: 1rem;
 }
+
+@media screen and (max-width:980px){
+    .check-show-pass{
+        width:50px;
+        margin-left:40%;
+    }
+}
+
+@media screen and (max-width: 675px){
+    .check-show-pass{
+        width:50px;
+        margin-left:40%;
+    }
+}

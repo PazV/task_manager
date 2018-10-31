@@ -2,104 +2,110 @@
 <div class="modal fade" id="win_new_task" data-keyboard="false" data-backdrop="static" style="overflow-y:scroll;">
     <div class="vertical-alignment-helper">
         <div class="modal-dialog vertical-align-center" style="overflow-y:initial !important;">
-          <div class="modal-content" style="min-height:400px; min-width:630px; overflow-y:auto;">
-            <div class="modal-header user-header header-win-title">
-              <span>Nueva tarea</span>
-              <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
-            </div>
-            <div class="modal-body" >
-                <div class="alert alert-info alert-dismissible" id="alertNTForm" style="display:none;" role="alert">
-                    <p>Ocurrió un error.</p>
-                    <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+            <div class="modal-content new-task-size">
+                <div class="modal-header user-header header-win-title">
+                    <span>Nueva tarea</span>
+                    <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
                 </div>
-                <form id="frmNewTask" method="POST" style="padding:8px;">
-                  <div class="form-group row row-w-span">
-                    <label for="txtTaskName" class="col-md-2 col-form-label" style="margin-bottom:0px;">Nombre:</label>
-                    <div class="col-md-10">
-                       <input type="text" name="name" class="form-control" id="NTname"/>
+                <div class="modal-body" >
+                    <div class="alert alert-info alert-dismissible" id="alertNTForm" style="display:none;" role="alert">
+                        <p>Ocurrió un error.</p>
+                        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
                     </div>
-                  </div>
-                  <div class="row">
-                       <span class="col-md-2"></span>
-                       <span class="col-md-10 error-msg" id="spnNTname">Error</span>
-                  </div>
-                  <div class="form-group row row-w-span">
-                    <label for="NTdescription" class="col-md-2 col-form-label">Descripción:</label>
-                    <div class="col-md-10">
-                        <textarea type="text" name="description" class="form-control" id="NTdescription" style="width:100%; "></textarea>
-                    </div>
-                  </div>
-                  <div class="row">
-                      <span class="col-md-2"></span>
-                      <span class="col-md-10 error-msg" id="spnNTdescription">Error</span>
-                  </div>
-                  <div class="form-group row row-w-span">
-                    <label for="NTdeadline" class="col-md-4 col-form-label">Fecha de vencimiento:</label>
-                    <div class="col-md-8">
-                       <input type="date" name="deadline" class="form-control" id="NTdeadline"/>
-                    </div>
-                  </div>
-                  <div class="row">
-                      <span class="col-md-4"></span>
-                      <span class="col-md-8 error-msg" id="spnNTdeadline">Error</span>
-                  </div>
-                  <div class="form-group row row-w-span">
-                    <label for="NTsupervisor_id" class="col-md-3 col-form-label">Supervisa:</label>
-                    <div class="col-md-4">
-                      <select id="NTsupervisor_id" class="form-control" placeholder="Supervisor" name="supervisor_id"></select>
-                    </div>
-                    <label for="NTsupervisor_deadline" class="col-md-1 col-form-label">Fecha:</label>
-                    <div class="col-md-4">
-                      <input type="date" class="form-control" id="NTsupervisor_deadline" name="supervisor_deadline"/>
-                    </div>
-                  </div>
-                  <div class="row">
-                      <span class="col-md-3"></span>
-                      <span class="col-md-4 error-msg-row" id="spnNTsupervisor_id">Error</span>
-                      <span class="col-md-1"></span>
-                      <span class="col-md-4 error-msg-row" id="spnNTsupervisor_deadline">Error</span>
-                  </div>
-                  <div class="form-group row row-w-span">
-                    <label for="NTassignee_id" class="col-md-3 col-form-label">Asignado a:</label>
-                    <div class="col-md-4">
-                      <select id="NTassignee_id" class="form-control" placeholder="Asignado a" name="assignee_id"></select>
-                    </div>
-                    <label for="NTassigee_deadline" class="col-md-1 col-form-label">Fecha:</label>
-                    <div class="col-md-4">
-                      <input type="date" id="NTassigee_deadline" class="form-control" name="assignee_deadline"/>
-                    </div>
-                  </div>
-                  <div class="row">
-                      <span class="col-md-3"></span>
-                      <span class="col-md-4 error-msg-row" id="spnNTassignee_id">Error</span>
-                      <span class="col-md-1"></span>
-                      <span class="col-md-4 error-msg-row" id="spnNTassigee_deadline">Error</span>
-                  </div>
-                  <div class="row">
-                      <label for="NTchkNotifyAdmin" class="form-check-label" style="width:200px; margin-left: 15px;">Notificar administrador:</label>
-                      <div style="width:20px; margin-left:20px;">
-                        <input type="checkbox" id="NTchkNotifyAdmin" data-toggle="tooltip" data-placement="bottom" title="Seleccionar si desea se envíe una notificación al administrador en cuanto se resuelva la tarea" class="form-check-input" name="notify_admin" style="margin-top: 0.4rem;"/>
-                      </div>
-                      <label for="NTchkRecurrentTask" class="form-check-label" style="width:130px;">Tarea recurrente:</label>
-                      <div style="width:20px; margin-left: 20px;">
-                        <input type="checkbox" id="NTchkRecurrentTask" class="form-check-input" data-toggle="tooltip" data-placement="bottom" title="Seleccionar si desea que la tarea se genera en automático en la frecuencia seleccionada" name="recurrent_task" style="margin-top: 0.4rem;"/>
-                      </div>
-                      <div>
-                        <select class="form-control-sm" id="NTselRecurrentFrequency" data-toggle="tooltip" data-placement="bottom" title="Seleccione la frecuencia con la que desea se genere de nuevo la tarea" style="border-radius:3px; display:none;" name="recurrent_frequency"></select>
-                      </div>
-                  </div>
-                </form>
-                <div style="display:inline; ">
-                    <button class="btn btn-success btn-lg" type="button" id="btnAddEvidence" data-toggle="tooltip" title="Agregar/Eliminar evidencias" style="margin-left:10px;">Evidencias</button>
-                    <div id="NTtask_evidences" style="max-height:110px; overflow-y:auto; margin-top: 10px;">
+                    <form id="frmNewTask" method="POST" style="padding:8px;">
+                        <div class="form-group row row-w-span">
+                            <label for="txtTaskName" class="col-md-2 col-form-label" style="margin-bottom:0px;">Nombre:</label>
+                            <div class="col-md-10">
+                                <input type="text" name="name" class="form-control" id="NTname"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-2"></span>
+                            <span class="col-md-10 error-msg" id="spnNTname">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NTdescription" class="col-md-2 col-form-label">Descripción:</label>
+                            <div class="col-md-10">
+                                <textarea type="text" name="description" class="form-control" id="NTdescription" style="width:100%; "></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-2"></span>
+                            <span class="col-md-10 error-msg" id="spnNTdescription">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NTdeadline" class="col-md-4 col-form-label">Fecha de vencimiento:</label>
+                            <div class="col-md-8">
+                                <input type="date" name="deadline" class="form-control" id="NTdeadline"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-4"></span>
+                            <span class="col-md-8 error-msg" id="spnNTdeadline">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NTsupervisor_id" class="col-md-3 col-form-label">Supervisa:</label>
+                            <div class="col-md-4">
+                                <select id="NTsupervisor_id" class="form-control" placeholder="Supervisor" name="supervisor_id"></select>
+                            </div>
+                            <label for="NTsupervisor_deadline" class="col-md-1 col-form-label">Fecha:</label>
+                            <div class="col-md-4">
+                                <input type="date" class="form-control" id="NTsupervisor_deadline" name="supervisor_deadline"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-3"></span>
+                            <span class="col-md-4 error-msg-row" id="spnNTsupervisor_id">Error</span>
+                            <span class="col-md-1"></span>
+                            <span class="col-md-4 error-msg-row" id="spnNTsupervisor_deadline">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NTassignee_id" class="col-md-3 col-form-label">Asignado a:</label>
+                            <div class="col-md-4">
+                                <select id="NTassignee_id" class="form-control" placeholder="Asignado a" name="assignee_id"></select>
+                            </div>
+                            <label for="NTassigee_deadline" class="col-md-1 col-form-label">Fecha:</label>
+                            <div class="col-md-4">
+                                <input type="date" id="NTassigee_deadline" class="form-control" name="assignee_deadline"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-3"></span>
+                            <span class="col-md-4 error-msg-row" id="spnNTassignee_id">Error</span>
+                            <span class="col-md-1"></span>
+                            <span class="col-md-4 error-msg-row" id="spnNTassigee_deadline">Error</span>
+                        </div>
+                        <div class="row">
+                            <label for="NTchkRecurrentTask" class="form-check-label" style="width:130px; margin-left: 15px;">Tarea recurrente:</label>
+                            <div style="width:20px; margin-left: 20px;">
+                                <input type="checkbox" id="NTchkRecurrentTask" class="form-check-input" data-toggle="tooltip" data-placement="bottom" title="Seleccionar si desea que la tarea se genera en automático en la frecuencia seleccionada" name="recurrent_task" style="margin-top: 0.4rem;"/>
+                            </div>
+                            <div style="margin-right:10px;">
+                                <select class="form-control-sm" id="NTselRecurrentFrequency" data-toggle="tooltip" data-placement="bottom" title="Seleccione la frecuencia con la que desea se genere de nuevo la tarea" style="border-radius:3px; display:none;" name="recurrent_frequency"></select>
+                            </div>
+                            <!-- <label for="NTdateStopRecurrent" id="lblNTdateStopRecurrent" style="display:none;">Recurrente hasta:</label>
+                            <div style="margin-left:15px; width:25%;">
+                                <input type="date" class="form-control" id="NTdateStopRecurrent" name="date_stop_recurrent" style="display:none;"/>
+                            </div> -->
+                        </div>
+                        <div class="row">
+                            <label for="NTchkNotifyAdmin" class="form-check-label" style="width:200px; margin-left: 15px; margin-top:15px;">Notificar administrador:</label>
+                            <div style="width:20px; margin-left:20px; margin-top:15px;">
+                                <input type="checkbox" id="NTchkNotifyAdmin" data-toggle="tooltip" data-placement="bottom" title="Seleccionar si desea se envíe una notificación al administrador en cuanto se resuelva la tarea" class="form-check-input" name="notify_admin" style="margin-top: 0.4rem;"/>
+                            </div>
+                        </div>
+                    </form>
+                    <div style="display:inline; ">
+                        <button class="btn btn-success btn-lg" type="button" id="btnAddEvidence" data-toggle="tooltip" title="Agregar/Eliminar evidencias" style="margin-left:10px;">Evidencias</button>
+                        <div id="NTtask_evidences" style="max-height:110px; overflow-y:auto; margin-top: 10px;">
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnSaveNewTask">Guardar <i class="fa fa-save"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCancelNewTask">Salir <i class="fa fa-window-close"></i></button>
+                </div>
             </div>
-            <div class="modal-footer user-footer">
-              <button type="button" class="btn btn-light" id="btnSaveNewTask">Guardar <i class="fa fa-save"></i></button>
-              <button type="button" class="btn btn-light" id="btnCancelNewTask">Salir <i class="fa fa-window-close"></i></button>
-            </div>
-          </div>
         </div>
     </div>
 </div>

@@ -1,7 +1,7 @@
 <div class="modal fade" id="win_add_evidence" data-keyboard="false" data-backdrop="static">
     <div class="vertical-alignment-helper">
         <div class="modal-dialog vertical-align-center">
-            <div class="modal-content" style="min-width: 550px;">
+            <div class="modal-content" style="min-width: 300px;">
                 <div class="modal-header user-header header-win-title">
                     <span>Agregar evidencias</span>
                     <button class="btn-close-modal pull-right" data-dismiss="modal" type="button"><i class="fa fa-close"></i></button>
@@ -13,28 +13,28 @@
                     </div>
                     <form id="frmAddEvidence" method="POST" style="padding:8px;">
                         <div class="form-group row row-w-span">
-                            <label for="TEname" class="col-md-2 col-form-label">Nombre:</label>
-                            <div class="col-md-7">
+                            <label for="TEname" class="col-sm-2 col-form-label">Nombre:</label>
+                            <div class="col-sm-7">
                                 <input type="text" name="name" class="form-control" id="TEname" />
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-sm-3">
                                 <select class="form-control" id="TEdocument_type" name="document_type" data-toggle="tooltip" title="Seleccione el tipo de documento"></select>
                             </div>
                         </div>
                         <div class="row">
-                            <span class="col-md-2"></span>
-                            <span class="col-md-7 error-msg-row" id="spnTEname">Error</span>
-                            <span class="col-md-3 error-msg-row" id="spnTEdocument_type">Error</span>
+                            <span class="col-sm-2"></span>
+                            <span class="col-sm-7 error-msg-row" id="spnTEname">Error</span>
+                            <span class="col-sm-3 error-msg-row" id="spnTEdocument_type">Error</span>
                         </div>
                         <div class="form-group row row-w-span" >
-                            <label for="TEdescription" class="col-md-3 col-form-label">Descripción:</label>
-                            <div class="col-md-9">
+                            <label for="TEdescription" class="col-sm-3 col-form-label">Descripción:</label>
+                            <div class="col-sm-9">
                                 <textarea type="text" class="form-control" id="TEdescription" name="description" style="width:100%;"></textarea>
                             </div>
                         </div>
                         <div class="row">
-                            <span class="col-md-3"></span>
-                            <span class="col-md-9 error-msg" id="spnTEdescription">Error</span>
+                            <span class="col-sm-3"></span>
+                            <span class="col-sm-9 error-msg" id="spnTEdescription">Error</span>
                         </div>
                     </form>
                 </div>

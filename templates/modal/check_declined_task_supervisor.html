@@ -1,7 +1,7 @@
 <div class="modal fade" id="win_check_declined_task_supervisor" data-keyboard="false" data-backdrop="static">
     <div class="vertical-alignment-helper">
         <div class="modal-dialog vertical-align-center">
-            <div class="modal-content" style="min-width:550px">
+            <div class="modal-content check-task-size" >
                 <div class="modal-header user-header header-win-title">
                     <span>Revisar tarea declinada</span>
                     <button class="btn-close-modal pull-right" data-dismiss="modal" type="button"><i class="fa fa-close"></i></button>
@@ -26,43 +26,43 @@
                             <span class="error-msg" style="width:63%;" id="spnCHDSUPdeadline">Error</span>
                         </div>
                         <div class="form-group row row-w-span">
-                          <label for="CHDSUPsupervisor_id" class="col-form-label" style="width:20%; padding-left:15px;">Supervisa:</label>
-                          <div style="width:35%;padding-right:8px;">
+                          <label for="CHDSUPsupervisor_id" class="col-form-label check-dtask-left-col1" >Supervisa:</label>
+                          <div class="check-dtask-left-col2">
                             <select id="CHDSUPsupervisor_id" class="form-control" placeholder="Supervisor" name="supervisor_id"></select>
                           </div>
-                          <label for="CHDSUPsupervisor_deadline" style="width:13%;padding-left:8px;" class="col-form-label">Fecha:</label>
-                          <div style="width:32%;padding-right:15px;">
+                          <label for="CHDSUPsupervisor_deadline" class="col-form-label check-dtask-right-col1">Fecha:</label>
+                          <div class="check-dtask-right-col2">
                             <input type="date" class="form-control" id="CHDSUPsupervisor_deadline" name="supervisor_deadline"/>
                           </div>
                         </div>
                         <div class="row">
-                            <span style="width:20%; padding-left:15px;"></span>
-                            <span style="width:35%;padding-right:8px;" class="error-msg-row" id="spnCHDSUPsupervisor_id">Error</span>
-                            <span style="width:13%;padding-left:8px;"></span>
-                            <span style="width:32%;padding-right:15px;" class="error-msg-row" id="spnCHDSUPsupervisor_deadline">Error</span>
+                            <span class="check-dtask-left-col1"></span>
+                            <span class="error-msg-row check-dtask-left-col2" id="spnCHDSUPsupervisor_id">Error</span>
+                            <span class="check-dtask-right-col1"></span>
+                            <span class="error-msg-row check-dtask-right-col2" id="spnCHDSUPsupervisor_deadline">Error</span>
                         </div>
                         <div class="form-group row row-w-span">
-                          <label for="CHDSUPassignee_id" style="width:20%; padding-left:15px;" class="col-form-label">Asignado a:</label>
-                          <div style="width:35%; padding-right:8px;">
+                          <label for="CHDSUPassignee_id" class="col-form-label check-dtask-left-col1">Asignado a:</label>
+                          <div class="check-dtask-left-col2">
                             <select id="CHDSUPassignee_id" class="form-control" placeholder="Asignado a" name="assignee_id"></select>
                           </div>
-                          <label for="CHDSUPassigee_deadline" class="col-form-label" style="width:13%;padding-left:8px;">Fecha:</label>
-                          <div style="width:32%;padding-right:15px;">
+                          <label for="CHDSUPassigee_deadline" class="col-form-label check-dtask-right-col1">Fecha:</label>
+                          <div class="check-dtask-right-col2">
                             <input type="date" id="CHDSUPassigee_deadline" class="form-control" name="assignee_deadline"/>
                           </div>
                         </div>
                         <div class="row">
-                            <span style="width:20%; padding-left:15px;"></span>
-                            <span style="width:35%; padding-right:8px;" class="error-msg-row" id="spnCHDSUPassignee_id">Error</span>
-                            <span style="width:13%; padding-left:8px;"></span>
-                            <span style="width:32%; padding-right:15px;" class="error-msg-row" id="spnCHDSUPassigee_deadline">Error</span>
+                            <span class="check-dtask-left-col1"></span>
+                            <span class="error-msg-row check-dtask-left-col2" id="spnCHDSUPassignee_id">Error</span>
+                            <span class="check-dtask-right-col1"></span>
+                            <span class="error-msg-row check-dtask-right-col2" id="spnCHDSUPassigee_deadline">Error</span>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer user-footer">
-                    <button class="btn btn-light" type="button" id="btnSaveCheckDeclinedSupTask" data-toggle="tooltip" title="Asignar tarea a auxiliar seleccionado y/o cambiar descripción">Enviar <i class="fa fa-calendar-check-o"></i></button>
-                    <button class="btn btn-light" type="button" id="btnCancelDeclinedSupTask" data-toggle="tooltip" title="Cancelar tarea (ya no será asignada a ningún auxiliar)">Cancelar tarea <i class="fa fa-calendar-times-o"></i></button>
-                    <button class="btn btn-light" type="button" id="btnCloseCheckDeclinedSupTask" data-toggle="tooltip" title="Salir sin realizar cambios">Salir <i class="fa fa-window-close"></i></button>
+                    <button class="btn btn-light" type="button" id="btnSaveCheckDeclinedSupTask" data-toggle="tooltip" title="Asignar tarea a auxiliar seleccionado y/o cambiar descripción"><span class="action-btn-text">Enviar </span><i class="fa fa-calendar-check-o"></i></button>
+                    <button class="btn btn-light" type="button" id="btnCancelDeclinedSupTask" data-toggle="tooltip" title="Cancelar tarea (ya no será asignada a ningún auxiliar)"><span class="action-btn-text">Cancelar tarea </span><i class="fa fa-calendar-times-o"></i></button>
+                    <button class="btn btn-light" type="button" id="btnCloseCheckDeclinedSupTask" data-toggle="tooltip" title="Salir sin realizar cambios"><span class="action-btn-text">Salir </span><i class="fa fa-window-close"></i></button>
                 </div>
             </div>
         </div>

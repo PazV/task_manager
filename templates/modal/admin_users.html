@@ -1,19 +1,22 @@
 
 <div class="modal fade" id="win_admin_users" data-keyboard="false" data-backdrop="static">
   <div class="vertical-alignment-helper">
-      <div class="modal-dialog modal-lg vertical-align-center">
+      <div class="modal-dialog  modal-lg vertical-align-center">
+      <!-- <div class="modal-dialog  vertical-align-center" style="overflow-y:initial !important;"> -->
         <div class="modal-content">
           <div class="modal-header user-header header-win-title">
             <span>Administrar usuarios</span>
             <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
           </div>
           <div class="modal-body" style="width:100%;">
+
               <div class="alert alert-info alert-dismissible" id="alertAdminUsersWin" style="display:none;" role="alert">
                   <p>Ocurrió un error.</p>
                   <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
               </div>
               <div class="content">
                   <div class="table-responsive">
+
                       <table class="table display" id="grdAdminUsers" style="width:100%;">
                         <thead style="width:100%;">
                           <tr>
