@@ -191,40 +191,8 @@ input[type="date"]
     font-size:.8rem;
 }
 
-.task-filters-col-1{
-    width:24%;
-    margin:0% 0.5%;
-}
-
-.task-filters-col-2{
-    width:18%;
-    margin:0% 0.5%;
-}
-
-.task-filters-col-3{
-    width:17%;
-    margin:0% 0.5%;
-}
-
-.task-filters-col-4{
-    width:64%;
-    margin:0% 0.5%;
-}
-
-.task-filters-col-5{
-    width:9%;
-    margin:0% 0.5%;
-}
 
 #btnCollapseFilters {
-    /* border-radius: 50%;
-    background-color: white;
-    border: #868080;
-    border-width: 1px;
-    border-style: solid;
-    text-align: center;
-    outline:none;
-    color:#868080; */
     display:none;
 }
 
@@ -270,17 +238,205 @@ input[type="date"]
     margin-right:3%;
 }
 
+.task-filters-col-1{
+    width:24%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-2{
+    width:18%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-2-fecha{
+    width:18%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-3{
+    width:17%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-4{
+    width:64%;
+    margin:0% 0.5%;
+}
+
+.task-filters-col-5{
+    width:9%;
+    margin:0% 0.5%;
+}
+
+
+.task-filter-label1{
+    width:32%;
+    margin:0% 2%;
+}
+
+.task-filter-label1-aux{
+    width:32%;
+    margin:0% 2%;
+}
+
+.task-filter-label1-status{
+    width:32%;
+    margin:0% 2%;
+}
+
+.task-filter-label2{
+    width:11%;
+    margin:0% 2%;
+}
+
+.task-filter-label3{
+    width:8%;
+    margin:0% 2%;
+}
+
+.task-filter-input1{
+    width:60%;
+    margin:0% 2%;
+}
+
+.task-filter-input1-aux{
+    width:60%;
+    margin:0% 2%;
+}
+
+.task-filter-input2{
+    width:90%;
+    margin:0% 2%;
+}
+
+.task-filter-input3{
+    width:81%;
+    margin:0% 2%;
+    height:fit-content;
+}
+
+.task-filter-input4{
+    width:64%;
+    margin:0% 2%;
+}
+
+.task-filter-input5{
+    width:82%;
+    margin:0% 2%;
+}
+
+@media screen and (max-width:1080px){
+    .filter-btn-no-padding{
+        padding:5px;
+    }
+
+    .task-filters-col-1, .task-filters-col-2 {
+        width: 45%;
+        margin-top: 10px;
+        margin-right:2%;
+        float:left;
+    }
+
+    .task-filters-col-4{
+        width: 33%;
+        margin-top: 10px;
+        /* margin-right:2%; */
+        float:left;
+    }
+
+
+    .task-filters-col-5{
+        width: 10%;
+        margin-top: 10px;
+        margin-right:2%;
+        float:left;
+    }
+
+    .task-filters-col-2-fecha{
+        width: 28%;
+        margin-top: 10px;
+        margin-right:2%;
+        float:left;
+    }
+
+    .task-filters-col-3{
+        width: 34%;
+        margin-top: 10px;
+        margin-right:2%;
+        float:left;
+    }
+
+    .task-filter-label1{
+        width:25%;
+        margin:0% 2%;
+    }
+
+    .task-filter-label1-aux{
+        width:25%;
+        margin:0% 2%;
+    }
+
+    .task-filter-label3{
+        width:21%;
+        margin:0% 2%;
+    }
+
+    .task-filter-input1{
+        width:66%;
+        margin:0% 2%;
+    }
+
+    .task-filter-input1-aux{
+        width:66%;
+        margin:0% 2%;
+    }
+
+    .task-filter-input5{
+        width:70%;
+        margin:0% 2%;
+    }
+
+}
 
 @media screen and (max-width:980px){
     .hidden-navbar-icon{
         display:none
     },
-    .task-filters-col-1, .task-filters-col-2, .task-filters-col-3, .task-filters-col-4, .task-filters-col-5{
-      width: 48%%;
+    .task-filters-col-1, .task-filters-col-2{
+      width: 45%;
       margin-top: 10px;
       margin-right:2%;
       float:left;
     }
+
+    /* .task-filters-col-4{
+        width: 38%;
+        margin-top: 10px;
+        margin-right:2%;
+        float:left;
+    } */
+
+    .task-filters-col-5{
+        width: 10%;
+        margin-top: 10px;
+        margin-right:2%;
+        float:left;
+    }
+
+    .task-filters-col-2-fecha {
+        width: 28%;
+        margin-top: 10px;
+        margin-right:2%;
+        float:left;
+    }
+
+    .task-filters-col-3{
+        width: 32%;
+        margin-top: 10px;
+        margin-right:2%;
+        float:left;
+    }
+
     #btnCollapseFilters {
         display:block;
         margin-top:35px;
@@ -350,10 +506,78 @@ input[type="date"]
 
 
 @media screen and (max-width: 675px){
-  .task-filters-col-1, .task-filters-col-2, .task-filters-col-3, .task-filters-col-4, .task-filters-col-5{
+  .task-filters-col-1, .task-filters-col-2, .task-filters-col-2-fecha, .task-filters-col-3{
     width: 98%;
     margin-top: 10px;
     margin-right:2%;
+  }
+
+  .task-filters-col-4{
+      width: 72%;
+      margin-top: 10px;
+      margin-right:2%;
+  }
+  .task-filters-col-5{
+      width: 20%;
+      margin-top: 10px;
+      margin-right:2%;
+  }
+
+  .task-filter-label1{
+      width:32%;
+      margin:0% 2%;
+  }
+
+  .task-filter-label1-aux{
+      width:20%;
+      margin:0% 2%;
+  }
+
+
+  .task-filter-label1-status{
+      width:32%;
+      margin:0% 2%;
+  }
+
+  .task-filter-label2{
+      width:13%;
+      margin:0% 2%;
+  }
+
+  .task-filter-label3{
+      width:24%;
+      margin:0% 2%;
+  }
+
+  .task-filter-input1{
+      width:60%;
+      margin:0% 2%;
+  }
+
+  .task-filter-input1-aux{
+      width:69%;
+      margin:0% 2%;
+  }
+
+  .task-filter-input2{
+      width:79%;
+      margin:0% 2% 0% 19%;
+  }
+
+  .task-filter-input3{
+      width:79%;
+      margin:0% 2%;
+      height:fit-content;
+  }
+
+  .task-filter-input4{
+      width:78%;
+      margin:0% 2%;
+  }
+
+  .task-filter-input5{
+      width:68%;
+      margin:0% 2%;
   }
 
   #btnCollapseFilters {

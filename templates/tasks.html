@@ -4,96 +4,96 @@
     <!-- <div  style="padding:2em; max-height:500px;" id="taskContainer"> -->
     <!-- <i class="fa fa-angle-double-down"></i> -->
 
-    <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divTaskFilters" id="btnCollapseFilters">Filtros</button>
-      <form id="TLfrmFilters">
-        <div id="divTaskFilters" class="collapse">
-        <div class="row" style="padding:0.5em;" id="row2">
-            <div class="row task-filters-col-1">
-                <label for="TLselSupervisor" style="width:32%; margin:0% 2%;" class="col-form-label"><b>Supervisor:</b></label>
-                <select class="form-control" id="TLselSupervisor" name="supervisor_id" style="width:60%; margin:0% 2%; border-color:#001871;"></select>
-            </div>
-            <div class="row task-filters-col-2">
-                <select class="form-control" id="TLdateType" name="date_type" style="width:90%; margin:0% 3%; border-color:#ed8b00;" data-toggle="tooltip" title="Tipo de fecha por el cual desea filtrar las tareas">
-                    <option id="2">Fecha límite</option>
-                    <option id="1">Fecha creación</option>
-                </select>
-            </div>
-            <div class="row task-filters-col-2">
-                <label for="TLdateFrom" style="width:11%; margin-left:2%; margin-right:2%;" class="col-form-label"><b>De:</b></label>
-                <input type="date" name="from" class="form-control" id="TLdateFrom" style="width:81%; margin-left:2%; margin-right:2%; border-color:#ed8b00" required="required" data-toggle="tooltip" title="Inicio rango de fechas"/>
-            </div>
-            <div class="row task-filters-col-2">
-                <label for="TLdateTo" style="width:11%; margin-left:2%; margin-right:2%;" class="col-form-label"><b>A:</b></label>
-                <input type="date" name="to" class="form-control" id="TLdateTo" style="width:81%; margin-left:2%; margin-right:2%; border-color:#ed8b00;" required="required"/>
-            </div>
-            <div class="row task-filters-col-3">
-                <label for="TLselStatus" class="col-form-label" style="width:33%;"><b>Status:</b></label>
-                <select class="form-control" id="TLselStatus" name="status_id" style="width:63%; margin-right:4%; border-color:#00bfb3;" data-toggle="tooltip" title="Status para filtrar tareas">
-                    <option id="-1">Todos</option>
-                    <option id="1">Pendiente</option>
-                    <option id="2">Resuelta</option>
-                    <option id="3">Declinada</option>
-                    <option id="4">Cerrada</option>
-                    <option id="5">Cancelada</option>
-                    <option id="6">En proceso</option>
-                </select>
-            </div>
-        </div>
-        <div class="row" style="padding-top:.2em; padding-bottom:.5em; padding-left:.5em;">
-            <div class="row task-filters-col-1">
-                <label for="TLselAssignee" style="width:32%; margin:0% 2%;" class="col-form-label"><b>Auxiliar:</b></label>
-                <select class="form-control" id="TLselAssignee" name="assignee_id" style="width:60%; margin:0% 2%; border-color:#00a9ce;"></select>
-            </div>
-            <div class="row task-filters-col-4">
-                <label for="TLsearchName" class="col-form-label" style="width:10%; margin:0% 2%;"><b>Buscar:</b></label>
-                <input type="text" class="form-control" id="TLsearchName" style="width:80%; margin-left:3%; margin-right:3%; border-color:#981d97;" name="search"/>
-            </div>
-            <div class="row task-filters-col-5">
-                <button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Buscar"  id="btnTaskSearch" style="margin-right:5px;"><i class="fa fa-search"></i></button>
-                <button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Limpiar búsqueda" id="btnClearTaskSearch" style="margin-left:5px;"><i class="fa fa-trash"></i></button>
-            </div>
-        </div>
-        </div>
-      </form>
+        <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divTaskFilters" id="btnCollapseFilters">Filtros</button>
+            <form id="TLfrmFilters" style="box-sizing:border-box;">
+                <div id="divTaskFilters" class="collapse">
+                    <div class="row" style="padding:0.5em;" id="row2">
+                        <div class="row task-filters-col-1">
+                            <label for="TLselSupervisor" class="col-form-label task-filter-label1"><b>Supervisor:</b></label>
+                            <select class="form-control task-filter-input1" id="TLselSupervisor" name="supervisor_id" style="border-color:#001871;"></select>
+                        </div>
+                        <div class="row task-filters-col-2">
+                            <select class="form-control task-filter-input2" id="TLdateType" name="date_type" style="border-color:#ed8b00;" data-toggle="tooltip" title="Tipo de fecha por el cual desea filtrar las tareas">
+                                <option id="2">Fecha límite</option>
+                                <option id="1">Fecha creación</option>
+                            </select>
+                        </div>
+                        <div class="row task-filters-col-2-fecha">
+                            <label for="TLdateFrom" class="col-form-label task-filter-label2"><b>De:</b></label>
+                            <input type="date" name="from" class="form-control task-filter-input3" id="TLdateFrom" style="border-color:#ed8b00;" required="required" data-toggle="tooltip" title="Inicio rango de fechas"/>
+                        </div>
+                        <div class="row task-filters-col-2-fecha">
+                            <label for="TLdateTo" class="col-form-label task-filter-label2"><b>A:</b></label>
+                            <input type="date" name="to" class="form-control task-filter-input3" id="TLdateTo" style="border-color:#ed8b00;" required="required"/>
+                        </div>
+                        <div class="row task-filters-col-3" style="display: -webkit-inline-box;">
+                            <label for="TLselStatus" class="col-form-label task-filter-label1-status"><b>Status:</b></label>
+                            <select class="form-control task-filter-input4" id="TLselStatus" name="status_id" style="border-color:#00bfb3;" data-toggle="tooltip" title="Status para filtrar tareas">
+                                <option id="-1">Todos</option>
+                                <option id="1">Pendiente</option>
+                                <option id="2">Resuelta</option>
+                                <option id="3">Declinada</option>
+                                <option id="4">Cerrada</option>
+                                <option id="5">Cancelada</option>
+                                <option id="6">En proceso</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:.2em; padding-bottom:.5em; padding-left:.5em;">
+                        <div class="row task-filters-col-1">
+                            <label for="TLselAssignee" class="col-form-label task-filter-label1-aux"><b>Auxiliar:</b></label>
+                            <select class="form-control task-filter-input1-aux" id="TLselAssignee" name="assignee_id" style="border-color:#00a9ce;"></select>
+                        </div>
+                        <div class="row task-filters-col-4">
+                            <label for="TLsearchName" class="col-form-label task-filter-label3"><b>Buscar:</b></label>
+                            <input type="text" class="form-control task-filter-input5" id="TLsearchName" style="border-color:#981d97;" name="search"/>
+                        </div>
+                        <div class="row task-filters-col-5">
+                            <button type="button" class="btn btn-outline-primary filter-btn-no-padding" data-toggle="tooltip" title="Buscar"  id="btnTaskSearch" style="margin-right:5px;"><i class="fa fa-search"></i></button>
+                            <button type="button" class="btn btn-outline-primary filter-btn-no-padding" data-toggle="tooltip" title="Limpiar búsqueda" id="btnClearTaskSearch" style="margin-left:5px;"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
 
-        <div class="table-responsive">
-            <table id="grdTask" class="table display">
-                <thead>
-                    <tr>
-                        <th class="info">Creada</th>
-                        <th>Nombre</th>
-                        <th>Fecha límite</th>
-                        <th>Auxiliar</th>
-                        <th>Supervisor</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody style="cursor:pointer;">
+            <div class="table-responsive">
+                <table id="grdTask" class="table display">
+                    <thead>
+                        <tr>
+                            <th class="info">Creada</th>
+                            <th>Nombre</th>
+                            <th>Fecha límite</th>
+                            <th>Auxiliar</th>
+                            <th>Supervisor</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody style="cursor:pointer;">
 
-                </tbody>
-            </table>
-        </div>
-        <div class="btn-toolbar float-right" role="toolbar" style="padding-top:5px; padding-right: 15px;">
-            <div class="btn-group " role="group">
-                <button type="button" class="btn btn-outline-primary" id="btnTaskDetails"><span class="action-btn-text">Ver detalles </span><i class="fa fa-search"></i></button>
-                <button type="button" class="btn btn-outline-primary" id="btnResolveTaskList"><span class="action-btn-text">Resolver </span><i class="fa fa fa-calendar-check-o"></i></button>
-                <button type="button" class="btn btn-outline-primary" id="btnDeclineTaskList"><span class="action-btn-text">Declinar </span><i class="fa fa-minus-circle"></i></button>
-                {% if g.template_user_info.user_type_id!=3 %}
-                    <button type="button" class="btn btn-outline-primary" id="btnCheckTaskList"><span class="action-btn-text">Revisar </span><i class="fa fa-check-square-o"></i></button>
-                {% endif %}
-                {% if g.template_user_info.user_type_id in (1,4,5,6) %}
-                    <button type="button" class="btn btn-outline-primary" id="btnEditTaskList"><span class="action-btn-text">Editar</span><i class="fa fa-edit"></i></button>
-                    <button type="button" class="btn btn-outline-primary" id="btnCancelTaskList"><span class="action-btn-text">Cancelar </span><i class="fa fa-times-circle"></i></button>
-                {% endif %}
-                {% if g.template_user_info.user_type_id!=3 %}
-                    <button type="button" class="btn btn-outline-primary" id="btnSendNotificationList"><span class="action-btn-text">Enviar notificación </span><i class="fa fa-bell-o"></i></button>
-                {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="btn-toolbar float-right" role="toolbar" style="padding-top:5px; padding-right: 15px;">
+                <div class="btn-group " role="group">
+                    <button type="button" class="btn btn-outline-primary" id="btnTaskDetails"><span class="action-btn-text">Ver detalles </span><i class="fa fa-search"></i></button>
+                    <button type="button" class="btn btn-outline-primary" id="btnResolveTaskList"><span class="action-btn-text">Resolver </span><i class="fa fa fa-calendar-check-o"></i></button>
+                    <button type="button" class="btn btn-outline-primary" id="btnDeclineTaskList"><span class="action-btn-text">Declinar </span><i class="fa fa-minus-circle"></i></button>
+                    {% if g.template_user_info.user_type_id!=3 %}
+                        <button type="button" class="btn btn-outline-primary" id="btnCheckTaskList"><span class="action-btn-text">Revisar </span><i class="fa fa-check-square-o"></i></button>
+                    {% endif %}
+                    {% if g.template_user_info.user_type_id in (1,4,5,6) %}
+                        <button type="button" class="btn btn-outline-primary" id="btnEditTaskList"><span class="action-btn-text">Editar </span><i class="fa fa-edit"></i></button>
+                        <button type="button" class="btn btn-outline-primary" id="btnCancelTaskList"><span class="action-btn-text">Cancelar </span><i class="fa fa-times-circle"></i></button>
+                    {% endif %}
+                    {% if g.template_user_info.user_type_id!=3 %}
+                        <button type="button" class="btn btn-outline-primary" id="btnSendNotificationList"><span class="action-btn-text">Enviar notificación </span><i class="fa fa-bell-o"></i></button>
+                    {% endif %}
                 <!-- <button type="button" id="btn" class="btn btn-outline-primary">Cargar</button> -->
 
+                </div>
+
             </div>
 
         </div>
-
-    </div>
     {% include 'elements/_sidebar.html' %}
 </div>
