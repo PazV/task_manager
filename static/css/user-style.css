@@ -152,7 +152,7 @@ EDIT ON
 
 .user-body-height {
     width:100%;
-    max-height:inherit;
+    max-height:initial;
 }
 
 @media screen and (max-width:980px){

@@ -134,6 +134,8 @@ $(document).ready(function(){
             "scrollY": "255px",
             "scrollCollapse":true,
             serverSide:true,
+            pageLength:5,
+            lengthChange:false,
             ajax:{
                 data:{'company_id':me.user_info.company_id,'from':'admin_users'},
                 url:'/users/getUsers',
@@ -262,6 +264,8 @@ $(document).ready(function(){
                             "scrollY": "255px",
                             "scrollCollapse":true,
                             serverSide:true,
+                            pageLength:5,
+                            lengthChange:false,
                             ajax:{
                                 data:{'company_id':me.user_info.company_id},
                                 url:'/users/getUsers',
@@ -404,6 +408,8 @@ $(document).ready(function(){
                                             "scrollY": "255px",
                                             "scrollCollapse":true,
                                             serverSide:true,
+                                            pageLength:5,
+                                            lengthChange:false,
                                             ajax:{
                                                 data:{'company_id':me.user_info.company_id},
                                                 url:'/users/getUsers',
