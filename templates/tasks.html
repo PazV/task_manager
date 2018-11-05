@@ -5,7 +5,8 @@
     <!-- <i class="fa fa-angle-double-down"></i> -->
 
         <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divTaskFilters" id="btnCollapseFilters">Filtros</button>
-            <form id="TLfrmFilters" style="box-sizing:border-box;">
+            <form id="TLfrmFilters">
+            <!-- <form id="TLfrmFilters" style="box-sizing:border-box;"> -->
                 <div id="divTaskFilters" class="collapse">
                     <div class="row" style="padding:0.5em;" id="row2">
                         <div class="row task-filters-col-1">
@@ -26,8 +27,8 @@
                             <label for="TLdateTo" class="col-form-label task-filter-label2"><b>A:</b></label>
                             <input type="date" name="to" class="form-control task-filter-input3" id="TLdateTo" style="border-color:#ed8b00;" required="required"/>
                         </div>
-                        <div class="row task-filters-col-3" style="display: -webkit-inline-box;">
-                            <label for="TLselStatus" class="col-form-label task-filter-label1-status"><b>Status:</b></label>
+                        <div class="row task-filters-col-3" style="display:-webkit-inline-box;">
+                            <label for="TLselStatus" class="col-form-label task-filter-label-status"><b>Status:</b></label>
                             <select class="form-control task-filter-input4" id="TLselStatus" name="status_id" style="border-color:#00bfb3;" data-toggle="tooltip" title="Status para filtrar tareas">
                                 <option id="-1">Todos</option>
                                 <option id="1">Pendiente</option>

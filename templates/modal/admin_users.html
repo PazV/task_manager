@@ -1,9 +1,10 @@
 
 <div class="modal fade" id="win_admin_users" data-keyboard="false" data-backdrop="static">
   <div class="vertical-alignment-helper">
-      <div class="modal-dialog  modal-lg vertical-align-center">
+      <div class="modal-dialog vertical-align-center">
+      <!-- <div class="modal-dialog  modal-lg vertical-align-center"> -->
       <!-- <div class="modal-dialog  vertical-align-center" style="overflow-y:initial !important;"> -->
-        <div class="modal-content">
+        <div class="modal-content user-win-width">
           <div class="modal-header user-header header-win-title">
             <span>Administrar usuarios</span>
             <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
@@ -15,10 +16,11 @@
                   <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
               </div>
               <div class="content">
+                  <!-- <div> -->
                   <div class="table-responsive">
 
-                      <table class="table display" id="grdAdminUsers" style="width:100%;">
-                        <thead style="width:100%;">
+                      <table class="table display" id="grdAdminUsers" style="overflow-x:auto;">
+                        <thead >
                           <tr>
                             <th>Nombre</th>
                             <th>Usuario</th>
@@ -33,9 +35,9 @@
 
           </div>
           <div class="modal-footer user-footer">
-            <button type="button" class="btn btn-light" data-toggle="tooltip" title="Agregar usuario" data-placement="bottom" id="btnNewUser">Nuevo <i class="fa fa-user-plus"></i></button>
-            <button type="button" class="btn btn-light" data-toggle="tooltip" title="Editar usuario" data-placement="bottom" id="btnEditUser">Editar <i class="fa fa-pencil"></i></button>
-            <button type="button" class="btn btn-light" data-toggle="tooltip" title="Deshabilitar usuario" data-placement="bottom" id="btnDisableUser">Deshabilitar <i class="fa fa-user-times"></i></button>
+            <button type="button" class="btn btn-light" data-toggle="tooltip" title="Agregar usuario" data-placement="bottom" id="btnNewUser"><span class="action-btn-text">Nuevo </span><i class="fa fa-user-plus"></i></button>
+            <button type="button" class="btn btn-light" data-toggle="tooltip" title="Editar usuario" data-placement="bottom" id="btnEditUser"><span class="action-btn-text">Editar </span><i class="fa fa-pencil"></i></button>
+            <button type="button" class="btn btn-light" data-toggle="tooltip" title="Deshabilitar usuario" data-placement="bottom" id="btnDisableUser"><span class="action-btn-text">Deshabilitar </span><i class="fa fa-user-times"></i></button>
           </div>
         </div>
       </div>

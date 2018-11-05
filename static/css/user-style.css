@@ -145,10 +145,20 @@ EDIT ON
   margin-left: 1rem;
 }
 
+.user-win-width{
+    min-width: 798px !important;
+    max-width: 800px !important;
+}
+
 @media screen and (max-width:980px){
     .check-show-pass{
         width:50px;
         margin-left:40%;
+    }
+
+    .user-win-width{
+        min-width: 500px !important;
+        max-width: 350px !important;
     }
 }
 
@@ -156,5 +166,10 @@ EDIT ON
     .check-show-pass{
         width:50px;
         margin-left:40%;
+    }
+
+    .user-win-width{
+        min-width:280px !important;
+        max-width: 265px !important;
     }
 }
