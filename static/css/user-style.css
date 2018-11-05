@@ -150,6 +150,11 @@ EDIT ON
     max-width: 800px !important;
 }
 
+.user-body-height {
+    width:100%;
+    max-height:inherit;
+}
+
 @media screen and (max-width:980px){
     .check-show-pass{
         width:50px;
@@ -159,6 +164,11 @@ EDIT ON
     .user-win-width{
         min-width: 500px !important;
         max-width: 350px !important;
+    }
+
+    .user-body-height {
+        width:100%;
+        max-height:600px;
     }
 }
 
@@ -171,5 +181,10 @@ EDIT ON
     .user-win-width{
         min-width:280px !important;
         max-width: 265px !important;
+    }
+
+    .user-body-height {
+        width:100%;
+        max-height:450px;
     }
 }
