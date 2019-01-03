@@ -27,6 +27,7 @@ import time
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color, colors, PatternFill, Border, Alignment
 from openpyxl.cell import Cell
+import subprocess
 
 bp = Blueprint('task', __name__, url_prefix='/task')
 
@@ -530,6 +531,7 @@ def getTaskDetails():
                     a.task_id=%s
                 and a.document_type_id=b.document_type_id
             """%data['task_id']).dictresult()
+
             if data['from']=='details' or data['from']=='decline':
                 doc_list=""
                 if documents!=[]:
@@ -2418,65 +2420,195 @@ def downloadTaskFormat():
         app.logger.info(traceback.format_exc(exc_info))
         return json.dumps(response)
 
-# @bp.route('/uploadTasks', methods=['GET','POST'])
-# @is_logged_in
-# def uploadTasks():
-#     response={}
-#     try:
-#         data=request.form.to_dict()
-#         app.logger.info(data)
-#         files=request.files
-#         file_path=cfg.report_path
-#         file=files[data['file_name']]
-#         filename = secure_filename(file.filename)
-#         file.save(os.path.join(file_path, filename))
-#
-#         read_file=load_workbook(os.path.join(file_path,filename))
-#         sheet_task=read_file['Tareas']
-#         tasks=[]
-#         task_keys=['name','description','deadline','supervisor_login','supervisor_deadline','assignee_login','assignee_deadline','notify_admin','recurrent','recurrent_frequency','doc_name','doc_description','doc_type']
-#         safe_cont=0
-#         row=2
-#         failed_rows=[]
-#         # while True:
-#         #     safe_cont+=1
-#         #     task_d={}
-#         #     do_task=True
-#         #     for i in range(1,14):
-#         #         cell=sheet_task.cell(row=row,column=i).value
-#         #         if i==1:
-#         #             if cell!=None:
-#
-#
-#
-#
-#         # while True:
-#         #     safe_cont+=1
-#         #     task_d={}
-#         #     do_task=True
-#         #     for i in range(1,14): #columnas
-#         #         cell=sheet_task.cell(row=row,column=i).value
-#         #         if i==1: #revisa primera columna que corresponde al nombre de la tarea
-#         #             if cell!=None: #valida que la celda no esté vacía
-#         #                 task_d[task_keys[i-1]]=cell #agrega llave y valor al diccionario task_d
-#         #             else: #si la celda está vacía
-#         #                 failed_rows.append(row) #agrega la fila que no se agregó a lista de filas que no se agregaron
-#         #                 do_task=False #cambia bandera  a falso
-#         #         else: #itera el resto de las columnas
-#         #             if do_task==True: #si bandera está en true
-#         #                 task_d[task_keys[i-1]]=cell
-#         #
-#         #
-#         #
-#         #     if safe_cont==30:
-#         #         break
-#
-#
-#         response['success']=True
-#
-#     except:
-#         response['success']=False
-#         response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
-#         exc_info=sys.exc_info()
-#         app.logger.info(traceback.format_exc(exc_info))
-#     return json.dumps(response)
+@bp.route('/uploadTasks', methods=['GET','POST'])
+@is_logged_in
+def uploadTasks():
+    response={}
+    try:
+        data=request.form.to_dict()
+        files=request.files
+        file_path=cfg.report_path
+        file=files[data['file_name']]
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(file_path, filename))
+
+        read_file=load_workbook(os.path.join(file_path,filename))
+
+        # sheet_task=read_file[0]
+
+        active_sheet=read_file['Tareas']
+        sheet_rows=active_sheet.rows
+        # app.logger.info(act_sheet.rows)
+
+        cont=0
+        keys=[]
+        dicts=[]
+        error=""
+
+        row_error=[]
+        key_dicts=[]
+
+        inserted_tasks=[]
+
+        for x in sheet_rows:
+            if cont==0:
+                for y in x:
+                    enc_key=y.value.encode('utf-8')
+                    key=GF.replaceString(enc_key)
+                    keys.append(key.lower())
+            else:
+                row_d={}
+                cont2=0
+                for y in x:
+                    row_d[keys[cont2]]=y.value
+                    cont2+=1
+                dicts.append(row_d)
+            cont+=1
+
+
+
+        for d in dicts:
+            nd={}
+            try:
+                #intenta armar el diccionario, si lo logra armar, quiere decir que corresponde a una fila con datos de la tarea
+                #va a caer en la excepción cuando intente hacer el split o un encode
+                #busca el id del usuario correspondiente al supervisor
+
+                sup_id=db.query("""
+                    select user_id from system.user where login='%s' and company_id=%s
+                """%(d['supervisor'].lower(),data['company_id'])).dictresult()
+
+                if sup_id!=[]:
+                    # nd['supervisor_login']=d['supervisor']
+                    nd['supervisor_id']=sup_id[0]['user_id']
+                    #busca el id del usuario correspondiente al auxiliar
+                    aux_id=db.query("""
+                        select user_id from system.user where login='%s' and company_id=%s
+                    """%(d['auxiliar'].lower(),data['company_id'])).dictresult()
+
+                    if aux_id!=[]:
+                        # nd['assignee_login']=d['auxiliar']
+
+                        nd['assignee_id']=aux_id[0]['user_id']
+                        nd['deadline']="%s-%s-%s"%(d['fecha_vencimiento'].split("-")[2],d['fecha_vencimiento'].split("-")[1],d['fecha_vencimiento'].split("-")[0])
+                        nd['supervisor_deadline']="%s-%s-%s"%(d['fecha_supervisor'].split("-")[2],d['fecha_supervisor'].split("-")[1],d['fecha_supervisor'].split("-")[0])
+                        nd['assignee_deadline']="%s-%s-%s"%(d['fecha_auxiliar'].split("-")[2],d['fecha_auxiliar'].split("-")[1],d['fecha_auxiliar'].split("-")[0])
+                        #comparar fechas - se debe validar que: deadline>=supervisor_deadline>=assignee_deadline
+                        deadline=datetime.datetime(int(nd['deadline'].split("-")[0]),int(nd['deadline'].split("-")[1]),int(nd['deadline'].split("-")[2]))
+                        sup_deadline=datetime.datetime(int(nd['supervisor_deadline'].split("-")[0]),int(nd['supervisor_deadline'].split("-")[1]),int(nd['supervisor_deadline'].split("-")[2]))
+                        aux_deadline=datetime.datetime(int(nd['assignee_deadline'].split("-")[0]),int(nd['assignee_deadline'].split("-")[1]),int(nd['assignee_deadline'].split("-")[2]))
+                        if deadline>=sup_deadline>=aux_deadline:
+
+                            nd['recurrent']=d['tarea_recurrente']
+                            nd['task_number']=int(d['no._tarea'])
+                            nd['notify_admin']=d['notificar_administrador']
+                            nd['name']=d['nombre'].encode('utf-8')
+
+                            if d['descripcion']!=None:
+                                nd['description']=d['descripcion'].encode('utf-8')
+                            else:
+                                nd['description']=d['nombre'].encode('utf-8')
+
+                            if d['tarea_recurrente'].lower()=='si':
+                                nd['recurrent']=True
+                                nd['recurrent_frequency']=int(d['frecuencia'])
+                            else:
+                                nd['recurrent']=False
+                                nd['recurrent_frequency']=0
+
+                            nd['documents']=[]
+                            if d['nombre_evidencia']!=None:
+                                evidence={}
+                                doc_type_id=db.query("""
+                                    select document_type_id from task.document_type
+                                    where document_type='%s'
+                                """%d['tipo_de_documento'].replace("_"," ").upper()).dictresult()
+                                if doc_type_id!=[]:
+                                    evidence['document_type_id']=doc_type_id[0]['document_type_id']
+                                    evidence['name']=d['nombre_evidencia'].encode('utf-8')
+                                    # evidence['document_type']=d['tipo_de_documento']
+                                    if d['descripcion_evidencia']!=None:
+                                        evidence['description']=d['descripcion_evidencia'].encode('utf-8')
+                                    if len(evidence)>0:
+                                        nd['documents'].append(evidence)
+                                else:
+                                    error="Error en la evidencia '{nombre_evidencia}', no se encontró el tipo de documento '{tipo_de_documento}'".format(**d)
+                                    row_error.append(error)
+                            key_dicts.append(nd)
+                        else:
+                            tarea=d['nombre']
+                            error="Favor de revisar las fechas de la tarea {nombre}, tomando en cuenta que la fecha límite debe ser mayor o igual a la fecha de supervisor, y la fecha de supervisor debe ser mayor o igual a la fecha del auxiliar.".format(**d)
+                            row_error.append(error)
+
+                    else:
+                        error="Error en la tarea '{nombre}': El auxiliar '{auxiliar}' no se encuentra registrado.".format(**d)
+                        row_error.append(error)
+                else:
+                    error="Error en la tarea '{nombre}': El supervisor '{supervisor}' no se encuentra registrado.".format(**d)
+                    row_error.append(error)
+
+
+            except:
+                #cuando cae en la excepción, es porque no logra armar el diccionario de la tarea, osea solo contiene datos de evidencias
+                if d['nombre_evidencia']!=None:
+                    for kd in key_dicts:
+                        if int(d['no._tarea'])==int(kd['task_number']):
+                            doc_type_id=db.query("""
+                                select document_type_id from task.document_type
+                                where document_type='%s'
+                            """%d['tipo_de_documento'].replace("_"," ").upper()).dictresult()
+                            if doc_type_id!=[]:
+                                evidence={
+                                    'name':d['nombre_evidencia'].encode('utf-8'),
+                                    'document_type_id':doc_type_id[0]['document_type_id'],
+                                    'description':''
+                                }
+                                if d['descripcion_evidencia']!=None:
+                                    evidence['description']=d['descripcion_evidencia'].encode('utf-8')
+                                kd['documents'].append(evidence)
+                            else:
+                                error="Error en la evidencia '{nombre_evidencia}', no se encontró el tipo de documento '{tipo_de_documento}'".format(**d)
+                                row_error.append(error)
+
+                            break
+
+        #guardar tareas
+        if key_dicts!=[]:
+            for dic in key_dicts:
+                dic['company_id']=data['company_id']
+
+                dic['status_id']=1
+                dic['user_last_updated']=data['user_id']
+                dic['created_by']=data['user_id']
+                new_task=db.insert("task.task",dic)
+                inserted_tasks.append(new_task['task_id']) #agrega a una lista las tareas insertadas
+                if dic['documents']!=[]:
+                    for d in dic['documents']:
+                        d['task_id']=new_task['task_id']
+                        a=db.insert("task.document",d)
+
+            response['success']=True
+            response['has_error_msg']=False
+
+            if row_error!=[]:
+                response['has_error_msg']=True
+                error_html="Ocurri&oacute; un error al intentar guardar los siguientes registros:<br><ul>"
+                for re in row_error:
+                    error_html+="<li>%s</li>"%re
+                error_html+="</ul>"
+                response['error_msg']=error_html
+        else:
+            response['success']=False
+            response['msg_response']="No se guardó ninguna tarea."
+        app.logger.info("before subprocess")
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        sub=subprocess.Popen(['python', os.path.join(__location__,'mail_subprocess.py'),str(inserted_tasks),str(data['company_id'])],bufsize=0, executable=None, stdin=None, stdout=None, stderr=None, preexec_fn=None, close_fds=False, shell=False, cwd=None, env=None, universal_newlines=False, startupinfo=None, creationflags=0)
+        app.logger.info(sub)
+        app.logger.info("after subprocess")
+
+    except:
+        response['success']=False
+        response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)

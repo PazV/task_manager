@@ -2758,6 +2758,20 @@ $(document).ready(function(){
                     }
                     if (res.success){
                         $("#win_upload_tasks").modal("hide");
+                        if (res.has_error_msg===true){
+                            $.alert({
+                                theme:'dark',
+                                title:'Atención',
+                                content:res.error_msg
+                            });
+                        }
+                        else{
+                            $.alert({
+                                theme:'dark',
+                                title:'Atención',
+                                content:'Las tareas están siendo cargadas.'
+                            });
+                        }
                     }
                     else{
                         $.alert({
