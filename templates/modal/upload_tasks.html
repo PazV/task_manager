@@ -1,0 +1,29 @@
+<div class="modal fade" id="win_upload_tasks" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header user-header header-win-title">
+                    <span>Cargar tareas</span>
+                    <button type="button" class="btn-close-modal" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="frmUploadTask">
+                        <div class="row" style="margin-top:.5em;" id="UTdiv_buttons">
+                        </div>
+                        <div class="row" style="margin-top:1em;">
+                            <label for="UTfile" class="file-input-label" style="width:25%; margin-left:2.5%;">Cargar tareas:</label>
+                            <input type="file" id="UTfile" name="file_tasks" lang="es" class="file-evidence file-input" data-toggle="tooltip" title="Cargar tareas" style="width:70%; margin-right:2.5%;" pattern=".XSLX,.xlsx,.Xlsx,.XLS,.xls,.Xls">
+                            <span class="col-sm-3"></span>
+                            <span id="spnUTfile" class="error-msg col-sm-8">Error</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnUploadTasks" data-toggle="tooltip" title="Cargar tareas">Cargar <i class="fa fa-upload"></i></button>
+                    <a href="/task/downloadTaskFormat" role="button" class="btn btn-light" id="btnDownloadTaskFormat" data-toggle="tooltip" title="Descargar formato para carga tareas">Formato <i class="fa fa-download"></i></a>
+                    <button type="button" class="btn btn-light" id="btnCloseUploadTasks" data-toggle="tooltip" title="Salir">Salir <i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
