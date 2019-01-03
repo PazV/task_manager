@@ -18,7 +18,7 @@
                         {% if g.template_user_info.user_type_id in (1,4,5,6) %}
                             <a class="dropdown-item" data-toggle="modal" href="#win_create_report">Reporte</a>
                         {% endif %}
-                        {% if g.template_user_info.user_type_id in (4,5) %}
+                        {% if g.template_user_info.user_type_id in (4,5,1,2,6) %}
                             <a class="dropdown-item" data-toggle="modal" href="#win_upload_tasks">Carga masiva</a>
                         {% endif %}
                     </div>
