@@ -8,22 +8,25 @@
     </button>
     <div class="collapse navbar-collapse navbar-toggleable-xs" id="divNavBar">
         <ul class="navbar-nav mr-auto">
-            {% if g.template_user_info.user_type_id!=3%}
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbaTask" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Crear tareas">
                         <i class="fa fa-list-alt hidden-navbar-icon" style="margin-right:5px; vertical-align:middle;"></i>Tareas
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarTask">
-                        <a class="dropdown-item" data-toggle="modal" href="#win_new_task" id="a_new_task">Crear nueva</a>
+                        <a class="dropdown-item" data-toggle="modal" href="#win_new_task" id="a_new_task">Crear tarea</a>
+                        
+                        {% if g.template_user_info.user_type_id!=3%}
                         {% if g.template_user_info.user_type_id in (1,4,5,6) %}
                             <a class="dropdown-item" data-toggle="modal" href="#win_create_report">Reporte</a>
                         {% endif %}
                         {% if g.template_user_info.user_type_id in (4,5,1,2,6) %}
                             <a class="dropdown-item" data-toggle="modal" href="#win_upload_tasks">Carga masiva</a>
                         {% endif %}
+                        {% endif %}
                     </div>
                 </li>
-            {% endif %}
+
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Administrar usuarios">
                     <i class="fa fa-group hidden-navbar-icon" style="margin-right:5px; vertical-align:middle;"></i>Usuarios
