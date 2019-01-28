@@ -40,8 +40,12 @@ def getSupervisor():
             flag,data=GF.toDict(request.form,'post')
             if flag:
                 condition=""
-                if int(data['user_type_id'])==2:
-                    condition=" and user_id=%s"%data['user_id']
+                #if int(data['user_type_id'])==2:
+                #    condition=" and user_id=%s"%data['user_id']
+                if int(data['user_type_id'])==6: #si es admin/sup se incluye el usuario en lista de supervisores
+                    condition=" and user_type_id in (2,3,6)"
+                else:
+                    condition=" and user_type_id in (2,3)"
                 supervisor=db.query("""
                     select
                         user_id as supervisor_id,
@@ -49,8 +53,8 @@ def getSupervisor():
                     from
                         system.user
                     where
-                        user_type_id in (2,6)
-                    and company_id=%s
+                        --user_type_id in (2,6) and
+                    company_id=%s
                     and enabled in (1,3) %s
                     order by name
                 """%(int(data['company_id']),condition)).dictresult()
@@ -80,12 +84,16 @@ def getAssignee():
             if flag:
                 condition=""
                 user_type=""
-                if int(data['user_type_id'])==3:
-                    condition=" and user_id=%s"%data['user_id']
+                #if int(data['user_type_id'])==3:
+                #    condition=" and user_id=%s"%data['user_id']
+                # if int(data['user_type_id'])==6:
+                #     user_type=" user_type_id in (2,3) "
+                # else:
+                #     user_type=" user_type_id = 3 "
                 if int(data['user_type_id'])==6:
-                    user_type=" user_type_id in (2,3) "
+                    user_type=" user_type_id in (2,3,6) "
                 else:
-                    user_type=" user_type_id = 3 "
+                    user_type=" user_type_id in (2,3) "
                 assignee=db.query("""
                     select
                         user_id as assignee_id,
@@ -271,11 +279,19 @@ def getTask():
             user=""
             deadline=""
             filter=json.loads(request.form['filter'])
+
             first=request.form['first']
             filters=""
             now=datetime.datetime.now()
+
+            if first=='true':
+                if user_type_id==2:
+                    filter['supervisor_id']=user_id
+                elif user_type_id==3:
+                    filter['assignee_id']=user_id
             for key,value in filter.iteritems():
                 if value!=-1:
+
                     if key[-3:]=='_id':
                         if user_type_id!=2:
                             filters+=" and a.%s = %s"%(key,value)
@@ -426,6 +442,7 @@ def getTask():
                 else:
                     order_by="a.assignee_deadline"
 
+            user=""
 
             task=db.query("""
                 select
@@ -440,7 +457,8 @@ def getTask():
                     a.status_id,
                     (select name from system.user where user_id=a.assignee_id) as assignee,
                     (select name from system.user where user_id=a.supervisor_id) as supervisor,
-                    b.description as status
+                    b.description as status,
+                    a.res_dec_by
                 from
                     task.status b,
                     task.task a
@@ -451,7 +469,7 @@ def getTask():
                 order by %s asc
                 offset %s limit %s
             """%(deadline,int(request.form['company_id']),user,filters,order_by,int(request.form['start']),int(request.form['length']))).dictresult()
-
+            
             total=db.query("""
                 select
                     count(*)
@@ -650,14 +668,14 @@ def getTaskDetails():
             elif data['from']=='check_declined':
                 declined_by=db.query("""
                     select
-                        a.declined_by,
+                        a.res_dec_by,
                         b.user_type_id
                     from
                         system.user b,
                         task.task a
                     where
                         a.task_id=%s
-                    and a.declined_by=b.user_id
+                    and a.res_dec_by=b.user_id
                 """%data['task_id']).dictresult()[0]
 
                 assignee_info=db.query("""
@@ -677,7 +695,7 @@ def getTaskDetails():
                     #en los demás casos
                     response['declined_by']='supervisor'
 
-                    if data['user_id']==declined_by['declined_by'] or data['user_type_id']==2:
+                    if data['user_id']==declined_by['res_dec_by'] or data['user_type_id']==2:
                         # si el usuario que declina es el mismo que desea revisar no lo permite
                         #si fue declinado por un supervisor, no puede ser revisado por otro supervisor
                         response['allow_check']=False
@@ -795,11 +813,12 @@ def resolveTask():
                 status_id=2,
                 comments='%s',
                 last_updated='now',
-                user_last_updated=%s
+                user_last_updated=%s,
+                res_dec_by=%s
             where
                 task_id=%s
             and company_id=%s
-        """%(data['comments'],data['user_id'],data['task_id'],data['company_id']))
+        """%(data['comments'],data['user_id'],data['user_id'],data['task_id'],data['company_id']))
 
         task_info=db.query("""
             select
@@ -1148,7 +1167,7 @@ def declineTask():
                     declining_cause='%s',
                     last_updated='now',
                     user_last_updated=%s,
-                    declined_by=%s
+                    res_dec_by=%s
                 where
                     task_id=%s
                 and company_id=%s

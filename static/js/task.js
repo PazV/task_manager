@@ -70,16 +70,32 @@ $(document).ready(function(){
             }
             if (res_sup.success){
                 $.each(res_sup.data,function(i, item){
-                    $("#TLselSupervisor").append($('<option>',{
-                        text:item.name,
-                        name:item.supervisor_id
-                    }));
+                    if (me.user_info['user_type_id']==2 && me.user_info['user_id']==item.supervisor_id){
+                        $("#TLselSupervisor").append($('<option>',{
+                            text:item.name,
+                            name:item.supervisor_id,
+                            selected:true
+                        }));
+                    }
+                    else{
+                        $("#TLselSupervisor").append($('<option>',{
+                            text:item.name,
+                            name:item.supervisor_id
+                        }));
+                    }
+
                 });
                 if (me.user_info['user_type_id']!=2){
                     $("#TLselSupervisor").append($('<option>',{
                         text:'Todos',
                         name:-1,
                         selected:true
+                    }));
+                }
+                else {
+                    $("#TLselSupervisor").append($('<option>',{
+                        text:'Todos',
+                        name:-1
                     }));
                 }
                 $.ajax({
@@ -98,16 +114,31 @@ $(document).ready(function(){
                         }
                         if (res_as.success){
                             $.each(res_as.data,function(i,item){
-                                $("#TLselAssignee").append($('<option>',{
-                                    text:item.name,
-                                    name:item.assignee_id
-                                }));
+                                if (me.user_info['user_type_id']==3 && me.user_info['user_id']==item.assignee_id){
+                                    $("#TLselAssignee").append($('<option>',{
+                                        text:item.name,
+                                        name:item.assignee_id,
+                                        selected:true
+                                    }));
+                                }
+                                else{
+                                    $("#TLselAssignee").append($('<option>',{
+                                        text:item.name,
+                                        name:item.assignee_id
+                                    }));
+                                }
                             });
                             if (me.user_info['user_type_id']!=3){
                                 $("#TLselAssignee").append($('<option>',{
                                     text:'Todos',
                                     name:-1,
                                     selected:true
+                                }));
+                            }
+                            else{
+                                $("#TLselAssignee").append($('<option>',{
+                                    text:'Todos',
+                                    name:-1
                                 }));
                             }
                         }
@@ -631,6 +662,7 @@ $(document).ready(function(){
             var data={};
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
+            console.log(record);
             data['task_id']=record['task_id'];
             data['user_id']=me.user_info.user_id;
             data['company_id']=me.user_info.company_id;
@@ -1309,9 +1341,21 @@ $(document).ready(function(){
             var data={};
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
+            var has_permission=true;
+            //console.log(record);
+            if (parseInt(me.user_info.user_type_id==3)){
+                if (parseInt(record['supervisor_id'])==parseInt(me.user_info.user_id)){
+                    has_permission=true;
+                }
+                else{
+                    has_permission=false;
+                }
+            }
 
             if (record['status_id']==2 || record['status_id']==3){
-                if (parseInt(record['assignee_id'])!=parseInt(me.user_info.user_id)) {
+                if (parseInt(record['res_dec_by'])!=parseInt(me.user_info.user_id) && has_permission==true){ //comprobar que el usuario que revisa la tarea es diferente al usuario que la resolvió
+
+                // if (parseInt(record['assignee_id'])!=parseInt(me.user_info.user_id)) {
                     data['task_id']=record['task_id'];
                     data['user_id']=me.user_info.user_id;
                     data['company_id']=me.user_info.company_id;
