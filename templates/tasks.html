@@ -25,7 +25,7 @@
                         </div>
                         <div class="row task-filters-col-2-fecha">
                             <label for="TLdateTo" class="col-form-label task-filter-label2"><b>A:</b></label>
-                            <input type="date" name="to" class="form-control task-filter-input3" id="TLdateTo" style="border-color:#ed8b00;" required="required"/>
+                            <input type="date" name="to" class="form-control task-filter-input3" id="TLdateTo" style="border-color:#ed8b00;" required="required" data-toggle="tooltip" title="Fin rango de fechas"/>
                         </div>
                         <div class="row task-filters-col-3" style="display:-webkit-inline-box;">
                             <label for="TLselStatus" class="col-form-label task-filter-label-status"><b>Status:</b></label>
@@ -77,7 +77,7 @@
             <div class="btn-toolbar float-right" role="toolbar" style="padding-top:5px; padding-right: 15px;">
                 <div class="btn-group " role="group">
                     <button type="button" class="btn btn-outline-primary" id="btnTaskDetails" data-toggle="tooltip" title="Ver detalles"><span class="action-btn-text">Ver detalles </span><i class="fa fa-search"></i></button>
-                    <button type="button" class="btn btn-outline-primary" id="btnResolveTaskList" data-toggle="tooltip" title="Resolver"><span class="action-btn-text">Resolver </span><i class="fa fa fa-calendar-check-o"></i></button>
+                    <button type="button" class="btn btn-outline-primary" id="btnResolveTaskList" data-toggle="tooltip" title="Resolver"><span class="action-btn-text">Resolver </span><i class="fa fa-calendar-check-o"></i></button>
                     <button type="button" class="btn btn-outline-primary" id="btnDeclineTaskList" data-toggle="tooltip" title="Declinar"><span class="action-btn-text">Declinar </span><i class="fa fa-minus-circle"></i></button>
                     <!-- Ya no limita a usuarios con perfil auxiliar a revisar tareas, siempre y cuando ese auxiliar sea el encargado de supervisar la tarea -->
                     <button type="button" class="btn btn-outline-primary" id="btnCheckTaskList" data-toggle="tooltip" title="Revisar"><span class="action-btn-text">Revisar </span><i class="fa fa-check-square-o"></i></button>
@@ -86,9 +86,9 @@
                         <button type="button" class="btn btn-outline-primary" id="btnEditTaskList" data-toggle="tooltip" title="Editar"><span class="action-btn-text">Editar </span><i class="fa fa-edit"></i></button>
                         <button type="button" class="btn btn-outline-primary" id="btnCancelTaskList" data-toggle="tooltip" title="Cancelar"><span class="action-btn-text">Cancelar </span><i class="fa fa-times-circle"></i></button>
                     {% endif %}
-                    {% if g.template_user_info.user_type_id!=3 %}
-                        <button type="button" class="btn btn-outline-primary" id="btnSendNotificationList" data-toggle="tooltip" title="Enviar notificación"><span class="action-btn-text">Enviar notificación </span><i class="fa fa-bell-o"></i></button>
-                    {% endif %}
+
+                    <button type="button" class="btn btn-outline-primary" id="btnSendNotificationList" data-toggle="tooltip" title="Enviar notificación"><span class="action-btn-text">Enviar notificación </span><i class="fa fa-bell-o"></i></button>
+
                 <!-- <button type="button" id="btn" class="btn btn-outline-primary">Cargar</button> -->
 
                 </div>

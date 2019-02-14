@@ -469,7 +469,7 @@ def getTask():
                 order by %s asc
                 offset %s limit %s
             """%(deadline,int(request.form['company_id']),user,filters,order_by,int(request.form['start']),int(request.form['length']))).dictresult()
-            
+
             total=db.query("""
                 select
                     count(*)
@@ -1986,7 +1986,7 @@ def getNotificationInfo():
                 and a.user_id=b.assignee_id
             """%data['task_id']).dictresult()[0]
             select_list=[]
-            if data['user_type_id']==2: #if sender is supervisor
+            if data['user_type_id']==2 or data['user_type_id']==3: #if sender is supervisor
                 supervisor=db.query("""
                     select
                         a.user_id,
@@ -2008,20 +2008,35 @@ def getNotificationInfo():
                         company_id=%s
                     and user_type_id in (1,6)
                 """%data['company_id']).dictresult()[0]
-                select_list.append({
-                    'name':'%s - Aux'%assignee['name'],
-                    'user_id':'%s'%assignee['user_id']
-                })
+                if data['user_type_id']==2:
+                    select_list.append({
+                        'name':'%s - Aux'%assignee['name'],
+                        'user_id':'%s'%assignee['user_id']
+                    })
+                    response['msg_from']=supervisor['name']
+                elif data['user_type_id']==3:
+                    select_list.append({
+                        'name':'%s - Sup'%supervisor['name'],
+                        'user_id':'%s'%supervisor['user_id']
+                    })
+                    response['msg_from']=assignee['name']
                 if int(admin['user_id'])!=int(supervisor['user_id']):
                     select_list.append({
                         'name':'%s - Admin'%admin['name'],
                         'user_id':'%s'%admin['user_id']
                     })
-                    select_list.append({
-                        'name':'%s - Aux, CC: %s - Admin'%(assignee['name'],admin['name']),
-                        'user_id':'%s,%s'%(assignee['user_id'],admin['user_id'])
-                    })
-                response['msg_from']=supervisor['name']
+                    if data['user_type_id']==2:
+                        select_list.append({
+                            'name':'%s - Aux, CC: %s - Admin'%(assignee['name'],admin['name']),
+                            'user_id':'%s,%s'%(assignee['user_id'],admin['user_id'])
+                        })
+                    else:
+                        select_list.append({
+                            'name':'%s - Sup, CC: %s - Admin'%(supervisor['name'],admin['name']),
+                            'user_id':'%s,%s'%(supervisor['user_id'],admin['user_id'])
+                        })
+
+
 
             elif data['user_type_id']==6: #if sender is supervisor-admin
                 supervisor=db.query("""

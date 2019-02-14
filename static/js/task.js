@@ -333,7 +333,6 @@ $(document).ready(function(){
                                 selected:false
                             }));
                         }
-
                     });
                     $.ajax({
                         url:'/task/getAssignee',
@@ -356,6 +355,46 @@ $(document).ready(function(){
                                         name:item.assignee_id
                                     }));
                                 });
+                                //////////////////////////
+                                // $.ajax({
+                                //     url:'/project/getProjects',
+                                //     method:'POST',
+                                //     data:JSON.stringify({'company_id':me.user_info.company_id}),
+                                //     success:function(responseProj){
+                                //         try{
+                                //             var respProj=JSON.parse(responseProj)
+                                //         }
+                                //         catch(err){
+                                //             handleAjaxErrorLoc(1,2,3);
+                                //         }
+                                //         if (respProj.success){
+                                //             $.each(respProj.data,function(i,item){
+                                //                 if (item.project_id==-1){
+                                //                     $("#NTproject").append($('<option>',{
+                                //                         text:item.name,
+                                //                         name:item.project_id,
+                                //                         selected:true
+                                //                     }));
+                                //                 }
+                                //                 else{
+                                //                     $("#NTproject").append($('<option>',{
+                                //                         text:item.name,
+                                //                         name:item.project_id
+                                //                     }));
+                                //                 }
+                                //             });
+                                //
+                                //         }
+                                //         else{
+                                //             $.alert({
+                                //                 theme:'dark',
+                                //                 title:'Atención',
+                                //                 content:respProj.msg_response
+                                //             });
+                                //         }
+                                //     }
+                                // });
+                                ////////////////
                                 $.ajax({
                                     url:'/task/getDocumentType',
                                     method:'POST',
@@ -369,14 +408,32 @@ $(document).ready(function(){
                                         if (resD.success){
                                             me.document_type_list=resD.data;
                                         }
+                                        else{
+                                            $.alert({
+                                                theme:'dark',
+                                                title:'Atención',
+                                                content:resD.msg_response
+                                            });
+                                        }
                                     }
+                                });
+                            }
+                            else{
+                                $.alert({
+                                    theme:'dark',
+                                    title:'Atención',
+                                    content:res_as.msg_response
                                 });
                             }
                         }
                     });
                 }
                 else{
-                    console.log("ERROR");
+                    $.alert({
+                        theme:'dark',
+                        title:'Atención',
+                        content:res_sup.msg_response
+                    });
                 }
             },
             // error:function(xhr,textStatus,error){
@@ -477,7 +534,7 @@ $(document).ready(function(){
                 text:"Cargando...",
                 type:EasyLoading.TYPE["PACMAN"],
             });
-            var sel_list=[{'id':"#NTsupervisor_id",'name':"supervisor_id"},{'id':"#NTassignee_id",'name':"assignee_id"},{'id':"#NTselRecurrentFrequency",'name':"recurrent_frequency"}];
+            var sel_list=[{'id':"#NTsupervisor_id",'name':"supervisor_id"},{'id':"#NTassignee_id",'name':"assignee_id"},{'id':"#NTselRecurrentFrequency",'name':"recurrent_frequency"},{'id':'#NTproject','name':"project_id"}];
             var data=getDictForm("#frmNewTask",sel_list);
             data['recurrent_task']=$("#NTchkRecurrentTask")[0].checked;
             data['notify_admin']=$("#NTchkNotifyAdmin")[0].checked;
@@ -487,6 +544,8 @@ $(document).ready(function(){
 
             data['name']=encodeURIComponent(data['name']);
             data['description']=encodeURIComponent(data['description']);
+            console.log("data");
+            console.log(data);
             $.ajax({
                 url:'/task/checkAssigneeTasks',
                 method:'POST',
@@ -649,7 +708,6 @@ $(document).ready(function(){
                     setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger","Ocurrió un error al intentar enviar la información, favor de intentarlo de nuevo.",true);
                 }
             });
-
         }
         else{
             setMessage("#alertNTForm",["alert-info","alert-success"],"alert-danger","Existen campos vacíos o incorrectos, favor de revisar.",true);
