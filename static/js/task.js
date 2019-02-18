@@ -534,7 +534,8 @@ $(document).ready(function(){
                 text:"Cargando...",
                 type:EasyLoading.TYPE["PACMAN"],
             });
-            var sel_list=[{'id':"#NTsupervisor_id",'name':"supervisor_id"},{'id':"#NTassignee_id",'name':"assignee_id"},{'id':"#NTselRecurrentFrequency",'name':"recurrent_frequency"},{'id':'#NTproject','name':"project_id"}];
+            var sel_list=[{'id':"#NTsupervisor_id",'name':"supervisor_id"},{'id':"#NTassignee_id",'name':"assignee_id"},{'id':"#NTselRecurrentFrequency",'name':"recurrent_frequency"}];
+            //,{'id':'#NTproject','name':"project_id"}
             var data=getDictForm("#frmNewTask",sel_list);
             data['recurrent_task']=$("#NTchkRecurrentTask")[0].checked;
             data['notify_admin']=$("#NTchkNotifyAdmin")[0].checked;
