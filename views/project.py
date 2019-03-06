@@ -187,7 +187,7 @@ def getProjects():
                 else:
                     today=datetime.datetime.now()
                     date_from='%s-%s-01'%(today.year,str(today.month).zfill(2))
-                    date_to='%s-%s-%s'%(today.year,str(today.month).zfill(2),str(today).zfill(2))
+                    date_to='%s-%s-%s'%(today.year,str(today.month).zfill(2),str(today.day).zfill(2))
                     response['date_from']=False
                     response['date_to']=False
                 date_filter=" and a.deadline between '%s 00:00:00' and '%s 23:59:59'"%(date_from,date_to)
