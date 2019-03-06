@@ -189,6 +189,9 @@ $(document).ready(function(){
                     action:function(){
                         $("#win_search_project_task").modal("show");
                     }
+                },
+                other:{
+                    text:'Salir'
                 }
             }
         })
@@ -196,9 +199,9 @@ $(document).ready(function(){
 
     $("#btnCloseSearchTask").click(function(){
         $("#win_search_project_task").modal("hide");
-    })
+    });
 
-    
+
 
     $.ajax({
         url:'/project/getCreatedBy',
