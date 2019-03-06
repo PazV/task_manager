@@ -198,9 +198,7 @@ $(document).ready(function(){
         $("#win_search_project_task").modal("hide");
     })
 
-    $("#btnPrViewTaskDetails").click(function(){
-        $("#win_task_details").modal("show");
-    });
+    
 
     $.ajax({
         url:'/project/getCreatedBy',
