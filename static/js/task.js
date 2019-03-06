@@ -368,11 +368,11 @@ $(document).ready(function(){
                                         }
                                         if (respProj.success){
                                             if ($("#win_project_detail").is(':visible')===true){
-                                                var project_table=$("#grdProjects").DataTable();
-                                                var project_ind=project_table.row('.selected').index();
-                                                var project_record=project_table.rows(project_ind).data()[0];
+                                                // var project_table=$("#grdProjects").DataTable();
+                                                // var project_ind=project_table.row('.selected').index();
+                                                // var project_record=project_table.rows(project_ind).data()[0];
                                                 $.each(respProj.data,function(i,item){
-                                                    if (item.project_id==project_record['project_id']){
+                                                    if (item.project_id==$("#win_project_detail").data('project_id')) {
                                                         $("#NTproject").append($('<option>',{
                                                             text:item.name,
                                                             name:item.project_id,
