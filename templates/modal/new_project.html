@@ -1,0 +1,55 @@
+<div class="modal fade" id="win_new_project" data-keyboard="false" data-backdrop="static" style="overflow-y:scroll;">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center" style="overflow-y:initial !important;">
+            <div class="modal-content new-project-size">
+                <div class="modal-header user-header header-win-title">
+                    <span>Nuevo proyecto</span>
+                    <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info alert-dismissible" id="alertNProjForm" style="display:none;" role="alert">
+                        <p>Ocurrió un error.</p>
+                        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+                    </div>
+                    <form id="frmNewProject" method="POST" style="padding:8px;">
+                        <div class="form-group row row-w-span">
+                            <label for="txtNPname" class="col-md-2 col-form-label" style="margin-bottom:0px;">Nombre:</label>
+                            <div class="col-md-10">
+                                <input type="text" name="name" class="form-control" id="txtNPname"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-2"></span>
+                            <span class="col-md-10 error-msg" id="spntxtNPname">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NPdescription" class="col-md-2 col-form-label">Descripción:</label>
+                            <div class="col-md-10">
+                                <textarea type="text" name="description" class="form-control" id="NPdescription" style="width:100%;"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-2"></span>
+                            <span class="col-md-10 error-msg" id="spnNPdescription">Error</span>
+                        </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NPdeadline" class="col-md-4 col-form-label">Fecha de vencimiento:</label>
+                            <div class="col-md-8">
+                                <input type="date" name="deadline" class="form-control" id="NPdeadline"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-4"></span>
+                            <span class="col-md-8 error-msg" id="spnNPdeadline">Error</span>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnSaveNewProject"><span class="action-btn-text">Guardar </span><i class="fa fa-save"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCancelNewProject"><span class="action-btn-text">Cancelar </span><i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

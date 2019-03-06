@@ -219,6 +219,41 @@ function checkDate(from,to){
 
 }
 
+function checkDateProject(from,to){
+    var today=new Date().toISOString().split("T")[0];
+    var split_date=today.split("-");
+    split_date[2]="01";
+    var first_day=split_date.join("-");
+    if (from==""){
+        $("#PLdateFrom").val(first_day);
+        from=first_day;
+        if (to==""){
+            to=today;
+            $("#PLdateTo").val(today);
+        }
+    }
+    if (to==""){
+        to=today;
+        $("#PLdateTo").val(today);
+    }
+    if (from!="" && to!=""){
+        var cfrom = new Date(from);
+        var cto = new Date(to);
+        if (cfrom>cto){
+            return to,to;
+        }
+        if (cfrom<=cto){
+            return from,to;
+        }
+    }
+    else{
+        to=today;
+        from=first_day;
+        return from,to;
+    }
+
+}
+
 function handleAjaxErrorLoc(xhr, textStatus, error){
     $.confirm({
         theme:'dark',

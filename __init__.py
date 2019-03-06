@@ -35,11 +35,11 @@ def create_app(test_config=None):
         #DATABASE=os.path.join(app.instance_path, 'taskapp.sqlite'),
         DEBUG_TB_INTERCEPT_REDIRECTS=False,
         ###***** Deseleccionar la sección con # para subir cambios a prod******
-        SESSION_COOKIE_SECURE=False,
-        SESSION_COOKIE_HTTPONLY=False,
+        # SESSION_COOKIE_SECURE=False,
+        # SESSION_COOKIE_HTTPONLY=False,
         # SESSION_COOKIE_SAMESITE='',
-        SERVER_NAME='easytask.com.mx',
-        SESSION_COOKIE_PATH=None
+        # SERVER_NAME='easytask.com.mx',
+        # SESSION_COOKIE_PATH=None
     )
     mail = Mail(app)
     # toolbar=DebugToolbarExtension(app)
@@ -77,6 +77,8 @@ def create_app(test_config=None):
     app.register_blueprint(task.bp)
     from views import settings
     app.register_blueprint(settings.bp)
+    from views import project
+    app.register_blueprint(project.bp)
 
     return app
 

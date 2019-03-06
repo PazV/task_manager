@@ -1,0 +1,43 @@
+<div class="modal fade" id="win_project_detail" data-keyboard="false" data-backdrop="static" style="overflow-y:scroll;">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center" style="overflow-y:initial !important;">
+            <div class="modal-content project-detail-size" style="max-width:none;">
+                <div class="modal-header user-header header-win-title">
+                    <span>Detalles del proyecto</span>
+                    <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div style="margin:15px; padding:20px;" class="jumbotron">
+                        <span id="PrDproject_info"></span>
+                    </div>
+                    <div class="content">
+                        <div class="table-responsive proj-task-table">
+                            <table class="table display" id="grdProjectTasks" >
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Supervisor</th>
+                                        <th>Auxiliar</th>
+                                        <th>Status</th>
+                                        <th>Fecha límite</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="cursor:pointer;">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnPrViewTaskDetails" data-toggle="tooltip" title="Ver detalles"><span class="action-btn-text">Ver detalles </span><i class="fa fa-search"></i></button>
+                    <button type="button" class="btn btn-light" id="btnPrResolveTask" data-toggle="tooltip" title="Resolver tarea"><span class="action-btn-text">Resolver </span><i class="fa fa-calendar-check-o"></i></button>
+                    <!-- <button type="button" class="btn btn-light" id="btnPrCheckResolvedTask" data-toggle="tooltip" title="Revisar tarea"><span class="action-btn-text">Revisar </span><i class="fa fa-check-square-o"></i></button> -->
+                    <button type="button" class="btn btn-light" id="btnPrAddTask" data-toggle="tooltip" title="Agregar tarea al proyecto"><span class="action-btn-text">Agregar tarea </span><i class="fa fa-calendar-plus-o"></i></button>
+                    <button type="button" class="btn btn-light" id="btnPrRemoveTask" data-toggle="tooltip" title="Quitar tarea"><span class="action-btn-text">Quitar tarea </span><i class="fa fa-calendar-minus-o"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCloseProjectDetail" data-toggle="tooltip" title="Salir"><span class="action-btn-text">Salir </span><i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

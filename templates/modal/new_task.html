@@ -75,6 +75,16 @@
                             <span class="col-md-1"></span>
                             <span class="col-md-4 error-msg-row" id="spnNTassigee_deadline">Error</span>
                         </div>
+                        <div class="form-group row row-w-span">
+                            <label for="NTproject" class="col-md-3 col-form-label">Proyecto:</label>
+                            <div class="col-md-9">
+                                <select id="NTproject" class="form-control" placeholder="Proyecto" name="project_id"></select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="col-md-3"></span>
+                            <span class="col-md-9 error-msg" id="spnNTproject">Error</span>
+                        </div>
                         <div class="row">
                             <label for="NTchkRecurrentTask" class="form-check-label" style="width:130px; margin-left: 15px;">Tarea recurrente:</label>
                             <div style="width:20px; margin-left: 20px;">
@@ -96,7 +106,7 @@
                         </div>
                     </form>
                     <div style="display:inline; ">
-                        <button class="btn btn-success btn-lg" type="button" id="btnAddEvidence" data-toggle="tooltip" title="Agregar/Eliminar evidencias" style="margin-left:10px;">Evidencias</button>
+                        <button class="btn btn-success btn-lg" type="button" id="btnAddEvidence" data-toggle="tooltip" title="Agregar evidencias" style="margin-left:10px;">Evidencias <i class="fa fa-file-text-o"></i></button>
                         <div id="NTtask_evidences" style="max-height:110px; overflow-y:auto; margin-top: 10px;">
                         </div>
                     </div>

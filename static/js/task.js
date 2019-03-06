@@ -355,66 +355,85 @@ $(document).ready(function(){
                                         name:item.assignee_id
                                     }));
                                 });
-                                //////////////////////////
-                                // $.ajax({
-                                //     url:'/project/getProjects',
-                                //     method:'POST',
-                                //     data:JSON.stringify({'company_id':me.user_info.company_id}),
-                                //     success:function(responseProj){
-                                //         try{
-                                //             var respProj=JSON.parse(responseProj)
-                                //         }
-                                //         catch(err){
-                                //             handleAjaxErrorLoc(1,2,3);
-                                //         }
-                                //         if (respProj.success){
-                                //             $.each(respProj.data,function(i,item){
-                                //                 if (item.project_id==-1){
-                                //                     $("#NTproject").append($('<option>',{
-                                //                         text:item.name,
-                                //                         name:item.project_id,
-                                //                         selected:true
-                                //                     }));
-                                //                 }
-                                //                 else{
-                                //                     $("#NTproject").append($('<option>',{
-                                //                         text:item.name,
-                                //                         name:item.project_id
-                                //                     }));
-                                //                 }
-                                //             });
-                                //
-                                //         }
-                                //         else{
-                                //             $.alert({
-                                //                 theme:'dark',
-                                //                 title:'Atención',
-                                //                 content:respProj.msg_response
-                                //             });
-                                //         }
-                                //     }
-                                // });
-                                ////////////////
                                 $.ajax({
-                                    url:'/task/getDocumentType',
+                                    url:'/project/getProjectList',
                                     method:'POST',
-                                    data:JSON.stringify({}),
-                                    success:function(responseD){
+                                    data:JSON.stringify({'company_id':me.user_info.company_id}),
+                                    success:function(responseProj){
                                         try{
-                                            var resD=JSON.parse(responseD);
-                                        }catch(err){
+                                            var respProj=JSON.parse(responseProj)
+                                        }
+                                        catch(err){
                                             handleAjaxErrorLoc(1,2,3);
                                         }
-                                        if (resD.success){
-                                            me.document_type_list=resD.data;
+                                        if (respProj.success){
+                                            if ($("#win_project_detail").is(':visible')===true){
+                                                var project_table=$("#grdProjects").DataTable();
+                                                var project_ind=project_table.row('.selected').index();
+                                                var project_record=project_table.rows(project_ind).data()[0];
+                                                $.each(respProj.data,function(i,item){
+                                                    if (item.project_id==project_record['project_id']){
+                                                        $("#NTproject").append($('<option>',{
+                                                            text:item.name,
+                                                            name:item.project_id,
+                                                            selected:true
+                                                        }));
+                                                    }
+                                                    else{
+                                                        $("#NTproject").append($('<option>',{
+                                                            text:item.name,
+                                                            name:item.project_id
+                                                        }));
+                                                    }
+                                                });
+                                            }
+                                            else{
+                                                $.each(respProj.data,function(i,item){
+                                                    if (item.project_id==-1){
+                                                        $("#NTproject").append($('<option>',{
+                                                            text:item.name,
+                                                            name:item.project_id,
+                                                            selected:true
+                                                        }));
+                                                    }
+                                                    else{
+                                                        $("#NTproject").append($('<option>',{
+                                                            text:item.name,
+                                                            name:item.project_id
+                                                        }));
+                                                    }
+                                                });
+                                            }
                                         }
                                         else{
                                             $.alert({
                                                 theme:'dark',
                                                 title:'Atención',
-                                                content:resD.msg_response
+                                                content:respProj.msg_response
                                             });
                                         }
+                                        $.ajax({
+                                            url:'/task/getDocumentType',
+                                            method:'POST',
+                                            data:JSON.stringify({}),
+                                            success:function(responseD){
+                                                try{
+                                                    var resD=JSON.parse(responseD);
+                                                }catch(err){
+                                                    handleAjaxErrorLoc(1,2,3);
+                                                }
+                                                if (resD.success){
+                                                    me.document_type_list=resD.data;
+                                                }
+                                                else{
+                                                    $.alert({
+                                                        theme:'dark',
+                                                        title:'Atención',
+                                                        content:resD.msg_response
+                                                    });
+                                                }
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -516,26 +535,22 @@ $(document).ready(function(){
         $("#NTdeadline").focusout();
         $("#NTsupervisor_deadline").focusout();
         $("#NTassigee_deadline").focusout();
-        console.log(input_list);
         for (x in input_list){
             // if (input_list[x].type=='text' || input_list[x].type=='date' || input_list[x].type=='textarea'){
             if (input_list[x].type=='text' || input_list[x].type=='date'){
-                console.log(input_list[x].id);
                 if ($("#"+input_list[x].id).hasClass('valid-field')===false){
-                    console.log("invalid "+input_list[x].id);
                     $("#"+input_list[x].id).focusout();
                     is_valid=false;
                 }
             }
         }
-        console.log("is valid "+is_valid);
         if (is_valid){
             EasyLoading.show({
                 text:"Cargando...",
                 type:EasyLoading.TYPE["PACMAN"],
             });
-            var sel_list=[{'id':"#NTsupervisor_id",'name':"supervisor_id"},{'id':"#NTassignee_id",'name':"assignee_id"},{'id':"#NTselRecurrentFrequency",'name':"recurrent_frequency"}];
-            //,{'id':'#NTproject','name':"project_id"}
+            var sel_list=[{'id':"#NTsupervisor_id",'name':"supervisor_id"},{'id':"#NTassignee_id",'name':"assignee_id"},{'id':"#NTselRecurrentFrequency",'name':"recurrent_frequency"},{'id':'#NTproject','name':"project_id"}];
+            //
             var data=getDictForm("#frmNewTask",sel_list);
             data['recurrent_task']=$("#NTchkRecurrentTask")[0].checked;
             data['notify_admin']=$("#NTchkNotifyAdmin")[0].checked;
@@ -545,8 +560,6 @@ $(document).ready(function(){
 
             data['name']=encodeURIComponent(data['name']);
             data['description']=encodeURIComponent(data['description']);
-            console.log("data");
-            console.log(data);
             $.ajax({
                 url:'/task/checkAssigneeTasks',
                 method:'POST',
@@ -587,38 +600,51 @@ $(document).ready(function(){
                                                         $("#alertLayout").find('p').html(res.msg_response);
                                                         $("#alertLayout").css("display","block");
                                                         $("#win_new_task").modal("hide");
-                                                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                                        $("#TLdateFrom").val(filters['from']);
-                                                        $("#grdTask").DataTable({
-                                                            "scrollY": "255px",
-                                                            "scrollCollapse":true,
-                                                            serverSide:true,
-                                                            ajax:{
-                                                                data:{
-                                                                    'company_id':me.user_info.company_id,
-                                                                    'user_id':me.user_info.user_id,
-                                                                    'user_type_id':me.user_info.user_type_id,
-                                                                    'first':false,
-                                                                    'filter':JSON.stringify(filters)
+                                                        if ($("#grdTask").is(':visible')===true){
+                                                            var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                                            var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                                            filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                                            filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                                            filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                                            $("#TLdateFrom").val(filters['from']);
+                                                            $("#grdTask").DataTable({
+                                                                "scrollY": "255px",
+                                                                "scrollCollapse":true,
+                                                                serverSide:true,
+                                                                ajax:{
+                                                                    data:{
+                                                                        'company_id':me.user_info.company_id,
+                                                                        'user_id':me.user_info.user_id,
+                                                                        'user_type_id':me.user_info.user_type_id,
+                                                                        'first':false,
+                                                                        'filter':JSON.stringify(filters)
+                                                                    },
+                                                                    url:'/task/getTask',
+                                                                    dataSrc:'data',
+                                                                    type:'POST',
+                                                                    error: handleAjaxErrorLoc
                                                                 },
-                                                                url:'/task/getTask',
-                                                                dataSrc:'data',
-                                                                type:'POST',
-                                                                error: handleAjaxErrorLoc
-                                                            },
-                                                            columns:[
-                                                                {data:'created', "width":"15%"},
-                                                                {data:'name',"width":"20%"},
-                                                                {data:'deadline',"width":"15%"},
-                                                                {data:'assignee',"width":"20%"},
-                                                                {data:'supervisor',"width":"20%"},
-                                                                {data:'status',"width":"10%"}
-                                                            ]
-                                                        });
+                                                                columns:[
+                                                                    {data:'created', "width":"15%"},
+                                                                    {data:'name',"width":"20%"},
+                                                                    {data:'deadline',"width":"15%"},
+                                                                    {data:'assignee',"width":"20%"},
+                                                                    {data:'supervisor',"width":"20%"},
+                                                                    {data:'status',"width":"10%"}
+                                                                ]
+                                                            });
+                                                        }
+                                                        else{
+                                                            if ($("#win_project_detail").is(':visible')){
+                                                                var project_table=$("#grdProjects").DataTable();
+                                                                var project_ind=project_table.row('.selected').index();
+                                                                var project_record=project_table.rows(project_ind).data()[0];
+                                                                getProjectTasks(me.user_info,project_record['project_id']);
+                                                            }
+                                                            else{
+                                                                getProjectGrd(me.user_info);
+                                                            }
+                                                        }
                                                     }
                                                     else{
                                                         EasyLoading.hide();
@@ -654,38 +680,51 @@ $(document).ready(function(){
                                         $("#alertLayout").find('p').html(res.msg_response);
                                         $("#alertLayout").css("display","block");
                                         $("#win_new_task").modal("hide");
-                                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                        $("#TLdateFrom").val(filters['from']);
-                                        $("#grdTask").DataTable({
-                                            "scrollY": "255px",
-                                            "scrollCollapse":true,
-                                            serverSide:true,
-                                            ajax:{
-                                                data:{
-                                                    'company_id':me.user_info.company_id,
-                                                    'user_id':me.user_info.user_id,
-                                                    'user_type_id':me.user_info.user_type_id,
-                                                    'first':false,
-                                                    'filter':JSON.stringify(filters)
+                                        if ($("#grdTask").is(':visible')===true){
+                                            var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                            var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                            filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                            filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                            filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                            $("#TLdateFrom").val(filters['from']);
+                                            $("#grdTask").DataTable({
+                                                "scrollY": "255px",
+                                                "scrollCollapse":true,
+                                                serverSide:true,
+                                                ajax:{
+                                                    data:{
+                                                        'company_id':me.user_info.company_id,
+                                                        'user_id':me.user_info.user_id,
+                                                        'user_type_id':me.user_info.user_type_id,
+                                                        'first':false,
+                                                        'filter':JSON.stringify(filters)
+                                                    },
+                                                    url:'/task/getTask',
+                                                    dataSrc:'data',
+                                                    type:'POST',
+                                                    error: handleAjaxErrorLoc
                                                 },
-                                                url:'/task/getTask',
-                                                dataSrc:'data',
-                                                type:'POST',
-                                                error: handleAjaxErrorLoc
-                                            },
-                                            columns:[
-                                                {data:'created', "width":"15%"},
-                                                {data:'name',"width":"20%"},
-                                                {data:'deadline',"width":"15%"},
-                                                {data:'assignee',"width":"20%"},
-                                                {data:'supervisor',"width":"20%"},
-                                                {data:'status',"width":"10%"}
-                                            ]
-                                        });
+                                                columns:[
+                                                    {data:'created', "width":"15%"},
+                                                    {data:'name',"width":"20%"},
+                                                    {data:'deadline',"width":"15%"},
+                                                    {data:'assignee',"width":"20%"},
+                                                    {data:'supervisor',"width":"20%"},
+                                                    {data:'status',"width":"10%"}
+                                                ]
+                                            });
+                                        }
+                                        else{
+                                            if ($("#win_project_detail").is(':visible')){
+                                                var project_table=$("#grdProjects").DataTable();
+                                                var project_ind=project_table.row('.selected').index();
+                                                var project_record=project_table.rows(project_ind).data()[0];
+                                                getProjectTasks(me.user_info,project_record['project_id']);
+                                            }
+                                            else{
+                                                getProjectGrd(me.user_info);
+                                            }
+                                        }
                                     }
                                     else{
                                         EasyLoading.hide();
@@ -721,7 +760,6 @@ $(document).ready(function(){
             var data={};
             var ind=table.row('.selected').index();
             var record=table.rows(ind).data()[0];
-            console.log(record);
             data['task_id']=record['task_id'];
             data['user_id']=me.user_info.user_id;
             data['company_id']=me.user_info.company_id;
@@ -865,6 +903,8 @@ $(document).ready(function(){
     $("#win_resolve_task").on('hidden.bs.modal',function(){
         $("#RTcomments").val([]);
         $("#RTfrmevidences").empty();
+        $(this).data('task_id',-1);
+        $(this).data('status_id',-1);
     });
 
     $("#btnResolveTask").click(function(){
@@ -917,16 +957,23 @@ $(document).ready(function(){
                 }
 
                 //llega en files
-                var table=$("#grdTask").DataTable();
-                var ind=table.row('.selected').index();
-                var record=table.rows(ind).data()[0];
-                frm.append('task_id',record['task_id']);
+                if ($("#win_project_detail").is(":visible")===true){
+                    frm.append('task_id',$("#win_resolve_task").data('task_id'));
+                    frm.append('status_id',$("#win_resolve_task").data('status_id'));
+                }
+                else{
+                    var table=$("#grdTask").DataTable();
+                    var ind=table.row('.selected').index();
+                    var record=table.rows(ind).data()[0];
+                    frm.append('task_id',record['task_id']);
+                    frm.append('status_id',record['status_id']);
+                }
                 frm.append('user_id',me.user_info.user_id);
                 frm.append('company_id',me.user_info.company_id);
                 frm.append('user_type_id',me.user_info.user_type_id);
                 frm.append('files_list',JSON.stringify(files_list));
                 frm.append('comments',$("#RTcomments")[0].value);
-                frm.append('status_id',record['status_id']);
+
 
                 //frm.append('task_id','1'); //llega en form
                 $.ajax({
@@ -946,38 +993,43 @@ $(document).ready(function(){
                             $("#alertLayout").find('p').html(res.msg_response);
                             $("#alertLayout").css("display","block");
                             $("#win_resolve_task").modal("hide");
-                            var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                            var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                            filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                            filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                            filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                            $("#TLdateFrom").val(filters['from']);
-                            $("#grdTask").DataTable({
-                                "scrollY": "255px",
-                                "scrollCollapse":true,
-                                serverSide:true,
-                                ajax:{
-                                    data:{
-                                        'company_id':me.user_info.company_id,
-                                        'user_id':me.user_info.user_id,
-                                        'user_type_id':me.user_info.user_type_id,
-                                        'first':false,
-                                        'filter':JSON.stringify(filters)
+                            if ($("#win_project_detail").is(":visible")===true){
+                                getProjectTasks(me.user_info,$("#win_project_detail").data('project_id'));
+                            }
+                            else{
+                                var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                $("#TLdateFrom").val(filters['from']);
+                                $("#grdTask").DataTable({
+                                    "scrollY": "255px",
+                                    "scrollCollapse":true,
+                                    serverSide:true,
+                                    ajax:{
+                                        data:{
+                                            'company_id':me.user_info.company_id,
+                                            'user_id':me.user_info.user_id,
+                                            'user_type_id':me.user_info.user_type_id,
+                                            'first':false,
+                                            'filter':JSON.stringify(filters)
+                                        },
+                                        url:'/task/getTask',
+                                        dataSrc:'data',
+                                        type:'POST',
+                                        error: handleAjaxErrorLoc
                                     },
-                                    url:'/task/getTask',
-                                    dataSrc:'data',
-                                    type:'POST',
-                                    error: handleAjaxErrorLoc
-                                },
-                                columns:[
-                                    {data:'created', "width":"15%"},
-                                    {data:'name',"width":"20%"},
-                                    {data:'deadline',"width":"15%"},
-                                    {data:'assignee',"width":"20%"},
-                                    {data:'supervisor',"width":"20%"},
-                                    {data:'status',"width":"10%"}
-                                ]
-                            });
+                                    columns:[
+                                        {data:'created', "width":"15%"},
+                                        {data:'name',"width":"20%"},
+                                        {data:'deadline',"width":"15%"},
+                                        {data:'assignee',"width":"20%"},
+                                        {data:'supervisor',"width":"20%"},
+                                        {data:'status',"width":"10%"}
+                                    ]
+                                });
+                            }
                         }
                         else{
                             EasyLoading.hide();
@@ -1045,15 +1097,20 @@ $(document).ready(function(){
             }
             total_size_MB=total_size/1024/1024;
             if (total_size_MB<=3){
-                var table=$("#grdTask").DataTable();
-                var ind=table.row('.selected').index();
-                var record=table.rows(ind).data()[0];
-
-                data.append('task_id',record['task_id']);
+                if ($("#win_project_detail").is(":visible")===true){
+                    data.append('task_id',$("#win_resolve_task").data('task_id'));
+                    data.append('status_id',$("#win_resolve_task").data('status_id'));
+                }
+                else{
+                    var table=$("#grdTask").DataTable();
+                    var ind=table.row('.selected').index();
+                    var record=table.rows(ind).data()[0];
+                    data.append('task_id',record['task_id']);
+                    data.append('status_id',record['status_id']);
+                }
                 data.append('user_id',me.user_info.user_id);
                 data.append('company_id',me.user_info.company_id);
                 data.append('user_type_id',me.user_info.user_type_id);
-                data.append('status_id',record['status_id']);
                 data.append('comments',$("#RTcomments")[0].value);
                 data.append('files_list',JSON.stringify(files_list));
                 EasyLoading.show({
@@ -1077,38 +1134,43 @@ $(document).ready(function(){
                             $("#alertLayout").find('p').html(res.msg_response);
                             $("#alertLayout").css("display","block");
                             $("#win_resolve_task").modal("hide");
-                            var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                            var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                            filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                            filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                            filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                            $("#TLdateFrom").val(filters['from']);
-                            $("#grdTask").DataTable({
-                                "scrollY": "255px",
-                                "scrollCollapse":true,
-                                serverSide:true,
-                                ajax:{
-                                    data:{
-                                        'company_id':me.user_info.company_id,
-                                        'user_id':me.user_info.user_id,
-                                        'user_type_id':me.user_info.user_type_id,
-                                        'first':false,
-                                        'filter':JSON.stringify(filters)
+                            if ($("#win_project_detail").is(":visible")===true){
+                                getProjectTasks(me.user_info,$("#win_project_detail").data('project_id'));
+                            }
+                            else{
+                                var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                $("#TLdateFrom").val(filters['from']);
+                                $("#grdTask").DataTable({
+                                    "scrollY": "255px",
+                                    "scrollCollapse":true,
+                                    serverSide:true,
+                                    ajax:{
+                                        data:{
+                                            'company_id':me.user_info.company_id,
+                                            'user_id':me.user_info.user_id,
+                                            'user_type_id':me.user_info.user_type_id,
+                                            'first':false,
+                                            'filter':JSON.stringify(filters)
+                                        },
+                                        url:'/task/getTask',
+                                        dataSrc:'data',
+                                        type:'POST',
+                                        error: handleAjaxErrorLoc
                                     },
-                                    url:'/task/getTask',
-                                    dataSrc:'data',
-                                    type:'POST',
-                                    error: handleAjaxErrorLoc
-                                },
-                                columns:[
-                                    {data:'created', "width":"15%"},
-                                    {data:'name',"width":"20%"},
-                                    {data:'deadline',"width":"15%"},
-                                    {data:'assignee',"width":"20%"},
-                                    {data:'supervisor',"width":"20%"},
-                                    {data:'status',"width":"10%"}
-                                ]
-                            });
+                                    columns:[
+                                        {data:'created', "width":"15%"},
+                                        {data:'name',"width":"20%"},
+                                        {data:'deadline',"width":"15%"},
+                                        {data:'assignee',"width":"20%"},
+                                        {data:'supervisor',"width":"20%"},
+                                        {data:'status',"width":"10%"}
+                                    ]
+                                });
+                            }
                         }
                         else{
                             EasyLoading.hide();
@@ -2903,6 +2965,13 @@ $(document).ready(function(){
             });
         }
     });
+
+    // $("#btnChangeProjectView").click(function(){
+    //     console.log("cambiar vista a proyectos");
+    //     $("#btnChangeTaskView").css("display","block");
+    //     $("#btnChangeProjectView").css("display","none");
+    // });
+
 
 });
 

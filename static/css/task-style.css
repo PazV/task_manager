@@ -206,6 +206,23 @@ input[type="date"]
     overflow-y:auto;
 }
 
+.new-project-size{
+    min-height:300px;
+    min-width:630px;
+    overflow-y:auto;
+}
+
+.project-detail-size{
+    min-height:550px;
+    width:800px !important;
+    overflow-x:auto;
+}
+
+.proj-task-table{
+    min-width:715px;
+    overflox-x:auto;
+}
+
 .check-task-size{
     min-width:550px;
 }
@@ -325,6 +342,8 @@ input[type="date"]
     margin:0% 2%;
 }
 
+
+
 @media screen and (max-width:1080px){
     .filter-btn-no-padding{
         padding:5px;
@@ -402,6 +421,7 @@ input[type="date"]
     .hidden-navbar-icon{
         display:none
     },
+
     .task-filters-col-1, .task-filters-col-2{
       width: 45%;
       margin-top: 10px;
@@ -458,6 +478,23 @@ input[type="date"]
         overflow-y:auto;
     }
 
+    .new-project-size{
+        min-height:300px;
+        min-width:300px !important;
+        overflow-y:auto;
+    }
+
+    .project-detail-size{
+        min-height:450px;
+        width:500px !important;
+        overflow-x:auto;
+    }
+
+    .proj-task-table{
+        min-width:290px;
+        overflox-x:auto;
+    }
+
     #TEdocument_type{
         padding-top:10px;
     }
@@ -503,7 +540,6 @@ input[type="date"]
         margin-right:5%;
     }
 }
-
 
 @media screen and (max-width: 675px){
   .task-filters-col-1, .task-filters-col-2, .task-filters-col-2-fecha, .task-filters-col-3{
@@ -598,6 +634,23 @@ input[type="date"]
       min-height:400px;
       min-width:250px !important;
       overflow-y:auto;
+  }
+
+  .new-project-size{
+      min-height:300px;
+      min-width:250px !important;
+      overflow-y:auto;
+  }
+
+  .project-detail-size{
+      min-height:350px;
+      width:300px !important;
+      overflow-x:auto;
+  }
+
+  .proj-task-table{
+      min-width:290px;
+      overflox-x:auto;
   }
 
   #TEdocument_type{

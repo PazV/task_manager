@@ -1,0 +1,76 @@
+<div class="row content">
+    <div style="padding:2em; width:100%;" id="projectContainer">
+        <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divProjectFilters" id="btnCollapseProjFilters">Filtros</button>
+        <form id="PLfrmFilters">
+            <div id="divProjectFilters" class="collapse">
+                <div class="row" style="padding:0.5em;">
+                    <div class="project-filter-1">
+                        <select class="form-control" id="PLdateType" name="date_type" style="border-color:#ed8b00; width:100%;" data-toggle="tooltip" title="Tipo de fecha por el cual desea filtrar los proyectos">
+                            <option id="2">Fecha límite</option>
+                            <option id="1">Fecha creación</option>
+                        </select>
+                    </div>
+                    <div class="row project-filter-2">
+                        <label for="PLdateFrom" class="col-form-label" style="width:20%;"><b>De:</b></label>
+                        <input type="date" name="from" class="form-control" id="PLdateFrom" style="border-color:#ed8b00; width:80%;" required="required" data-toggle="tooltip" title="Inicio rango de fechas" />
+                    </div>
+                    <div class="row project-filter-2">
+                        <label for="PLdateTo" class="col-form-label" style="width:20%;"><b>A:</b></label>
+                        <input type="date" name="to" class="form-control" id="PLdateTo" style="border-color:#ed8b00; width:80%;" required="required" data-toggle="tooltip" title="Fin rango de fechas"/>
+                    </div>
+                    <div class="row project-filter-3">
+                        <label for="PLstatus" class="col-form-label" style="width:25%;"><b>Status:</b></label>
+                        <select class="form-control" style="border-color:#00bfb3; width:75%;" data-toggle="tooltip" title="Status para filtrar proyectos" id="PLstatus" name="status_id">
+                            <option id="-1">Todos</option>
+                            <option id="1">Pendiente</option>
+                            <option id="2">Resuelta</option>
+                            <option id="3">Declinada</option>
+                            <option id="4">Cerrada</option>
+                            <option id="5">Cancelada</option>
+                            <option id="6">En proceso</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" style="padding:0.5em;">
+                    <div class="row project-filter-4">
+                        <label for="PLcreatedBy" class="col-form-label label-proj-filt-createdby"><b>Creado por:</b></label>
+                        <select class="form-control input-proj-filt-createdby" id="PLcreatedBy" name="created_by" data-toggle="tooltip" title="Indica usuario que creó el proyecto"></select>
+                    </div>
+                    <div class="row project-filter-5">
+                        <label for="PLsearchName" class="col-form-label label-proj-filt-search"><b>Buscar:</b></label>
+                        <input type="text" class="form-control input-proj-filt-search" name="search" id="PLsearchName" data-toggle="tooltip" title="Buscar por nombre de proyecto"/>
+                    </div>
+                    <div class="row project-filter-6">
+                        <button type="button" class="btn btn-outline-primary filter-btn-no-padding" data-toggle="tooltip" title="Buscar" id="btnProjectSearch" style="margin-right:5px;"><i class="fa fa-search"></i></button>
+                        <button type="button" class="btn btn-outline-primary filter-btn-no-padding" data-toggle="tooltip" title="Limpiar búsqueda" id="btnClearProjectSearch" style="margin-left:5px;"><i class="fa fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table id="grdProjects" class="table display">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Creado por</th>
+                        <th>Fecha creación</th>
+                        <th>Fecha límite</th>
+                        <th>Tareas</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody style="cursor:pointer;">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="btn-toolbar float-right" role="toolbar" style="padding-top:5px; padding-right:15px;">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary" id="btnProjectDetails" data-toggle="tooltip" title="Ver detalles de proyecto"><span class="action-btn-text">Ver detalles </span><i class="fa fa-search"></i></button>
+                <button type="button" class="btn btn-outline-primary" id="btnEditProject" data-toggle="tooltip" title="Editar proyecto"><span class="action-btn-text">Editar </span><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-outline-primary" id="btnDeleteProject" data-toggle="tooltip" title="Eliminar proyecto"><span class="action-btn-text">Eliminar </span><i class="fa fa-trash"></i></button>
+                <button type="button" class="btn btn-outline-primary" id="btnSendNotifProject" data-toggle="tooltip" title="Enviar notificación sobre proyecto"><span class="action-btn-text">Enviar notificación </span><i class="fa fa-bell-o"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
