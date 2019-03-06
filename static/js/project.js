@@ -90,8 +90,14 @@ $(document).ready(function(){
                                                             handleAjaxErrorLoc(1,2,3);
                                                         }
                                                         if (resp_proj_info.success){
+
                                                             $("#PrDproject_info").html(resp_proj_info.html);
                                                             $("#win_project_detail").modal("show");
+                                                            $("#win_project_detail").data('project_id',res.project_id);
+                                                            getProjectTasks(me.user_info,res.project_id);
+                                                            setTimeout(function(){
+                                                                $("#grdProjectTasks").DataTable().draw();
+                                                            },200);
                                                         }
                                                         else{
                                                             $.alert({

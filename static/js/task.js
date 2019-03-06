@@ -636,10 +636,11 @@ $(document).ready(function(){
                                                         }
                                                         else{
                                                             if ($("#win_project_detail").is(':visible')){
-                                                                var project_table=$("#grdProjects").DataTable();
-                                                                var project_ind=project_table.row('.selected').index();
-                                                                var project_record=project_table.rows(project_ind).data()[0];
-                                                                getProjectTasks(me.user_info,project_record['project_id']);
+                                                                // var project_table=$("#grdProjects").DataTable();
+                                                                // var project_ind=project_table.row('.selected').index();
+                                                                // var project_record=project_table.rows(project_ind).data()[0];
+
+                                                                getProjectTasks(me.user_info,$("#win_project_detail").data('project_id'));
                                                             }
                                                             else{
                                                                 getProjectGrd(me.user_info);

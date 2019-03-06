@@ -40,6 +40,7 @@ def saveProject():
                     data['last_updated_by'] = data['user_id']
                     new_project = db.insert("task.project",data)
                     response['new']=True
+                    
                     response['project_id']=new_project['project_id']
                 else:
                     db.query("""
