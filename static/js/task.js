@@ -21,6 +21,7 @@ $(document).ready(function(){
                 'user_id':me.user_info.user_id,
                 'user_type_id':me.user_info.user_type_id,
                 'first':true,
+                'show_hidden_tasks':false,
                 'filter':JSON.stringify({
                     'status_id':-1,
                     'assignee_id':-1,
@@ -149,38 +150,39 @@ $(document).ready(function(){
     });
 
     $("#btnTaskSearch").click(function(){
-        var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-        var filters=getDictForm("#TLfrmFilters",sel_list);
-        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-        $("#TLdateFrom").val(filters['from']);
-        $("#grdTask").DataTable({
-            "scrollY": "255px",
-            "scrollCollapse":true,
-            serverSide:true,
-            ajax:{
-                data:{
-                    'company_id':me.user_info.company_id,
-                    'user_id':me.user_info.user_id,
-                    'user_type_id':me.user_info.user_type_id,
-                    'first':false,
-                    'filter':JSON.stringify(filters)
-                },
-                url:'/task/getTask',
-                dataSrc:'data',
-                type:'POST',
-                error: handleAjaxErrorLoc
-            },
-            columns:[
-                {data:'created', "width":"15%"},
-                {data:'name',"width":"20%"},
-                {data:'deadline',"width":"15%"},
-                {data:'assignee',"width":"20%"},
-                {data:'supervisor',"width":"20%"},
-                {data:'status',"width":"10%"}
-            ]
-        });
+        getTasks(me.user_info);
+        // var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+        // var filters=getDictForm("#TLfrmFilters",sel_list);
+        // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+        // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+        // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+        // $("#TLdateFrom").val(filters['from']);
+        // $("#grdTask").DataTable({
+        //     "scrollY": "255px",
+        //     "scrollCollapse":true,
+        //     serverSide:true,
+        //     ajax:{
+        //         data:{
+        //             'company_id':me.user_info.company_id,
+        //             'user_id':me.user_info.user_id,
+        //             'user_type_id':me.user_info.user_type_id,
+        //             'first':false,
+        //             'filter':JSON.stringify(filters)
+        //         },
+        //         url:'/task/getTask',
+        //         dataSrc:'data',
+        //         type:'POST',
+        //         error: handleAjaxErrorLoc
+        //     },
+        //     columns:[
+        //         {data:'created', "width":"15%"},
+        //         {data:'name',"width":"20%"},
+        //         {data:'deadline',"width":"15%"},
+        //         {data:'assignee',"width":"20%"},
+        //         {data:'supervisor',"width":"20%"},
+        //         {data:'status',"width":"10%"}
+        //     ]
+        // });
 
     });
 
@@ -198,38 +200,39 @@ $(document).ready(function(){
         $("#TLselStatus option[id='-1']").prop('selected', true);
         $("#TLdateFrom").val(first_day);
         $("#TLdateTo").val(today);
-        var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-        var filters=getDictForm("#TLfrmFilters",sel_list);
-        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-        $("#TLdateFrom").val(filters['from']);
-        $("#grdTask").DataTable({
-            "scrollY": "255px",
-            "scrollCollapse":true,
-            serverSide:true,
-            ajax:{
-                data:{
-                    'company_id':me.user_info.company_id,
-                    'user_id':me.user_info.user_id,
-                    'user_type_id':me.user_info.user_type_id,
-                    'first':false,
-                    'filter':JSON.stringify(filters)
-                },
-                url:'/task/getTask',
-                dataSrc:'data',
-                type:'POST',
-                error: handleAjaxErrorLoc
-            },
-            columns:[
-                {data:'created', "width":"15%"},
-                {data:'name',"width":"20%"},
-                {data:'deadline',"width":"15%"},
-                {data:'assignee',"width":"20%"},
-                {data:'supervisor',"width":"20%"},
-                {data:'status',"width":"10%"}
-            ]
-        });
+        getTasks(me.user_info);
+        // var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+        // var filters=getDictForm("#TLfrmFilters",sel_list);
+        // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+        // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+        // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+        // $("#TLdateFrom").val(filters['from']);
+        // $("#grdTask").DataTable({
+        //     "scrollY": "255px",
+        //     "scrollCollapse":true,
+        //     serverSide:true,
+        //     ajax:{
+        //         data:{
+        //             'company_id':me.user_info.company_id,
+        //             'user_id':me.user_info.user_id,
+        //             'user_type_id':me.user_info.user_type_id,
+        //             'first':false,
+        //             'filter':JSON.stringify(filters)
+        //         },
+        //         url:'/task/getTask',
+        //         dataSrc:'data',
+        //         type:'POST',
+        //         error: handleAjaxErrorLoc
+        //     },
+        //     columns:[
+        //         {data:'created', "width":"15%"},
+        //         {data:'name',"width":"20%"},
+        //         {data:'deadline',"width":"15%"},
+        //         {data:'assignee',"width":"20%"},
+        //         {data:'supervisor',"width":"20%"},
+        //         {data:'status',"width":"10%"}
+        //     ]
+        // });
 
     });
 
@@ -249,39 +252,39 @@ $(document).ready(function(){
     });
 
     $("#TLselStatus").change(function(){
-
-        var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-        var filters=getDictForm("#TLfrmFilters",sel_list);
-        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-        $("#TLdateFrom").val(filters['from']);
-        $("#grdTask").DataTable({
-            "scrollY": "255px",
-            "scrollCollapse":true,
-            serverSide:true,
-            ajax:{
-                data:{
-                    'company_id':me.user_info.company_id,
-                    'user_id':me.user_info.user_id,
-                    'user_type_id':me.user_info.user_type_id,
-                    'first':false,
-                    'filter':JSON.stringify(filters)
-                },
-                url:'/task/getTask',
-                dataSrc:'data',
-                type:'POST',
-                error: handleAjaxErrorLoc
-            },
-            columns:[
-                {data:'created', "width":"15%"},
-                {data:'name',"width":"20%"},
-                {data:'deadline',"width":"15%"},
-                {data:'assignee',"width":"20%"},
-                {data:'supervisor',"width":"20%"},
-                {data:'status',"width":"10%"}
-            ]
-        });
+        getTasks(me.user_info);
+        // var sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+        // var filters=getDictForm("#TLfrmFilters",sel_list);
+        // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+        // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+        // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+        // $("#TLdateFrom").val(filters['from']);
+        // $("#grdTask").DataTable({
+        //     "scrollY": "255px",
+        //     "scrollCollapse":true,
+        //     serverSide:true,
+        //     ajax:{
+        //         data:{
+        //             'company_id':me.user_info.company_id,
+        //             'user_id':me.user_info.user_id,
+        //             'user_type_id':me.user_info.user_type_id,
+        //             'first':false,
+        //             'filter':JSON.stringify(filters)
+        //         },
+        //         url:'/task/getTask',
+        //         dataSrc:'data',
+        //         type:'POST',
+        //         error: handleAjaxErrorLoc
+        //     },
+        //     columns:[
+        //         {data:'created', "width":"15%"},
+        //         {data:'name',"width":"20%"},
+        //         {data:'deadline',"width":"15%"},
+        //         {data:'assignee',"width":"20%"},
+        //         {data:'supervisor',"width":"20%"},
+        //         {data:'status',"width":"10%"}
+        //     ]
+        // });
 
     });
 
@@ -601,38 +604,39 @@ $(document).ready(function(){
                                                         $("#alertLayout").css("display","block");
                                                         $("#win_new_task").modal("hide");
                                                         if ($("#grdTask").is(':visible')===true){
-                                                            var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                                            var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                                            filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                                            filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                                            filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                                            $("#TLdateFrom").val(filters['from']);
-                                                            $("#grdTask").DataTable({
-                                                                "scrollY": "255px",
-                                                                "scrollCollapse":true,
-                                                                serverSide:true,
-                                                                ajax:{
-                                                                    data:{
-                                                                        'company_id':me.user_info.company_id,
-                                                                        'user_id':me.user_info.user_id,
-                                                                        'user_type_id':me.user_info.user_type_id,
-                                                                        'first':false,
-                                                                        'filter':JSON.stringify(filters)
-                                                                    },
-                                                                    url:'/task/getTask',
-                                                                    dataSrc:'data',
-                                                                    type:'POST',
-                                                                    error: handleAjaxErrorLoc
-                                                                },
-                                                                columns:[
-                                                                    {data:'created', "width":"15%"},
-                                                                    {data:'name',"width":"20%"},
-                                                                    {data:'deadline',"width":"15%"},
-                                                                    {data:'assignee',"width":"20%"},
-                                                                    {data:'supervisor',"width":"20%"},
-                                                                    {data:'status',"width":"10%"}
-                                                                ]
-                                                            });
+                                                            getTasks(me.user_info);
+                                                            // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                                            // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                                            // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                                            // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                                            // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                                            // $("#TLdateFrom").val(filters['from']);
+                                                            // $("#grdTask").DataTable({
+                                                            //     "scrollY": "255px",
+                                                            //     "scrollCollapse":true,
+                                                            //     serverSide:true,
+                                                            //     ajax:{
+                                                            //         data:{
+                                                            //             'company_id':me.user_info.company_id,
+                                                            //             'user_id':me.user_info.user_id,
+                                                            //             'user_type_id':me.user_info.user_type_id,
+                                                            //             'first':false,
+                                                            //             'filter':JSON.stringify(filters)
+                                                            //         },
+                                                            //         url:'/task/getTask',
+                                                            //         dataSrc:'data',
+                                                            //         type:'POST',
+                                                            //         error: handleAjaxErrorLoc
+                                                            //     },
+                                                            //     columns:[
+                                                            //         {data:'created', "width":"15%"},
+                                                            //         {data:'name',"width":"20%"},
+                                                            //         {data:'deadline',"width":"15%"},
+                                                            //         {data:'assignee',"width":"20%"},
+                                                            //         {data:'supervisor',"width":"20%"},
+                                                            //         {data:'status',"width":"10%"}
+                                                            //     ]
+                                                            // });
                                                         }
                                                         else{
                                                             if ($("#win_project_detail").is(':visible')){
@@ -682,38 +686,39 @@ $(document).ready(function(){
                                         $("#alertLayout").css("display","block");
                                         $("#win_new_task").modal("hide");
                                         if ($("#grdTask").is(':visible')===true){
-                                            var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                            var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                            filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                            filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                            filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                            $("#TLdateFrom").val(filters['from']);
-                                            $("#grdTask").DataTable({
-                                                "scrollY": "255px",
-                                                "scrollCollapse":true,
-                                                serverSide:true,
-                                                ajax:{
-                                                    data:{
-                                                        'company_id':me.user_info.company_id,
-                                                        'user_id':me.user_info.user_id,
-                                                        'user_type_id':me.user_info.user_type_id,
-                                                        'first':false,
-                                                        'filter':JSON.stringify(filters)
-                                                    },
-                                                    url:'/task/getTask',
-                                                    dataSrc:'data',
-                                                    type:'POST',
-                                                    error: handleAjaxErrorLoc
-                                                },
-                                                columns:[
-                                                    {data:'created', "width":"15%"},
-                                                    {data:'name',"width":"20%"},
-                                                    {data:'deadline',"width":"15%"},
-                                                    {data:'assignee',"width":"20%"},
-                                                    {data:'supervisor',"width":"20%"},
-                                                    {data:'status',"width":"10%"}
-                                                ]
-                                            });
+                                            getTasks(me.user_info);
+                                            // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                            // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                            // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                            // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                            // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                            // $("#TLdateFrom").val(filters['from']);
+                                            // $("#grdTask").DataTable({
+                                            //     "scrollY": "255px",
+                                            //     "scrollCollapse":true,
+                                            //     serverSide:true,
+                                            //     ajax:{
+                                            //         data:{
+                                            //             'company_id':me.user_info.company_id,
+                                            //             'user_id':me.user_info.user_id,
+                                            //             'user_type_id':me.user_info.user_type_id,
+                                            //             'first':false,
+                                            //             'filter':JSON.stringify(filters)
+                                            //         },
+                                            //         url:'/task/getTask',
+                                            //         dataSrc:'data',
+                                            //         type:'POST',
+                                            //         error: handleAjaxErrorLoc
+                                            //     },
+                                            //     columns:[
+                                            //         {data:'created', "width":"15%"},
+                                            //         {data:'name',"width":"20%"},
+                                            //         {data:'deadline',"width":"15%"},
+                                            //         {data:'assignee',"width":"20%"},
+                                            //         {data:'supervisor',"width":"20%"},
+                                            //         {data:'status',"width":"10%"}
+                                            //     ]
+                                            // });
                                         }
                                         else{
                                             if ($("#win_project_detail").is(':visible')){
@@ -998,38 +1003,39 @@ $(document).ready(function(){
                                 getProjectTasks(me.user_info,$("#win_project_detail").data('project_id'));
                             }
                             else{
-                                var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                $("#TLdateFrom").val(filters['from']);
-                                $("#grdTask").DataTable({
-                                    "scrollY": "255px",
-                                    "scrollCollapse":true,
-                                    serverSide:true,
-                                    ajax:{
-                                        data:{
-                                            'company_id':me.user_info.company_id,
-                                            'user_id':me.user_info.user_id,
-                                            'user_type_id':me.user_info.user_type_id,
-                                            'first':false,
-                                            'filter':JSON.stringify(filters)
-                                        },
-                                        url:'/task/getTask',
-                                        dataSrc:'data',
-                                        type:'POST',
-                                        error: handleAjaxErrorLoc
-                                    },
-                                    columns:[
-                                        {data:'created', "width":"15%"},
-                                        {data:'name',"width":"20%"},
-                                        {data:'deadline',"width":"15%"},
-                                        {data:'assignee',"width":"20%"},
-                                        {data:'supervisor',"width":"20%"},
-                                        {data:'status',"width":"10%"}
-                                    ]
-                                });
+                                getTasks(me.user_info);
+                                // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                // $("#TLdateFrom").val(filters['from']);
+                                // $("#grdTask").DataTable({
+                                //     "scrollY": "255px",
+                                //     "scrollCollapse":true,
+                                //     serverSide:true,
+                                //     ajax:{
+                                //         data:{
+                                //             'company_id':me.user_info.company_id,
+                                //             'user_id':me.user_info.user_id,
+                                //             'user_type_id':me.user_info.user_type_id,
+                                //             'first':false,
+                                //             'filter':JSON.stringify(filters)
+                                //         },
+                                //         url:'/task/getTask',
+                                //         dataSrc:'data',
+                                //         type:'POST',
+                                //         error: handleAjaxErrorLoc
+                                //     },
+                                //     columns:[
+                                //         {data:'created', "width":"15%"},
+                                //         {data:'name',"width":"20%"},
+                                //         {data:'deadline',"width":"15%"},
+                                //         {data:'assignee',"width":"20%"},
+                                //         {data:'supervisor',"width":"20%"},
+                                //         {data:'status',"width":"10%"}
+                                //     ]
+                                // });
                             }
                         }
                         else{
@@ -1139,38 +1145,39 @@ $(document).ready(function(){
                                 getProjectTasks(me.user_info,$("#win_project_detail").data('project_id'));
                             }
                             else{
-                                var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                $("#TLdateFrom").val(filters['from']);
-                                $("#grdTask").DataTable({
-                                    "scrollY": "255px",
-                                    "scrollCollapse":true,
-                                    serverSide:true,
-                                    ajax:{
-                                        data:{
-                                            'company_id':me.user_info.company_id,
-                                            'user_id':me.user_info.user_id,
-                                            'user_type_id':me.user_info.user_type_id,
-                                            'first':false,
-                                            'filter':JSON.stringify(filters)
-                                        },
-                                        url:'/task/getTask',
-                                        dataSrc:'data',
-                                        type:'POST',
-                                        error: handleAjaxErrorLoc
-                                    },
-                                    columns:[
-                                        {data:'created', "width":"15%"},
-                                        {data:'name',"width":"20%"},
-                                        {data:'deadline',"width":"15%"},
-                                        {data:'assignee',"width":"20%"},
-                                        {data:'supervisor',"width":"20%"},
-                                        {data:'status',"width":"10%"}
-                                    ]
-                                });
+                                getTasks(me.user_info);
+                                // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                // $("#TLdateFrom").val(filters['from']);
+                                // $("#grdTask").DataTable({
+                                //     "scrollY": "255px",
+                                //     "scrollCollapse":true,
+                                //     serverSide:true,
+                                //     ajax:{
+                                //         data:{
+                                //             'company_id':me.user_info.company_id,
+                                //             'user_id':me.user_info.user_id,
+                                //             'user_type_id':me.user_info.user_type_id,
+                                //             'first':false,
+                                //             'filter':JSON.stringify(filters)
+                                //         },
+                                //         url:'/task/getTask',
+                                //         dataSrc:'data',
+                                //         type:'POST',
+                                //         error: handleAjaxErrorLoc
+                                //     },
+                                //     columns:[
+                                //         {data:'created', "width":"15%"},
+                                //         {data:'name',"width":"20%"},
+                                //         {data:'deadline',"width":"15%"},
+                                //         {data:'assignee',"width":"20%"},
+                                //         {data:'supervisor',"width":"20%"},
+                                //         {data:'status',"width":"10%"}
+                                //     ]
+                                // });
                             }
                         }
                         else{
@@ -1311,38 +1318,39 @@ $(document).ready(function(){
                                         $("#alertLayout").find('p').html(res.msg_response);
                                         $("#alertLayout").css("display","block");
                                         $("#win_resolve_task").modal("hide");
-                                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                        $("#TLdateFrom").val(filters['from']);
-                                        $("#grdTask").DataTable({
-                                            "scrollY": "255px",
-                                            "scrollCollapse":true,
-                                            serverSide:true,
-                                            ajax:{
-                                                data:{
-                                                    'company_id':me.user_info.company_id,
-                                                    'user_id':me.user_info.user_id,
-                                                    'user_type_id':me.user_info.user_type_id,
-                                                    'first':false,
-                                                    'filter':JSON.stringify(filters)
-                                                },
-                                                url:'/task/getTask',
-                                                dataSrc:'data',
-                                                type:'POST',
-                                                error: handleAjaxErrorLoc
-                                            },
-                                            columns:[
-                                                {data:'created', "width":"15%"},
-                                                {data:'name',"width":"20%"},
-                                                {data:'deadline',"width":"15%"},
-                                                {data:'assignee',"width":"20%"},
-                                                {data:'supervisor',"width":"20%"},
-                                                {data:'status',"width":"10%"}
-                                            ]
-                                        });
+                                        getTasks(me.user_info);
+                                        // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                        // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                        // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                        // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                        // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                        // $("#TLdateFrom").val(filters['from']);
+                                        // $("#grdTask").DataTable({
+                                        //     "scrollY": "255px",
+                                        //     "scrollCollapse":true,
+                                        //     serverSide:true,
+                                        //     ajax:{
+                                        //         data:{
+                                        //             'company_id':me.user_info.company_id,
+                                        //             'user_id':me.user_info.user_id,
+                                        //             'user_type_id':me.user_info.user_type_id,
+                                        //             'first':false,
+                                        //             'filter':JSON.stringify(filters)
+                                        //         },
+                                        //         url:'/task/getTask',
+                                        //         dataSrc:'data',
+                                        //         type:'POST',
+                                        //         error: handleAjaxErrorLoc
+                                        //     },
+                                        //     columns:[
+                                        //         {data:'created', "width":"15%"},
+                                        //         {data:'name',"width":"20%"},
+                                        //         {data:'deadline',"width":"15%"},
+                                        //         {data:'assignee',"width":"20%"},
+                                        //         {data:'supervisor',"width":"20%"},
+                                        //         {data:'status',"width":"10%"}
+                                        //     ]
+                                        // });
                                         $("#win_decline_task").modal("hide");
                                     }
                                     else{
@@ -1705,38 +1713,39 @@ $(document).ready(function(){
                     $("#alertLayout").find('p').html(res.msg_response);
                     $("#alertLayout").css("display","block");
                     $("#win_check_declined_task_supervisor").modal("hide");
-                    var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                    var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                    $("#TLdateFrom").val(filters['from']);
-                    $("#grdTask").DataTable({
-                        "scrollY": "255px",
-                        "scrollCollapse":true,
-                        serverSide:true,
-                        ajax:{
-                            data:{
-                                'company_id':me.user_info.company_id,
-                                'user_id':me.user_info.user_id,
-                                'user_type_id':me.user_info.user_type_id,
-                                'first':false,
-                                'filter':JSON.stringify(filters)
-                            },
-                            url:'/task/getTask',
-                            dataSrc:'data',
-                            type:'POST',
-                            error: handleAjaxErrorLoc
-                        },
-                        columns:[
-                            {data:'created', "width":"15%"},
-                            {data:'name',"width":"20%"},
-                            {data:'deadline',"width":"15%"},
-                            {data:'assignee',"width":"20%"},
-                            {data:'supervisor',"width":"20%"},
-                            {data:'status',"width":"10%"}
-                        ]
-                    });
+                    getTasks(me.user_info);
+                    // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                    // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                    // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                    // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                    // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                    // $("#TLdateFrom").val(filters['from']);
+                    // $("#grdTask").DataTable({
+                    //     "scrollY": "255px",
+                    //     "scrollCollapse":true,
+                    //     serverSide:true,
+                    //     ajax:{
+                    //         data:{
+                    //             'company_id':me.user_info.company_id,
+                    //             'user_id':me.user_info.user_id,
+                    //             'user_type_id':me.user_info.user_type_id,
+                    //             'first':false,
+                    //             'filter':JSON.stringify(filters)
+                    //         },
+                    //         url:'/task/getTask',
+                    //         dataSrc:'data',
+                    //         type:'POST',
+                    //         error: handleAjaxErrorLoc
+                    //     },
+                    //     columns:[
+                    //         {data:'created', "width":"15%"},
+                    //         {data:'name',"width":"20%"},
+                    //         {data:'deadline',"width":"15%"},
+                    //         {data:'assignee',"width":"20%"},
+                    //         {data:'supervisor',"width":"20%"},
+                    //         {data:'status',"width":"10%"}
+                    //     ]
+                    // });
                 }
                 else{
                     EasyLoading.hide();
@@ -1781,38 +1790,39 @@ $(document).ready(function(){
                                     $("#alertLayout").find('p').html(res.msg_response);
                                     $("#alertLayout").css("display","block");
                                     $("#win_check_declined_task_supervisor").modal("hide");
-                                    var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                    var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                    $("#TLdateFrom").val(filters['from']);
-                                    $("#grdTask").DataTable({
-                                        "scrollY": "255px",
-                                        "scrollCollapse":true,
-                                        serverSide:true,
-                                        ajax:{
-                                            data:{
-                                                'company_id':me.user_info.company_id,
-                                                'user_id':me.user_info.user_id,
-                                                'user_type_id':me.user_info.user_type_id,
-                                                'first':false,
-                                                'filter':JSON.stringify(filters)
-                                            },
-                                            url:'/task/getTask',
-                                            dataSrc:'data',
-                                            type:'POST',
-                                            error: handleAjaxErrorLoc
-                                        },
-                                        columns:[
-                                            {data:'created', "width":"15%"},
-                                            {data:'name',"width":"20%"},
-                                            {data:'deadline',"width":"15%"},
-                                            {data:'assignee',"width":"20%"},
-                                            {data:'supervisor',"width":"20%"},
-                                            {data:'status',"width":"10%"}
-                                        ]
-                                    });
+                                    getTasks(me.user_info);
+                                    // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                    // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                    // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                    // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                    // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                    // $("#TLdateFrom").val(filters['from']);
+                                    // $("#grdTask").DataTable({
+                                    //     "scrollY": "255px",
+                                    //     "scrollCollapse":true,
+                                    //     serverSide:true,
+                                    //     ajax:{
+                                    //         data:{
+                                    //             'company_id':me.user_info.company_id,
+                                    //             'user_id':me.user_info.user_id,
+                                    //             'user_type_id':me.user_info.user_type_id,
+                                    //             'first':false,
+                                    //             'filter':JSON.stringify(filters)
+                                    //         },
+                                    //         url:'/task/getTask',
+                                    //         dataSrc:'data',
+                                    //         type:'POST',
+                                    //         error: handleAjaxErrorLoc
+                                    //     },
+                                    //     columns:[
+                                    //         {data:'created', "width":"15%"},
+                                    //         {data:'name',"width":"20%"},
+                                    //         {data:'deadline',"width":"15%"},
+                                    //         {data:'assignee',"width":"20%"},
+                                    //         {data:'supervisor',"width":"20%"},
+                                    //         {data:'status',"width":"10%"}
+                                    //     ]
+                                    // });
                                 }
                                 else{
                                     setMessage("#alertCHDSUPTask",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
@@ -1868,38 +1878,39 @@ $(document).ready(function(){
                                     $("#alertLayout").find('p').html(res.msg_response);
                                     $("#alertLayout").css("display","block");
                                     $("#win_check_task").modal("hide");
-                                    var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                    var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                    $("#TLdateFrom").val(filters['from']);
-                                    $("#grdTask").DataTable({
-                                        "scrollY": "255px",
-                                        "scrollCollapse":true,
-                                        serverSide:true,
-                                        ajax:{
-                                            data:{
-                                                'company_id':me.user_info.company_id,
-                                                'user_id':me.user_info.user_id,
-                                                'user_type_id':me.user_info.user_type_id,
-                                                'first':false,
-                                                'filter':JSON.stringify(filters)
-                                            },
-                                            url:'/task/getTask',
-                                            dataSrc:'data',
-                                            type:'POST',
-                                            error: handleAjaxErrorLoc
-                                        },
-                                        columns:[
-                                            {data:'created', "width":"15%"},
-                                            {data:'name',"width":"20%"},
-                                            {data:'deadline',"width":"15%"},
-                                            {data:'assignee',"width":"20%"},
-                                            {data:'supervisor',"width":"20%"},
-                                            {data:'status',"width":"10%"}
-                                        ]
-                                    });
+                                    getTasks(me.user_info);
+                                    // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                    // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                    // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                    // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                    // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                    // $("#TLdateFrom").val(filters['from']);
+                                    // $("#grdTask").DataTable({
+                                    //     "scrollY": "255px",
+                                    //     "scrollCollapse":true,
+                                    //     serverSide:true,
+                                    //     ajax:{
+                                    //         data:{
+                                    //             'company_id':me.user_info.company_id,
+                                    //             'user_id':me.user_info.user_id,
+                                    //             'user_type_id':me.user_info.user_type_id,
+                                    //             'first':false,
+                                    //             'filter':JSON.stringify(filters)
+                                    //         },
+                                    //         url:'/task/getTask',
+                                    //         dataSrc:'data',
+                                    //         type:'POST',
+                                    //         error: handleAjaxErrorLoc
+                                    //     },
+                                    //     columns:[
+                                    //         {data:'created', "width":"15%"},
+                                    //         {data:'name',"width":"20%"},
+                                    //         {data:'deadline',"width":"15%"},
+                                    //         {data:'assignee',"width":"20%"},
+                                    //         {data:'supervisor',"width":"20%"},
+                                    //         {data:'status',"width":"10%"}
+                                    //     ]
+                                    // });
                                 }
                                 else{
                                     EasyLoading.hide();
@@ -1957,38 +1968,39 @@ $(document).ready(function(){
                                     $("#alertLayout").find('p').html(res.msg_response);
                                     $("#alertLayout").css("display","block");
                                     $("#win_check_task").modal("hide");
-                                    var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                    var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                    $("#TLdateFrom").val(filters['from']);
-                                    $("#grdTask").DataTable({
-                                        "scrollY": "255px",
-                                        "scrollCollapse":true,
-                                        serverSide:true,
-                                        ajax:{
-                                            data:{
-                                                'company_id':me.user_info.company_id,
-                                                'user_id':me.user_info.user_id,
-                                                'user_type_id':me.user_info.user_type_id,
-                                                'first':false,
-                                                'filter':JSON.stringify(filters)
-                                            },
-                                            url:'/task/getTask',
-                                            dataSrc:'data',
-                                            type:'POST',
-                                            error: handleAjaxErrorLoc
-                                        },
-                                        columns:[
-                                            {data:'created', "width":"15%"},
-                                            {data:'name',"width":"20%"},
-                                            {data:'deadline',"width":"15%"},
-                                            {data:'assignee',"width":"20%"},
-                                            {data:'supervisor',"width":"20%"},
-                                            {data:'status',"width":"10%"}
-                                        ]
-                                    });
+                                    getTasks(me.user_info);
+                                    // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                    // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                    // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                    // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                    // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                    // $("#TLdateFrom").val(filters['from']);
+                                    // $("#grdTask").DataTable({
+                                    //     "scrollY": "255px",
+                                    //     "scrollCollapse":true,
+                                    //     serverSide:true,
+                                    //     ajax:{
+                                    //         data:{
+                                    //             'company_id':me.user_info.company_id,
+                                    //             'user_id':me.user_info.user_id,
+                                    //             'user_type_id':me.user_info.user_type_id,
+                                    //             'first':false,
+                                    //             'filter':JSON.stringify(filters)
+                                    //         },
+                                    //         url:'/task/getTask',
+                                    //         dataSrc:'data',
+                                    //         type:'POST',
+                                    //         error: handleAjaxErrorLoc
+                                    //     },
+                                    //     columns:[
+                                    //         {data:'created', "width":"15%"},
+                                    //         {data:'name',"width":"20%"},
+                                    //         {data:'deadline',"width":"15%"},
+                                    //         {data:'assignee',"width":"20%"},
+                                    //         {data:'supervisor',"width":"20%"},
+                                    //         {data:'status',"width":"10%"}
+                                    //     ]
+                                    // });
                                 }
                                 else{
                                     EasyLoading.hide();
@@ -2064,38 +2076,39 @@ $(document).ready(function(){
                                         $("#alertLayout").find('p').html(res.msg_response);
                                         $("#alertLayout").css("display","block");
                                         $("#win_check_declined_task").modal("hide");
-                                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                        $("#TLdateFrom").val(filters['from']);
-                                        $("#grdTask").DataTable({
-                                            "scrollY": "255px",
-                                            "scrollCollapse":true,
-                                            serverSide:true,
-                                            ajax:{
-                                                data:{
-                                                    'company_id':me.user_info.company_id,
-                                                    'user_id':me.user_info.user_id,
-                                                    'user_type_id':me.user_info.user_type_id,
-                                                    'first':false,
-                                                    'filter':JSON.stringify(filters)
-                                                },
-                                                url:'/task/getTask',
-                                                dataSrc:'data',
-                                                type:'POST',
-                                                error: handleAjaxErrorLoc
-                                            },
-                                            columns:[
-                                                {data:'created', "width":"15%"},
-                                                {data:'name',"width":"20%"},
-                                                {data:'deadline',"width":"15%"},
-                                                {data:'assignee',"width":"20%"},
-                                                {data:'supervisor',"width":"20%"},
-                                                {data:'status',"width":"10%"}
-                                            ]
-                                        });
+                                        getTasks(me.user_info);
+                                        // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                        // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                        // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                        // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                        // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                        // $("#TLdateFrom").val(filters['from']);
+                                        // $("#grdTask").DataTable({
+                                        //     "scrollY": "255px",
+                                        //     "scrollCollapse":true,
+                                        //     serverSide:true,
+                                        //     ajax:{
+                                        //         data:{
+                                        //             'company_id':me.user_info.company_id,
+                                        //             'user_id':me.user_info.user_id,
+                                        //             'user_type_id':me.user_info.user_type_id,
+                                        //             'first':false,
+                                        //             'filter':JSON.stringify(filters)
+                                        //         },
+                                        //         url:'/task/getTask',
+                                        //         dataSrc:'data',
+                                        //         type:'POST',
+                                        //         error: handleAjaxErrorLoc
+                                        //     },
+                                        //     columns:[
+                                        //         {data:'created', "width":"15%"},
+                                        //         {data:'name',"width":"20%"},
+                                        //         {data:'deadline',"width":"15%"},
+                                        //         {data:'assignee',"width":"20%"},
+                                        //         {data:'supervisor',"width":"20%"},
+                                        //         {data:'status',"width":"10%"}
+                                        //     ]
+                                        // });
                                     }
                                     else{
                                         EasyLoading.hide();
@@ -2136,38 +2149,39 @@ $(document).ready(function(){
                         $("#alertLayout").find('p').html(res.msg_response);
                         $("#alertLayout").css("display","block");
                         $("#win_check_declined_task").modal("hide");
-                        var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                        var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                        filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                        filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                        filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                        $("#TLdateFrom").val(filters['from']);
-                        $("#grdTask").DataTable({
-                            "scrollY": "255px",
-                            "scrollCollapse":true,
-                            serverSide:true,
-                            ajax:{
-                                data:{
-                                    'company_id':me.user_info.company_id,
-                                    'user_id':me.user_info.user_id,
-                                    'user_type_id':me.user_info.user_type_id,
-                                    'first':false,
-                                    'filter':JSON.stringify(filters)
-                                },
-                                url:'/task/getTask',
-                                dataSrc:'data',
-                                type:'POST',
-                                error: handleAjaxErrorLoc
-                            },
-                            columns:[
-                                {data:'created', "width":"15%"},
-                                {data:'name',"width":"20%"},
-                                {data:'deadline',"width":"15%"},
-                                {data:'assignee',"width":"20%"},
-                                {data:'supervisor',"width":"20%"},
-                                {data:'status',"width":"10%"}
-                            ]
-                        });
+                        getTasks(me.user_info);
+                        // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                        // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                        // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                        // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                        // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                        // $("#TLdateFrom").val(filters['from']);
+                        // $("#grdTask").DataTable({
+                        //     "scrollY": "255px",
+                        //     "scrollCollapse":true,
+                        //     serverSide:true,
+                        //     ajax:{
+                        //         data:{
+                        //             'company_id':me.user_info.company_id,
+                        //             'user_id':me.user_info.user_id,
+                        //             'user_type_id':me.user_info.user_type_id,
+                        //             'first':false,
+                        //             'filter':JSON.stringify(filters)
+                        //         },
+                        //         url:'/task/getTask',
+                        //         dataSrc:'data',
+                        //         type:'POST',
+                        //         error: handleAjaxErrorLoc
+                        //     },
+                        //     columns:[
+                        //         {data:'created', "width":"15%"},
+                        //         {data:'name',"width":"20%"},
+                        //         {data:'deadline',"width":"15%"},
+                        //         {data:'assignee',"width":"20%"},
+                        //         {data:'supervisor',"width":"20%"},
+                        //         {data:'status',"width":"10%"}
+                        //     ]
+                        // });
                     }
                     else{
                         EasyLoading.hide();
@@ -2213,38 +2227,39 @@ $(document).ready(function(){
                                     $("#alertLayout").find('p').html(res.msg_response);
                                     $("#alertLayout").css("display","block");
                                     $("#win_check_declined_task").modal("hide");
-                                    var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
-                                    var filters=getDictForm("#TLfrmFilters",filter_sel_list);
-                                    filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
-                                    filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
-                                    filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
-                                    $("#TLdateFrom").val(filters['from']);
-                                    $("#grdTask").DataTable({
-                                        "scrollY": "255px",
-                                        "scrollCollapse":true,
-                                        serverSide:true,
-                                        ajax:{
-                                            data:{
-                                                'company_id':me.user_info.company_id,
-                                                'user_id':me.user_info.user_id,
-                                                'user_type_id':me.user_info.user_type_id,
-                                                'first':false,
-                                                'filter':JSON.stringify(filters)
-                                            },
-                                            url:'/task/getTask',
-                                            dataSrc:'data',
-                                            type:'POST',
-                                            error: handleAjaxErrorLoc
-                                        },
-                                        columns:[
-                                            {data:'created', "width":"15%"},
-                                            {data:'name',"width":"20%"},
-                                            {data:'deadline',"width":"15%"},
-                                            {data:'assignee',"width":"20%"},
-                                            {data:'supervisor',"width":"20%"},
-                                            {data:'status',"width":"10%"}
-                                        ]
-                                    });
+                                    getTasks(me.user_info);
+                                    // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
+                                    // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
+                                    // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
+                                    // filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
+                                    // filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
+                                    // $("#TLdateFrom").val(filters['from']);
+                                    // $("#grdTask").DataTable({
+                                    //     "scrollY": "255px",
+                                    //     "scrollCollapse":true,
+                                    //     serverSide:true,
+                                    //     ajax:{
+                                    //         data:{
+                                    //             'company_id':me.user_info.company_id,
+                                    //             'user_id':me.user_info.user_id,
+                                    //             'user_type_id':me.user_info.user_type_id,
+                                    //             'first':false,
+                                    //             'filter':JSON.stringify(filters)
+                                    //         },
+                                    //         url:'/task/getTask',
+                                    //         dataSrc:'data',
+                                    //         type:'POST',
+                                    //         error: handleAjaxErrorLoc
+                                    //     },
+                                    //     columns:[
+                                    //         {data:'created', "width":"15%"},
+                                    //         {data:'name',"width":"20%"},
+                                    //         {data:'deadline',"width":"15%"},
+                                    //         {data:'assignee',"width":"20%"},
+                                    //         {data:'supervisor',"width":"20%"},
+                                    //         {data:'status',"width":"10%"}
+                                    //     ]
+                                    // });
                                 }
                                 else{
                                     setMessage("#alertCHDTask",["alert-info","alert-success"],"alert-danger",res.msg_response,true);
@@ -2967,11 +2982,133 @@ $(document).ready(function(){
         }
     });
 
-    // $("#btnChangeProjectView").click(function(){
-    //     console.log("cambiar vista a proyectos");
-    //     $("#btnChangeTaskView").css("display","block");
-    //     $("#btnChangeProjectView").css("display","none");
-    // });
+    $("#btnHideTask").click(function(){
+        var task_table=$("#grdTask").DataTable();
+        if (task_table.rows('.selected').any()){
+            var task_ind = task_table.row('.selected').index();
+            var task_record = task_table.rows(task_ind).data()[0];
+            if (task_record['status_id']==5 || task_record['status_id']==4 || task_record['status_id']==3){
+                $.confirm({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'¿Está seguro que desea ocultar esta tarea?',
+                    buttons:{
+                        confirm:{
+                            text:'Sí',
+                            action:function(){
+                                $.ajax({
+                                    url:'/task/hideTask',
+                                    type:'POST',
+                                    data:JSON.stringify({'task_id':task_record['task_id'],'user_id':me.user_info.user_id}),
+                                    success:function(response){
+                                        try{
+                                            var res=JSON.parse(response);
+                                        }catch(err){
+                                            handleAjaxErrorLoc(1,2,3);
+                                        }
+                                        if (res.success){
+                                            getTasks(me.user_info);
+                                        }
+                                        else{
+                                            $.alert({
+                                                theme:'dark',
+                                                title:'Atención',
+                                                content:res.msg_response
+                                            });
+                                        }
+                                    },
+                                    error:function(){
+                                        $.alert({
+                                            theme:'dark',
+                                            title:'Atención',
+                                            content:'Ocurrió un error, favor de intentarlo de nuevo.'
+                                        });
+                                    }
+                                });
+                            }
+                        },
+                        cancel:{
+                            text:'No',
+                            action:function(){
+
+                            }
+                        }
+                    }
+                });
+            }
+            else{
+                $.alert({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'Esta tarea no puede ser ocultada.'
+                });
+            }
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'¡Debe seleccionar una tarea para ocultarla!'
+            });
+        }
+    });
+
+    $("#check_show_hidden_tasks").click(function(){
+        getTasks(me.user_info);
+    });
+
+    $("#btnShowTask").click(function(){
+        var task_table=$("#grdTask").DataTable();
+        if (task_table.rows('.selected').any()){
+            $.confirm({
+                theme:'dark',
+                title:'Atención',
+                content:'¿Está seguro que quiere hacer visible esta tarea?',
+                buttons:{
+                    confirm:{
+                        text:'Sí',
+                        action:function(){
+                            var task_ind = task_table.row('.selected').index();
+                            var task_record = task_table.rows(task_ind).data()[0];
+                            $.ajax({
+                                url:'/task/showTask',
+                                type:'POST',
+                                data:JSON.stringify({'task_id':task_record['task_id']}),
+                                success:function(response){
+                                    try{
+                                        var res=JSON.parse(response);
+                                    }catch(err){
+                                        handleAjaxErrorLoc(1,2,3);
+                                    }
+                                    if (res.success){
+                                        getTasks(me.user_info);
+                                    }
+                                    else{
+                                        $.alert({
+                                            theme:'dark',
+                                            title:'Atención',
+                                            content:res.msg_response
+                                        });
+                                    }
+                                },
+                                error:function(){
+                                    $.alert({
+                                        theme:'dark',
+                                        title:'Atención',
+                                        content:'Ocurrió un error, favor de intentarlo de nuevo más tarde.'
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    cancel:{
+                        text:'No'
+                    }
+                }
+            })
+        }
+
+    });
 
 
 });
@@ -2984,6 +3121,12 @@ function getTasks(user_info){
     filters['date_type']=parseInt($("#TLdateType option:selected")[0].id);
     filters['from'],filters['to']=checkDate(filters['from'],filters['to']);
     $("#TLdateFrom").val(filters['from']);
+    var show_hidden_tasks=false;
+    if (user_info.user_type_id==4){
+        if ($("#check_show_hidden_tasks")[0].checked===true){
+            show_hidden_tasks=true;
+        }
+    }
     $("#grdTask").DataTable({
         "scrollY": "255px",
         "scrollCollapse":true,
@@ -2994,6 +3137,7 @@ function getTasks(user_info){
                 'user_id':user_info.user_id,
                 'user_type_id':user_info.user_type_id,
                 'first':false,
+                'show_hidden_tasks':show_hidden_tasks,
                 'filter':JSON.stringify(filters)
             },
             url:'/task/getTask',

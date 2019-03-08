@@ -276,6 +276,7 @@ def getTask():
         if request.method=='POST':
             user_type_id=int(request.form['user_type_id'])
             user_id=int(request.form['user_id'])
+            show_hidden_tasks=request.form['show_hidden_tasks']
             user=""
             deadline=""
             filter=json.loads(request.form['filter'])
@@ -283,6 +284,11 @@ def getTask():
             first=request.form['first']
             filters=""
             now=datetime.datetime.now()
+
+            if show_hidden_tasks=='false':
+                hidden_tasks=" and a.hidden=%s"%show_hidden_tasks
+            else:
+                hidden_tasks=""
 
             if first=='true':
                 if user_type_id==2:
@@ -465,10 +471,10 @@ def getTask():
                 where
                     a.company_id=%s
                 and a.status_id=b.status_id
-                %s %s
+                %s %s %s
                 order by %s asc
                 offset %s limit %s
-            """%(deadline,int(request.form['company_id']),user,filters,order_by,int(request.form['start']),int(request.form['length']))).dictresult()
+            """%(deadline,int(request.form['company_id']),user,filters,hidden_tasks,order_by,int(request.form['start']),int(request.form['length']))).dictresult()
 
             total=db.query("""
                 select
@@ -479,8 +485,8 @@ def getTask():
                 where
                     a.company_id=%s
                 and a.status_id=b.status_id
-                %s %s
-            """%(int(request.form['company_id']),user,filters)).dictresult()
+                %s %s %s
+            """%(int(request.form['company_id']),user,filters,hidden_tasks)).dictresult()
 
             response['data']=task
             response['recordsTotal']=total[0]['count']
@@ -2643,6 +2649,54 @@ def uploadTasks():
     except:
         response['success']=False
         response['msg_response']="Ocurrió un error, favor de intentarlo de nuevo."
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+@bp.route('/hideTask', methods=['GET','POST'])
+@is_logged_in
+def hideTask():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            db.query("""
+                update task.task
+                set hidden=True
+                where task_id=%s
+            """%data['task_id'])
+            response['success']=True
+            response['msg_response']='La tarea ha quedado oculta.'
+        else:
+            response['success']=False
+            response['msg_response']='Ocurrió un error al intentar obtener los datos de la tarea.'
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error, favor de intentarlo de nuevo más tarde.'
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+@bp.route('/showTask', methods=['GET','POST'])
+@is_logged_in
+def showTask():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            db.query("""
+                update task.task
+                set hidden=False
+                where task_id=%s
+            """%data['task_id'])
+            response['success']=True
+            response['msg_response']='La tarea ha quedado visible.'
+        else:
+            response['success']=False
+            response['msg_response']='Ocurrió un error al intentar obtener los datos de la tarea.'
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error, favor de intentarlo de nuevo más tarde.'
         exc_info=sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))
     return json.dumps(response)
