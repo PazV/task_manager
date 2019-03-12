@@ -48,8 +48,8 @@ $(document).ready(function(){
             });
         }
         else{
-            var deadline=data['deadline']+' 23:59:59';
-            if ($("#win_new_project").data('project_id')!=-1){
+            var deadline=data['deadline']+' 00:00:00';
+            if (new Date(deadline)>=new Date() || $("#win_new_project").data('project_id')!=-1){
                 EasyLoading.show({
                     text:'Cargando...',
                     type:EasyLoading.TYPE["PACMAN"]
