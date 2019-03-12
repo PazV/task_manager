@@ -51,6 +51,7 @@ $(document).ready(function(){
             var deadline=data['deadline']+' 00:00:00';
             console.log(new Date(deadline))
             console.log(new Date())
+            console.log($("#win_new_project").data('project_id'))
             if (new Date(deadline)>=new Date() || $("#win_new_project").data('project_id')!=-1){
                 EasyLoading.show({
                     text:'Cargando...',
