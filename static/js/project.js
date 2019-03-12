@@ -174,7 +174,9 @@ $(document).ready(function(){
         resetForm("#frmNewProject",["input|INPUT","textarea|TEXTAREA","date|DATE"]);
         setMessage("#alertNProjForm",["alert-success","alert-danger"],"alert-info","",false);
         $("#btnEditProject").data('clicked',false);
-        getProjectGrd(me.user_info);
+        if ($("#grdProjects").is(':visible')){
+            getProjectGrd(me.user_info);
+        }
     });
 
     $("#btnCloseProjectDetail").click(function(){
@@ -498,9 +500,10 @@ $(document).ready(function(){
                                 text:'Cargando...',
                                 type:EasyLoading.TYPE['PACMAN'],
                             });
-                            var project_table=$("#grdProjects").DataTable(); //tabla de proyectos
-                            var project_ind=project_table.row('.selected').index();
-                            var project_record=project_table.rows(project_ind).data()[0];
+                            // var project_table=$("#grdProjects").DataTable(); //tabla de proyectos
+                            // var project_ind=project_table.row('.selected').index();
+                            // var project_record=project_table.rows(project_ind).data()[0];
+                            var project_id=$("#win_project_detail").data('project_id');
                             var task_ind=task_table.row('.selected').index();
                             var task_record=task_table.rows(task_ind).data()[0];
                             $.ajax({
@@ -508,7 +511,7 @@ $(document).ready(function(){
                                 method:'POST',
                                 data:JSON.stringify({
                                     'task_id':task_record['task_id'],
-                                    'project_id':project_record['project_id']
+                                    'project_id':project_id
                                 }),
                                 success:function(response){
                                     EasyLoading.hide();
@@ -536,7 +539,7 @@ $(document).ready(function(){
                                                                 method:'POST',
                                                                 data:JSON.stringify({
                                                                     'task_id':task_record['task_id'],
-                                                                    'project_id':project_record['project_id'],
+                                                                    'project_id':project_id,
                                                                     'user_id':me.user_info.user_id
                                                                 }),
                                                                 success:function(response2){
@@ -556,7 +559,7 @@ $(document).ready(function(){
                                                                                     text:'Aceptar',
                                                                                     action:function(){
                                                                                         $("#win_search_project_task").modal("hide");
-                                                                                        getProjectTasks(me.user_info,project_record['project_id']);
+                                                                                        getProjectTasks(me.user_info,project_id);
                                                                                     }
                                                                                 }
                                                                             }
@@ -595,7 +598,7 @@ $(document).ready(function(){
                                                 method:'POST',
                                                 data:JSON.stringify({
                                                     'task_id':task_record['task_id'],
-                                                    'project_id':project_record['project_id'],
+                                                    'project_id':project_id,
                                                     'user_id':me.user_info.user_id
                                                 }),
                                                 success:function(response2){
@@ -615,7 +618,7 @@ $(document).ready(function(){
                                                                     text:'Aceptar',
                                                                     action:function(){
                                                                         $("#win_search_project_task").modal("hide");
-                                                                        getProjectTasks(me.user_info,project_record['project_id']);
+                                                                        getProjectTasks(me.user_info,project_id);
                                                                     }
                                                                 }
                                                             }
@@ -673,7 +676,9 @@ $(document).ready(function(){
     });
 
     $("#win_project_detail").on('hidden.bs.modal',function(){
-        getProjectGrd(me.user_info);
+        if ($("#grdProjects").is(':visible')){
+            getProjectGrd(me.user_info);
+        }
         $(this).data('project_id',-1);
     });
 
