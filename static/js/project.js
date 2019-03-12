@@ -52,7 +52,7 @@ $(document).ready(function(){
             console.log(new Date(deadline))
             console.log(new Date())
             console.log($("#win_new_project").data('project_id'))
-            if (new Date(deadline)>=new Date() || $("#win_new_project").data('project_id')!=-1){
+            // if (new Date(deadline)>=new Date() || $("#win_new_project").data('project_id')!=-1){
                 EasyLoading.show({
                     text:'Cargando...',
                     type:EasyLoading.TYPE["PACMAN"]
@@ -148,13 +148,13 @@ $(document).ready(function(){
                     }
                 });
             }
-            else{
-                $.alert({
-                    theme:'dark',
-                    title:'Atención',
-                    content:'La fecha seleccionada no es válida. Favor de verificarla.'
-                });
-            }
+            // else{
+            //     $.alert({
+            //         theme:'dark',
+            //         title:'Atención',
+            //         content:'La fecha seleccionada no es válida. Favor de verificarla.'
+            //     });
+            // }
         }
     });
 
