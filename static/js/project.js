@@ -26,12 +26,12 @@ $(document).ready(function(){
             var project_ind=project_table.row('.selected').index();
             var project_record=project_table.rows(project_ind).data()[0];
             $("#win_new_project").data('project_id',project_record['project_id']);
-            console.log("true");
+
         }
         else{
             $("#NPdeadline").val(today);
             $("#win_new_project").data('project_id',-1);
-            console.log("false");
+
         }
     });
 
@@ -49,9 +49,7 @@ $(document).ready(function(){
         }
         else{
             var deadline=data['deadline']+' 23:59:59';
-            console.log(new Date(deadline))
-            console.log(new Date())
-            console.log($("#win_new_project").data('project_id'))
+            
             // if (new Date(deadline)>=new Date() || $("#win_new_project").data('project_id')!=-1){
                 EasyLoading.show({
                     text:'Cargando...',
@@ -820,7 +818,7 @@ $(document).ready(function(){
             $("#txtNPname").val(project_record['name']);
             $("#NPdescription").val(project_record['description']);
             var set_date = project_record['deadline'].split("-")[2]+"-"+project_record['deadline'].split("-")[1]+"-"+project_record['deadline'].split("-")[0];
-            console.log(set_date);
+
             $("#NPdeadline").val(set_date);
             $("#win_new_project").modal("show");
         }
@@ -1056,7 +1054,7 @@ $(document).ready(function(){
 
     $("#btnSendProjNotification").click(function(){
         var notif_info=getDictForm("#frmSendProjectNotif",[],"all");
-        console.log(notif_info);
+
         var send_notif=false;
         Object.keys(notif_info).forEach(function(key) {
             if (key.split("_").length==3){
