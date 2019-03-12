@@ -49,7 +49,7 @@ $(document).ready(function(){
         }
         else{
             var deadline=data['deadline']+' 23:59:59';
-            if (new Date(deadline)>=new Date() || $("#win_new_project").data('project_id')!=-1){
+            if ($("#win_new_project").data('project_id')!=-1){
                 EasyLoading.show({
                     text:'Cargando...',
                     type:EasyLoading.TYPE["PACMAN"]
@@ -258,6 +258,7 @@ $(document).ready(function(){
     $("#grdProjects").DataTable({
         "scrollY":"225px",
         "scrollCollapse":true,
+        "lengthChange":false,
         serverSide:true,
         ajax:{
             data:{
@@ -1203,6 +1204,7 @@ function getProjectGrd(user_info){
     $("#grdProjects").DataTable({
         "scrollY":"225px",
         "scrollCollapse":true,
+        "lengthChange":false,
         serverSide:true,
         ajax:{
             data:{
@@ -1232,6 +1234,7 @@ function getProjectTasks(user_info,project_id){
     $("#grdProjectTasks").DataTable({
         "scrollY":"140px",
         "scrollCollapse":true,
+        "lengthChange":false,
         serverSide:true,
         ajax:{
             data:{
@@ -1260,6 +1263,7 @@ function getSearchedProjectTasks(user_info){
     $("#grdSearchTasks").DataTable({
         "scrollY":"160px",
         "scrollCollapse":true,
+        "lengthChange":false,
         serverSide:true,
         ajax:{
             data:{
