@@ -49,6 +49,8 @@ $(document).ready(function(){
         }
         else{
             var deadline=data['deadline']+' 00:00:00';
+            console.log(new Date(deadline))
+            console.log(new Date())
             if (new Date(deadline)>=new Date() || $("#win_new_project").data('project_id')!=-1){
                 EasyLoading.show({
                     text:'Cargando...',
