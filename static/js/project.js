@@ -48,7 +48,7 @@ $(document).ready(function(){
             });
         }
         else{
-            var deadline=data['deadline']+' 00:00:00';
+            var deadline=data['deadline']+' 23:59:59';
             console.log(new Date(deadline))
             console.log(new Date())
             console.log($("#win_new_project").data('project_id'))
