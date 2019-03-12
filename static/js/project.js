@@ -147,7 +147,7 @@ $(document).ready(function(){
                         });
                     }
                 });
-            }
+            // }
             // else{
             //     $.alert({
             //         theme:'dark',
