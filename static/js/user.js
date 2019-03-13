@@ -137,7 +137,7 @@ $(document).ready(function(){
             pageLength:5,
             lengthChange:false,
             ajax:{
-                data:{'company_id':me.user_info.company_id,'from':'admin_users'},
+                data:{'company_id':me.user_info.company_id,'from':'admin_users','user_type_id':me.user_info.user_type_id},
                 url:'/users/getUsers',
                 dataSrc:'data',
                 type:'POST',
@@ -267,7 +267,7 @@ $(document).ready(function(){
                             pageLength:5,
                             lengthChange:false,
                             ajax:{
-                                data:{'company_id':me.user_info.company_id},
+                                data:{'company_id':me.user_info.company_id,'user_type_id':me.user_info.user_type_id,'from':'admin_users'},
                                 url:'/users/getUsers',
                                 dataSrc:'data',
                                 type:'POST',
@@ -411,7 +411,7 @@ $(document).ready(function(){
                                             pageLength:5,
                                             lengthChange:false,
                                             ajax:{
-                                                data:{'company_id':me.user_info.company_id},
+                                                data:{'company_id':me.user_info.company_id,'user_type_id':me.user_info.user_type_id,'from':'admin_users'},
                                                 url:'/users/getUsers',
                                                 dataSrc:'data',
                                                 type:'POST',
