@@ -13,17 +13,15 @@
                     </div>
                     <form method="POST" id="frmSendProjectNotif" style="padding:.25rem;">
                         <div class="row from-group">
-                            <label for="SPNfrom" class="col-sm-2 col-form-label label-msg-notif">De:</label>
+                            <label for="SPNfrom" class="col-sm-2 col-form-label label-msg-notif" style="margin-left:3%;">De:</label>
                             <input type="text" readonly id="SPNfrom" class="col-sm-9 form-control ta-msg-notif" name="msg_from"/>
                         </div>
-                        <fieldset style="border:solid; border-width:thin; border-color:#cbcccd; margin:2%;" id="fieldsetSPN">
+                        <fieldset style="border:solid; border-width:thin; border-color:#cbcccd; margin: 2%; border-radius: 5px;" id="fieldsetSPN">
                             <legend style="width:inherit; margin:5px; padding-right:5px; padding-left:5px; font-size:large; color:#004080;">Enviar a:</legend>
-                            <div id="SPNparentDiv">
-
-                            </div>
+                            <div id="SPNparentDiv"></div>
                         </fieldset>
                         <div class="row form-group">
-                            <label for="SPNmessage" class="col-form-label txtarea-label-notif">Mensaje:</label>
+                            <label for="SPNmessage" class="col-form-label txtarea-label-notif" style="margin-left:5%;">Mensaje:</label>
                             <textarea type=text name="message" class="form-control txtarea-box-notif" id="SPNmessage"></textarea>
                         </div>
                     </form>
