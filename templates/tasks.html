@@ -1,10 +1,14 @@
 
 <div class="row content" id="row1">
-    <div style="padding:2em; width:100%;" id="taskContainer">
+    <div style="padding:0.5em 2em 2em; width:100%;" id="taskContainer">
     <!-- <div  style="padding:2em; max-height:500px;" id="taskContainer"> -->
     <!-- <i class="fa fa-angle-double-down"></i> -->
 
-        <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divTaskFilters" id="btnCollapseFilters">Filtros</button>
+        <div class="row">
+            <p id="pTaskTitle" class="view-title">Tareas</p>
+            <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divTaskFilters" id="btnCollapseFilters">Filtros</button>
+        </div>
+
             <form id="TLfrmFilters">
             <!-- <form id="TLfrmFilters" style="box-sizing:border-box;"> -->
                 <div id="divTaskFilters" class="collapse">

@@ -14,6 +14,7 @@ $(document).ready(function(){
     $("#grdTask").DataTable({
         "scrollY": "255px",
         "scrollCollapse":true,
+        "lengthChange":false,
         serverSide:true,
         ajax:{
             data:{
@@ -605,6 +606,9 @@ $(document).ready(function(){
                                                         $("#win_new_task").modal("hide");
                                                         if ($("#grdTask").is(':visible')===true){
                                                             getTasks(me.user_info);
+                                                            if ($("#win_project_detail").is(':visible')){
+                                                                getProjectTasks(me.user_info,$("#win_project_detail").data('project_id'));
+                                                            }
                                                             // var filter_sel_list=[{'id':"#TLselSupervisor",'name':"supervisor_id"},{'id':"#TLselAssignee",'name':"assignee_id"}];
                                                             // var filters=getDictForm("#TLfrmFilters",filter_sel_list);
                                                             // filters['status_id']=parseInt($("#TLselStatus option:selected")[0].id);
@@ -3130,6 +3134,7 @@ function getTasks(user_info){
     $("#grdTask").DataTable({
         "scrollY": "255px",
         "scrollCollapse":true,
+        "lengthChange":false,
         serverSide:true,
         ajax:{
             data:{

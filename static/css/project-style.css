@@ -106,8 +106,8 @@
 #SPTfrmFilters{
     margin-left: 3%;
 }
-@media screen and (max-width:1080px){
 
+@media screen and (max-width:1080px){
     .project-filter-4{
         width:40%;
         margin-top:3px;
@@ -204,6 +204,10 @@
         margin-left: 4%;
     }
 
+    #divTitleProject{
+        margin-top:10px;
+    }
+
 }
 
 @media screen and (max-width:865px){
@@ -238,6 +242,10 @@
         width:67%;
         border-color:#00a9ce;
     }
+
+    #divTitleProject{
+        margin-top:10px;
+    }
 }
 
 @media screen and (max-width: 675px){
@@ -246,6 +254,13 @@
         margin-top:3px;
         margin-left:1.5%;
         margin-right:1.5%;
+    }
+
+    #btnCollapseProjFilters {
+        display:block;
+        margin-top:35px;
+        padding: 5px;
+        margin-left: 1.5em;
     }
 
     .project-task-filter-1,.project-task-filter-2{
