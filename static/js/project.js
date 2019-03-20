@@ -49,7 +49,7 @@ $(document).ready(function(){
         }
         else{
             var deadline=data['deadline']+' 23:59:59';
-            
+
             // if (new Date(deadline)>=new Date() || $("#win_new_project").data('project_id')!=-1){
                 EasyLoading.show({
                     text:'Cargando...',
@@ -1186,7 +1186,69 @@ $(document).ready(function(){
 
     $("#win_proj_notif_history").on('hidden.bs.modal',function(){
         $("#divProjNotifications").empty();
-    })
+    });
+
+    $("#btnProjectSummary").click(function(){
+        var project_table=$("#grdProjects").DataTable();
+        if (project_table.rows('.selected').any()){
+            var project_ind=project_table.row('.selected').index();
+            var project_record=project_table.rows(project_ind).data()[0];
+            EasyLoading.show({
+                text:"Cargando...",
+                type:EasyLoading.TYPE["PACMAN"]
+            });
+            $.ajax({
+                url:'/project/getProjectSummary',
+                type:'POST',
+                data:JSON.stringify({'project_id':project_record['project_id']}),
+                success:function(response){
+                    try{
+                        var res=JSON.parse(response);
+                    }catch(err){
+                        handleAjaxErrorLoc(1,2,3);
+                    }
+                    EasyLoading.hide();
+                    if (res.success){
+                        $.alert({
+                            theme:'dark',
+                            title:'Atención',
+                            content:res.msg_response,
+                            buttons:{
+                                confirm:{
+                                    text:'Descargar',
+                                    action:function(){
+                                        window.open(res.filename,"_blank");
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    else{
+                        $.alert({
+                            theme:'dark',
+                            title:'Atención',
+                            content:res.msg_response
+                        });
+                    }
+                },
+                error:function(){
+                    EasyLoading.hide();
+                    $.alert({
+                        theme:'dark',
+                        title:'Atención',
+                        content:'Ocurrió un error, favor de intentarlo de nuevo más tarde.'
+                    });
+                }
+            });
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Debe seleccionar un proyecto para obtener generar su resumen.'
+            });
+        }
+    });
 
 });
 

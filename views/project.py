@@ -22,6 +22,9 @@ import random
 import app_config as cfg
 import datetime
 import time
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, Color, colors, PatternFill, Border, Alignment
+from openpyxl.cell import Cell
 
 bp = Blueprint('project', __name__, url_prefix='/project')
 
@@ -40,7 +43,7 @@ def saveProject():
                     data['last_updated_by'] = data['user_id']
                     new_project = db.insert("task.project",data)
                     response['new']=True
-                    
+
                     response['project_id']=new_project['project_id']
                 else:
                     db.query("""
@@ -403,7 +406,7 @@ def checkTaskProject():
                 select project_id from task.task
                 where task_id=%s
             """%data['task_id']).dictresult()
-            app.logger.info(type(task_project[0]['project_id']))
+            # app.logger.info(type(task_project[0]['project_id']))
             if task_project!=[]:
                 if int(task_project[0]['project_id'])!=-1:
                     project_name=db.query("""
@@ -622,7 +625,7 @@ def sendProjectNotification():
                 where project_id=%s
             """%data['project_id']).dictresult()
             html_task_names=""
-            app.logger.info(task_names)
+            # app.logger.info(task_names)
             if task_names!=[]:
                 html_task_names=' '.join('<li>%s</li>'%tn['name'] for tn in task_names)
 
@@ -712,3 +715,372 @@ def getProjectNotificationHistory():
         exc_info=sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))
     return json.dumps(response)
+
+@bp.route('/getProjectSummary', methods=['GET','POST'])
+@is_logged_in
+def getProjectSummary():
+    response={}
+    try:
+        flag, data=GF.toDict(request.form,'post')
+        if flag:
+            project_info=db.query("""
+                select
+                    a.name,
+                    a.description,
+                    to_char(a.created,'DD-MM-YYYY HH24:MI:SS') as created,
+                    (select name from system.user where user_id=a.created_by) as created_by,
+                    to_char(a.deadline,'DD-MM-YYYY HH24:MI:SS') as deadline
+                from
+                    task.project a
+                where
+                    a.project_id=%s
+            """%data['project_id']).dictresult()[0]
+
+            closed_tasks=db.query("""
+                select
+                    a.name,
+                    to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                    to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    to_char(a.deadline,'DD-MM-YYYY HH24:MI:SS') as deadline,
+                    (select name from system.user where user_id=a.assignee_id) as assignee,
+                    (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                    to_char(a.resolved_date,'DD-MM-YYYY HH24:MI:SS') as resolved_date
+                from
+                    task.task a
+                where
+                    project_id=%s
+                and status_id=4
+            """%data['project_id']).dictresult()
+
+            resolved_tasks=db.query("""
+                select
+                    a.name,
+                    to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                    to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    to_char(a.deadline,'DD-MM-YYYY HH24:MI:SS') as deadline,
+                    (select name from system.user where user_id=a.assignee_id) as assignee,
+                    (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                    to_char(a.resolved_date,'DD-MM-YYYY HH24:MI:SS') as resolved_date,
+                    (select name from system.user where user_id=a.res_dec_by) as resolved_by
+                from
+                    task.task a
+                where
+                    project_id=%s
+                and status_id=2
+            """%data['project_id']).dictresult()
+
+            pending_tasks=db.query("""
+                select
+                    a.name,
+                    to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                    to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    to_char(a.deadline,'DD-MM-YYYY HH24:MI:SS') as deadline,
+                    (select name from system.user where user_id=a.assignee_id) as assignee,
+                    (select name from system.user where user_id=a.supervisor_id) as supervisor
+                from
+                    task.task a
+                where
+                    project_id=%s
+                and status_id=1
+            """%data['project_id']).dictresult()
+
+            inprocess_tasks=db.query("""
+                select
+                    a.name,
+                    to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                    to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    to_char(a.deadline,'DD-MM-YYYY HH24:MI:SS') as deadline,
+                    (select name from system.user where user_id=a.assignee_id) as assignee,
+                    (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                    to_char(a.last_updated,'DD-MM-YYYY HH24:MI:SS') as last_updated,
+                    (select name from system.user where user_id=a.user_last_updated) as user_last_updated
+                from
+                    task.task a
+                where
+                    project_id=%s
+                and status_id=6
+            """%data['project_id']).dictresult()
+
+            declined_tasks=db.query("""
+                select
+                    a.name,
+                    to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                    to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    to_char(a.deadline,'DD-MM-YYYY HH24:MI:SS') as deadline,
+                    (select name from system.user where user_id=a.assignee_id) as assignee,
+                    (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                    (select name from system.user where user_id=a.res_dec_by) as declined_by,
+                    to_char(a.last_updated,'DD-MM-YYYY HH24:MI:SS') as declined_date
+                from
+                    task.task a
+                where
+                    project_id=%s
+                and status_id=3
+            """%data['project_id']).dictresult()
+
+            canceled_tasks=db.query("""
+                select
+                    a.name,
+                    to_char(a.assignee_deadline,'DD-MM-YYYY HH24:MI:SS') as assignee_deadline,
+                    to_char(a.supervisor_deadline,'DD-MM-YYYY HH24:MI:SS') as supervisor_deadline,
+                    to_char(a.deadline,'DD-MM-YYYY HH24:MI:SS') as deadline,
+                    (select name from system.user where user_id=a.assignee_id) as assignee,
+                    (select name from system.user where user_id=a.supervisor_id) as supervisor,
+                    (select name from system.user where user_id=a.user_last_updated) as canceled_by,
+                    to_char(a.last_updated,'DD-MM-YYYY HH24:MI:SS') as canceled_date
+                from
+                    task.task a
+                where
+                    project_id=%s
+                and status_id=5
+            """%data['project_id']).dictresult()
+
+            wb = Workbook()
+            ws = wb.active
+            ftitlebold=Font(name='Arial',size=14,bold=True)
+            ftitlebold_align=Alignment(horizontal="right",vertical="center")
+            ftitle=Font(name='Arial',size=12)
+            ftitlebold12=Font(name='Arial',size=12,bold=True)
+
+
+            ws.column_dimensions['A'].width = 60
+            ws.column_dimensions['B'].width = 23
+            ws.column_dimensions['C'].width = 23
+            ws.column_dimensions['D'].width = 23
+            ws.column_dimensions['E'].width = 23
+            ws.column_dimensions['F'].width = 23
+            ws.column_dimensions['G'].width = 23
+            ws.column_dimensions['H'].width = 23
+
+            title_list=[{'cell':'A1','value':'Proyecto:'},{'cell':'A2','value':'Descripción:'},{'cell':'A3','value':'Creado por:'},{'cell':'A4','value':'Finaliza:'}]
+            for x in title_list:
+                ws[x['cell']].value=x['value']
+                ws[x['cell']].font=ftitlebold
+                ws[x['cell']].alignment=ftitlebold_align
+
+            title_value_list=[{'cell':'B1','value':project_info['name']},{'cell':'B2','value':project_info['description']},{'cell':'B3','value':project_info['created_by']},{'cell':'B4','value':project_info['deadline']}]
+            for y in title_value_list:
+                ws[y['cell']].value=y['value']
+                ws[y['cell']].font=ftitle
+
+            ftasktitle=Font(name='Arial',size=12, bold=True, color="ffffff")
+            ws.merge_cells('A6:H6')
+            ws['A6'].fill=PatternFill("solid",fgColor="0066b3")
+            ws['A6'].value='Tareas cerradas'
+            ws['A6'].font=ftasktitle
+            ws['A6'].alignment=Alignment(horizontal="center",vertical="center")
+
+            row=7
+            closed_titles=['Nombre','Auxiliar','Fecha auxiliar','Supervisor','Fecha supervisor','Fecha límite','Resuelta']
+            resolved_titles=['Nombre','Auxiliar','Fecha auxiliar','Supervisor','Fecha supervisor','Fecha límite','Resuelta','Resuelta por']
+            pending_titles=['Nombre','Auxiliar','Fecha auxiliar','Supervisor','Fecha supervisor','Fecha límite']
+            inprocess_titles=['Nombre','Auxiliar','Fecha auxiliar','Supervisor','Fecha supervisor','Fecha límite','Actualizado','Actualizado por']
+            declined_titles=['Nombre','Auxiliar','Fecha auxiliar','Supervisor','Fecha supervisor','Fecha límite','Declinada','Declinada por']
+            canceled_titles=['Nombre','Auxiliar','Fecha auxiliar','Supervisor','Fecha supervisor','Fecha límite','Cancelada']
+
+            #tareas cerradas
+            if closed_tasks!=[]:
+                for t in range(1,len(closed_titles)+1):
+                    ws.cell(row=row,column=t,value=closed_titles[t-1])
+                    ws.cell(row=row,column=t).font=ftitlebold12
+                    ws.cell(row=row,column=t).alignment=Alignment(horizontal="center",vertical="center")
+                row+=1
+                tasks_order=[{'position':1,'value':'name'},{'position':2,'value':'assignee'},{'position':3,'value':'assignee_deadline'},{'position':4,'value':'supervisor'},{'position':5,'value':'supervisor_deadline'},{'position':6,'value':'deadline'},{'position':7,'value':'resolved_date'}]
+                for ct in closed_tasks:
+                    for to in tasks_order:
+                        ws.cell(row=row,column=to['position'],value=ct[to['value']])
+                        ws.cell(row=row,column=to['position']).font=ftitle
+                        ws.cell(row=row,column=to['position']).alignment=Alignment(horizontal="center",vertical="center")
+                    row+=1
+                row+=1
+
+            else:
+                ws.merge_cells('A7:H7')
+                ws['A7'].value='No hay tareas cerradas'
+                ws['A7'].alignment=Alignment(horizontal="center",vertical="center")
+                ws['A7'].font=ftitle
+                row+=2
+
+            merge='A%s:H%s'%(row,row)
+            ws.merge_cells(merge)
+            ws['A'+str(row)].fill=PatternFill("solid",fgColor="a3238e")
+            ws['A'+str(row)].value='Tareas resueltas'
+            ws['A'+str(row)].font=ftasktitle
+            ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+            row+=1
+            if resolved_tasks!=[]:
+                for t in range(1,len(resolved_titles)+1):
+                    ws.cell(row=row,column=t,value=resolved_titles[t-1])
+                    ws.cell(row=row,column=t).font=ftitlebold12
+                    ws.cell(row=row,column=t).alignment=Alignment(horizontal="center",vertical="center")
+                row+=1
+                tasks_order=[{'position':1,'value':'name'},{'position':2,'value':'assignee'},{'position':3,'value':'assignee_deadline'},{'position':4,'value':'supervisor'},{'position':5,'value':'supervisor_deadline'},{'position':6,'value':'deadline'},{'position':7,'value':'resolved_date'},{'position':8,'value':'resolved_by'}]
+                for ct in resolved_tasks:
+                    for to in tasks_order:
+                        ws.cell(row=row,column=to['position'],value=ct[to['value']])
+                        ws.cell(row=row,column=to['position']).font=ftitle
+                        ws.cell(row=row,column=to['position']).alignment=Alignment(horizontal="center",vertical="center")
+                    row+=1
+                row+=1
+            else:
+                merge='A%s:H%s'%(row,row)
+                ws.merge_cells(merge)
+                ws['A'+str(row)].value='No hay tareas resueltas'
+                ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+                ws['A'+str(row)].font=ftitle
+                row+=2
+
+            merge='A%s:H%s'%(row,row)
+            ws.merge_cells(merge)
+            ws['A'+str(row)].fill=PatternFill("solid",fgColor="ef413d")
+            ws['A'+str(row)].value='Tareas pendientes'
+            ws['A'+str(row)].font=ftasktitle
+            ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+            row+=1
+            if pending_tasks!=[]:
+                for t in range(1,len(pending_titles)+1):
+                    ws.cell(row=row,column=t,value=pending_titles[t-1])
+                    ws.cell(row=row,column=t).font=ftitlebold12
+                    ws.cell(row=row,column=t).alignment=Alignment(horizontal="center",vertical="center")
+                row+=1
+                tasks_order=[{'position':1,'value':'name'},{'position':2,'value':'assignee'},{'position':3,'value':'assignee_deadline'},{'position':4,'value':'supervisor'},{'position':5,'value':'supervisor_deadline'},{'position':6,'value':'deadline'}]
+                for ct in pending_tasks:
+                    for to in tasks_order:
+                        ws.cell(row=row,column=to['position'],value=ct[to['value']])
+                        ws.cell(row=row,column=to['position']).font=ftitle
+                        ws.cell(row=row,column=to['position']).alignment=Alignment(horizontal="center",vertical="center")
+                    row+=1
+                row+=1
+            else:
+                merge='A%s:H%s'%(row,row)
+                ws.merge_cells(merge)
+                ws['A'+str(row)].value='No hay tareas pendientes'
+                ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+                ws['A'+str(row)].font=ftitle
+                row+=2
+
+
+            merge='A%s:H%s'%(row,row)
+            ws.merge_cells(merge)
+            ws['A'+str(row)].fill=PatternFill("solid",fgColor="faa61a")
+            ws['A'+str(row)].value='Tareas en proceso'
+            ws['A'+str(row)].font=ftasktitle
+            ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+            row+=1
+            if inprocess_tasks!=[]:
+                for t in range(1,len(inprocess_titles)+1):
+                    ws.cell(row=row,column=t,value=inprocess_titles[t-1])
+                    ws.cell(row=row,column=t).font=ftitlebold12
+                    ws.cell(row=row,column=t).alignment=Alignment(horizontal="center",vertical="center")
+                row+=1
+                tasks_order=[{'position':1,'value':'name'},{'position':2,'value':'assignee'},{'position':3,'value':'assignee_deadline'},{'position':4,'value':'supervisor'},{'position':5,'value':'supervisor_deadline'},{'position':6,'value':'deadline'},{'position':7,'value':'last_updated'},{'position':8,'value':'user_last_updated'}]
+                for ct in inprocess_tasks:
+                    for to in tasks_order:
+                        ws.cell(row=row,column=to['position'],value=ct[to['value']])
+                        ws.cell(row=row,column=to['position']).font=ftitle
+                        ws.cell(row=row,column=to['position']).alignment=Alignment(horizontal="center",vertical="center")
+                    row+=1
+                row+=1
+            else:
+                merge='A%s:H%s'%(row,row)
+                ws.merge_cells(merge)
+                ws['A'+str(row)].value='No hay tareas en proceso'
+                ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+                ws['A'+str(row)].font=ftitle
+                row+=2
+
+            merge='A%s:H%s'%(row,row)
+            ws.merge_cells(merge)
+            ws['A'+str(row)].fill=PatternFill("solid",fgColor="72bf44")
+            ws['A'+str(row)].value='Tareas declinadas'
+            ws['A'+str(row)].font=ftasktitle
+            ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+            row+=1
+            if declined_tasks!=[]:
+                for t in range(1,len(declined_titles)+1):
+                    ws.cell(row=row,column=t,value=declined_titles[t-1])
+                    ws.cell(row=row,column=t).font=ftitlebold12
+                    ws.cell(row=row,column=t).alignment=Alignment(horizontal="center",vertical="center")
+                row+=1
+                tasks_order=[{'position':1,'value':'name'},{'position':2,'value':'assignee'},{'position':3,'value':'assignee_deadline'},{'position':4,'value':'supervisor'},{'position':5,'value':'supervisor_deadline'},{'position':6,'value':'deadline'},{'position':7,'value':'declined_date'},{'position':8,'value':'declined_by'}]
+                for ct in declined_tasks:
+                    for to in tasks_order:
+                        ws.cell(row=row,column=to['position'],value=ct[to['value']])
+                        ws.cell(row=row,column=to['position']).font=ftitle
+                        ws.cell(row=row,column=to['position']).alignment=Alignment(horizontal="center",vertical="center")
+                    row+=1
+                row+=1
+            else:
+                merge='A%s:H%s'%(row,row)
+                ws.merge_cells(merge)
+                ws['A'+str(row)].value='No hay tareas declinadas'
+                ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+                ws['A'+str(row)].font=ftitle
+                row+=2
+
+            merge='A%s:H%s'%(row,row)
+            ws.merge_cells(merge)
+            ws['A'+str(row)].fill=PatternFill("solid",fgColor="684703")
+            ws['A'+str(row)].value='Tareas canceladas'
+            ws['A'+str(row)].font=ftasktitle
+            ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+            row+=1
+            if canceled_tasks!=[]:
+                for t in range(1,len(canceled_titles)+1):
+                    ws.cell(row=row,column=t,value=canceled_titles[t-1])
+                    ws.cell(row=row,column=t).font=ftitlebold12
+                    ws.cell(row=row,column=t).alignment=Alignment(horizontal="center",vertical="center")
+                row+=1
+                tasks_order=[{'position':1,'value':'name'},{'position':2,'value':'assignee'},{'position':3,'value':'assignee_deadline'},{'position':4,'value':'supervisor'},{'position':5,'value':'supervisor_deadline'},{'position':6,'value':'deadline'},{'position':7,'value':'canceled_date'},{'position':8,'value':'canceled_by'}]
+                for ct in canceled_tasks:
+                    for to in tasks_order:
+                        ws.cell(row=row,column=to['position'],value=ct[to['value']])
+                        ws.cell(row=row,column=to['position']).font=ftitle
+                        ws.cell(row=row,column=to['position']).alignment=Alignment(horizontal="center",vertical="center")
+                    row+=1
+                row+=1
+
+            else:
+                merge='A%s:H%s'%(row,row)
+                ws.merge_cells(merge)
+                ws['A'+str(row)].value='No hay tareas canceladas'
+                ws['A'+str(row)].alignment=Alignment(horizontal="center",vertical="center")
+                ws['A'+str(row)].font=ftitle
+                row+=2
+
+
+            fecha=str(datetime.datetime.today())
+            fecha=fecha.replace(" ","_")
+            fecha=fecha.replace(":","_")
+            fecha=fecha.replace(".","_")
+
+            wb.save('%sResumen_%s.xlsx'%(cfg.report_path,fecha))
+            response['filename']='/project/downloadProjectSummary/Resumen_%s.xlsx'%fecha
+            response['success']=True
+            response['msg_response']='El resumen ha sido generado.'
+
+        else:
+            response['success']=False
+            response['msg_response']='Ocurrió un error al intentar obtener la información del proyecto, favor de intentarlo más tarde.'
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error, favor de intentarlo de nuevo más tarde.'
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)
+
+@bp.route('/downloadProjectSummary/<filename>', methods=['GET','POST'])
+@is_logged_in
+def downloadProjectSummary(filename):
+    response={}
+    try:
+        path="%s%s"%(cfg.report_path,filename)
+        name="%s"%filename
+        return send_file(path,attachment_filename=name)
+
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error'
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+        return response
