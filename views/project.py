@@ -222,7 +222,8 @@ def getProjects():
                     to_char(a.created,'DD-MM-YYYY') as created,
                     to_char(a.deadline,'DD-MM-YYYY') as deadline,
                     (select count(task_id) from task.task where project_id=a.project_id) as tasks,
-                    b.description as status
+                    b.description as status,
+                    a.status_id
                 from
                     task.project a,
                     task.status b
@@ -231,7 +232,9 @@ def getProjects():
                 and a.status_id=b.status_id
                 %s %s %s %s
                 order by a.name
-            """%(company_id,status,created_by,date_filter,search)).dictresult()
+                offset %s limit %s
+            """%(company_id,status,created_by,date_filter,search,int(request.form['start']),int(request.form['length']))).dictresult()
+
 
             total=db.query("""
                 select
@@ -313,7 +316,9 @@ def getProjectTasks():
                     a.project_id=%s
                 and a.status_id=b.status_id
                 and a.company_id=%s
-            """%(project_id,company_id)).dictresult()
+                order by a.name
+                offset %s limit %s
+            """%(project_id,company_id,int(request.form['start']),int(request.form['length']))).dictresult()
 
             total_tasks=db.query("""
                 select count(a.task_id)
@@ -372,7 +377,9 @@ def getSearchedProjectTasks():
                     a.company_id=%s
                 and a.status_id=b.status_id
                 %s %s %s
-            """%(company_id,status_filter,date_filter,search_filter)).dictresult()
+                order by a.name
+                offset %s limit %s
+            """%(company_id,status_filter,date_filter,search_filter,int(request.form['start']),int(request.form['length']))).dictresult()
             task_total=db.query("""
                 select count(a.task_id)
                 from task.task a
@@ -1084,3 +1091,34 @@ def downloadProjectSummary(filename):
         exc_info=sys.exc_info()
         app.logger.info(traceback.format_exc(exc_info))
         return response
+
+@bp.route('/changeProjectStatus', methods=['GET','POST'])
+@is_logged_in
+def changeProjectStatus():
+    response={}
+    try:
+        flag,data=GF.toDict(request.form,'post')
+        if flag:
+            resolved=''
+            if int(data['status_id'])==2:
+                resolved=',resolved_date=now() '
+
+            db.query("""
+                update task.project
+                set status_id=%s,
+                last_updated=now(),
+                last_updated_by=%s %s
+                where project_id=%s
+            """%(data['status_id'],data['user_id'],resolved,data['project_id']))
+
+            response['success']=True
+            response['msg_response']='El status ha sido actualizado.'
+        else:
+            response['success']=False
+            response['msg_response']='Ocurrió un error al intentar procesar la información, favor de intentarlo de nuevo.'
+    except:
+        response['success']=False
+        response['msg_response']='Ocurrió un error, favor de intentarlo de nuevo más tarde.'
+        exc_info=sys.exc_info()
+        app.logger.info(traceback.format_exc(exc_info))
+    return json.dumps(response)

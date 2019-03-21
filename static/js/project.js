@@ -1250,6 +1250,72 @@ $(document).ready(function(){
         }
     });
 
+    $("#btnChangeProjectStatus").click(function(){
+        var project_table=$("#grdProjects").DataTable();
+        if (project_table.rows('.selected').any()){
+            $("#win_change_proj_status").modal("show");
+            var project_ind=project_table.row('.selected').index();
+            var project_record=project_table.rows(project_ind).data()[0];
+            $("#win_change_proj_status").data('project_id',project_record['project_id']);
+            console.log(project_record['status_id']);
+            console.log(project_record['status']);
+            console.log("[id="+project_record['status_id']+"]");
+            $("#ChSstatus option[id="+project_record['status_id']+"]").prop("selected",true);
+
+
+        }
+        else{
+            $.alert({
+                theme:'dark',
+                title:'Atención',
+                content:'Debe seleccionar un proyecto para cambiar su status.'
+            });
+        }
+    });
+
+    $("#btnCloseProjectStatus").click(function(){
+        $("#win_change_proj_status").data('project_id',-1);
+        $("#win_change_proj_status").modal("hide");
+    });
+
+    $("#btnSaveProjectStatus").click(function(){
+        EasyLoading.show({
+            text:"Cargando...",
+            type:EasyLoading.TYPE["PACMAN"]
+        });
+        $.ajax({
+            url:'/project/changeProjectStatus',
+            type:'POST',
+            data:JSON.stringify({'project_id':$("#win_change_proj_status").data('project_id'),'user_id':me.user_info.user_id,'status_id':$("#ChSstatus").find("option:selected").attr("id")}),
+            success:function(response){
+                try{
+                    var res=JSON.parse(response);
+                }catch(err){
+                    handleAjaxErrorLoc(1,2,3);
+                }
+                EasyLoading.hide();
+                if (res.success){
+                    $("#win_change_proj_status").modal("hide");
+                    getProjectGrd(me.user_info);
+                }
+                else{
+                    $.alert({
+                        theme:'dark',
+                        title:'Atención',
+                        content:res.msg_response
+                    });
+                }
+            },
+            error:function(){
+                $.alert({
+                    theme:'dark',
+                    title:'Atención',
+                    content:'Ocurrió un error, favor de intentarlo de nuevo.'
+                });
+            }
+        });
+    });
+
 });
 
 
