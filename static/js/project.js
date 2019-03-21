@@ -1257,9 +1257,7 @@ $(document).ready(function(){
             var project_ind=project_table.row('.selected').index();
             var project_record=project_table.rows(project_ind).data()[0];
             $("#win_change_proj_status").data('project_id',project_record['project_id']);
-            console.log(project_record['status_id']);
-            console.log(project_record['status']);
-            console.log("[id="+project_record['status_id']+"]");
+            
             $("#ChSstatus option[id="+project_record['status_id']+"]").prop("selected",true);
 
 
