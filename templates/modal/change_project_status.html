@@ -1,0 +1,27 @@
+<div class="modal fade" id="win_change_proj_status" data-keyboard="false" data-backdrop="static" style="overflow-y:scroll;">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center" style="overflow-y:initial !important;">
+            <div class="modal-content">
+                <div class="modal-header user-header header-win-title">
+                    <span>Cambiar status</span>
+                    <button type="button" class="btn-close-modal pull-right" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="padding:2% 5%;">
+                        <label for="ChSstatus" class="col-form-label" style="width:25%;"><b>Status:</b></label>
+                        <select class="form-control" style="border-color:#00bfb3; width:75%;" data-toggle="tooltip" title="Seleccionar status" id="ChSstatus" name="status_id">
+                            <option id="1">Pendiente</option>
+                            <option id="2">Resuelto</option>
+                            <option id="4">Cerrado</option>
+                            <option id="6">En proceso</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer user-footer">
+                    <button type="button" class="btn btn-light" id="btnSaveProjectStatus" data-toggle="tooltip" title="Guardar status"><span class="action-btn-text">Guardar </span><i class="fa fa-save"></i></button>
+                    <button type="button" class="btn btn-light" id="btnCloseProjectStatus" data-toggle="tooltip" title="Salir"><span class="action-btn-text">Salir </span><i class="fa fa-window-close"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
