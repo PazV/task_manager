@@ -2499,9 +2499,8 @@ $(document).ready(function(){
                                     theme:'dark',
                                     title:'Atención',
                                     content:'No tienes permisos para revisar esta tarea.'
-                                })
+                                });
                             }
-
                         }
                     }
                 });

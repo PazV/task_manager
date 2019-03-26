@@ -93,9 +93,8 @@
                         <button type="button" class="btn btn-outline-primary" id="btnDeclineTaskList" data-toggle="tooltip" title="Declinar"><span class="action-btn-text">Declinar </span><i class="fa fa-minus-circle"></i></button>
                         <!-- Ya no limita a usuarios con perfil auxiliar a revisar tareas, siempre y cuando ese auxiliar sea el encargado de supervisar la tarea -->
                         <button type="button" class="btn btn-outline-primary" id="btnCheckTaskList" data-toggle="tooltip" title="Revisar"><span class="action-btn-text">Revisar </span><i class="fa fa-check-square-o"></i></button>
-
+                        <button type="button" class="btn btn-outline-primary" id="btnEditTaskList" data-toggle="tooltip" title="Editar"><span class="action-btn-text">Editar </span><i class="fa fa-edit"></i></button>
                         {% if g.template_user_info.user_type_id in (1,4,5,6) %}
-                            <button type="button" class="btn btn-outline-primary" id="btnEditTaskList" data-toggle="tooltip" title="Editar"><span class="action-btn-text">Editar </span><i class="fa fa-edit"></i></button>
                             <button type="button" class="btn btn-outline-primary" id="btnCancelTaskList" data-toggle="tooltip" title="Cancelar"><span class="action-btn-text">Cancelar </span><i class="fa fa-times-circle"></i></button>
                         {% endif %}
                         <button type="button" class="btn btn-outline-primary" id="btnSendNotificationList" data-toggle="tooltip" title="Enviar notificación"><span class="action-btn-text">Enviar notificación </span><i class="fa fa-bell-o"></i></button>
