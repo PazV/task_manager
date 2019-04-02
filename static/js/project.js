@@ -14,10 +14,12 @@ $(document).ready(function(){
     if (show_task_view===true){
         $("#btnChangeTaskView").css("display","block");
         $("#btnChangeProjectView").css("display","none");
+        $("#btnWinTodayTasks").css("display","none");
     }
     else{
         $("#btnChangeTaskView").css("display","none");
         $("#btnChangeProjectView").css("display","block");
+        $("#btnWinTodayTasks").css("display","block");
     }
 
     $("#win_new_project").on('show.bs.modal',function(){
@@ -1257,7 +1259,7 @@ $(document).ready(function(){
             var project_ind=project_table.row('.selected').index();
             var project_record=project_table.rows(project_ind).data()[0];
             $("#win_change_proj_status").data('project_id',project_record['project_id']);
-            
+
             $("#ChSstatus option[id="+project_record['status_id']+"]").prop("selected",true);
 
 
