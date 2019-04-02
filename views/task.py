@@ -2757,7 +2757,7 @@ def getTodayTasks():
         today=str(datetime.datetime.today()).split(" ")[0]
         tasks=db.query("""
             select task_id, name from task.task where %s between '%s 00:00:00' and '%s 23:59:59'
-            and company_id=%s and (supervisor_id=%s or assignee_id=%s) order by name asc
+            and company_id=%s and (supervisor_id=%s or assignee_id=%s) and status_id in (1,6) order by name asc
         """%(deadline,today,today,data['company_id'],data['user_id'],data['user_id'])).dictresult()
 
         task_html=""
