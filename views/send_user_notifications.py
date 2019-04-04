@@ -82,49 +82,98 @@ def main():
         now_date=datetime.now()
         now_str=str(now_date).split(" ")[0]
 
+        # assignee_html_message="""
+        #     <p>Estimado {user_name}:</p>
+        #         <p>Le recordamos que tiene pendiente por resolver las siguientes tareas de la empresa {company}:</p>
+        #         <table style="width: 100%; border-collapse: collapse;" border="1">
+        #         <tbody>
+        #         <tr style="height: 15px;">
+        #         <td style="width: 11.9339%; text-align: center; height: 15px;"><strong>Prioridad</strong></td>
+        #         <td style="width: 43.0992%; text-align: center; height: 15px;"><strong>Nombre</strong></td>
+        #         <td style="width: 22.9669%; text-align: center; height: 15px;"><strong>Responsable</strong></td>
+        #         <td style="width: 22%; text-align: center; height: 15px;"><strong>Fecha de vencimiento</strong></td>
+        #         </tr>
+        #         {rows}
+        #         </tbody>
+        #         </table>
+        #         <p>Para ingresar a la plataforma, dar click <a href="{link}">aqu&iacute;</a>.</p>
+        #         <p><img src="data:image/png;base64,{mail_img}" alt="" width="352" height="81" /></p>
+        # """
+
         assignee_html_message="""
-            <p>Estimado {user_name}:</p>
-                <p>Le recordamos que tiene pendiente por resolver las siguientes tareas de la empresa {company}:</p>
-                <table style="width: 100%; border-collapse: collapse;" border="1">
-                <tbody>
-                <tr style="height: 15px;">
-                <td style="width: 11.9339%; text-align: center; height: 15px;"><strong>Prioridad</strong></td>
-                <td style="width: 43.0992%; text-align: center; height: 15px;"><strong>Nombre</strong></td>
-                <td style="width: 22.9669%; text-align: center; height: 15px;"><strong>Responsable</strong></td>
-                <td style="width: 22%; text-align: center; height: 15px;"><strong>Fecha de vencimiento</strong></td>
-                </tr>
-                {rows}
-                </tbody>
-                </table>
-                <p>Para ingresar a la plataforma, dar click <a href="{link}">aqu&iacute;</a>.</p>
-                <p><img src="data:image/png;base64,{mail_img}" alt="" width="352" height="81" /></p>
+            <p style="text-align: center;"><img src="data:image/png;base64,{task_img}" alt="" width="90" height="90" /></p>
+            <p style="text-align: center;"><span style="font-family: helvetica; font-size: 16pt;"><strong>&iexcl;Tienes tareas pendientes!</strong></span></p>
+            <p style="text-align: left;"><span style="font-size: 12pt; font-family: helvetica;">Estimado {user_name}:</span></p>
+            <p style="text-align: left;"><span style="font-size: 12pt; font-family: helvetica;">Le recordamos que tiene pendiente por resolver las siguientes tareas de la empresa {company}:</span></p>
+            <table style="width: 100%; border-collapse: collapse; border-style: double; border-color: #7a7878;" border="1">
+            <tbody>
+            <tr style="height: 15px;">
+            <td style="width: 11.9339%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Prioridad</span></strong></td>
+            <td style="width: 43.0992%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Nombre</span></strong></td>
+            <td style="width: 22.9669%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Responsable</span></strong></td>
+            <td style="width: 22%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Fecha de vencimiento</span></strong></td>
+            </tr>
+            {rows}
+            </tbody>
+            </table>
+            <p>&nbsp;</p>
+            <p><span style="font-family: helvetica; font-size: 12pt;">Para ingresar a EasyTask, dar click <a href="{link}">aqu&iacute;</a>.</span></p>
+            <p><img src="data:image/png;base64,{mail_img}" alt="" width="135" height="30" /></p>
         """
+
+
+        # row_expired_red_flag="""
+        #     <tr style="height: 28px;">
+        #         <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_red_flag}" alt="" width="15" height="18" /></td>
+        #         <td style="width: 43.0992%; height: 22px;"><span style="color: #ff0000;">{name}</span></td>
+        #         <td style="width: 22.9669%; text-align: center; height: 22px;"><span style="color: #ff0000;">{in_charge}</span></td>
+        #         <td style="width: 22%; text-align: center; height: 22px;"><span style="color: #ff0000;">{deadline}</span></td>
+        #     </tr>
+        # """
 
         row_expired_red_flag="""
             <tr style="height: 28px;">
-                <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_red_flag}" alt="" width="15" height="18" /></td>
-                <td style="width: 43.0992%; height: 22px;"><span style="color: #ff0000;">{name}</span></td>
-                <td style="width: 22.9669%; text-align: center; height: 22px;"><span style="color: #ff0000;">{in_charge}</span></td>
-                <td style="width: 22%; text-align: center; height: 22px;"><span style="color: #ff0000;">{deadline}</span></td>
+            <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_red_flag}" alt="" width="15" height="18" /></td>
+            <td style="width: 43.0992%; height: 22px;"><span style="color: #ff0000; font-family: helvetica;">{name}</span></td>
+            <td style="width: 22.9669%; text-align: center; height: 22px;"><span style="color: #ff0000; font-family: helvetica;">{in_charge}</span></td>
+            <td style="width: 22%; text-align: center; height: 22px;"><span style="color: #ff0000; font-family: helvetica;">{deadline}</span></td>
             </tr>
         """
 
+
+        # row_red_flag="""
+        #     <tr style="height: 28px;">
+        #         <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_red_flag}" alt="" width="15" height="18" /></td>
+        #         <td style="width: 43.0992%; height: 22px;">{name}</td>
+        #         <td style="width: 22.9669%; text-align: center; height: 22px;">{in_charge}</td>
+        #         <td style="width: 22%; text-align: center; height: 22px;">{deadline}</td>
+        #     </tr>
+        # """
 
         row_red_flag="""
             <tr style="height: 28px;">
-                <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_red_flag}" alt="" width="15" height="18" /></td>
-                <td style="width: 43.0992%; height: 22px;">{name}</td>
-                <td style="width: 22.9669%; text-align: center; height: 22px;">{in_charge}</td>
-                <td style="width: 22%; text-align: center; height: 22px;">{deadline}</td>
+            <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_red_flag}" alt="" width="15" height="18" /></td>
+            <td style="width: 43.0992%; height: 22px; font-family: helvetica;">{name}</td>
+            <td style="width: 22.9669%; text-align: center; height: 22px; font-family: helvetica;">{in_charge}</td>
+            <td style="width: 22%; text-align: center; height: 22px; font-family: helvetica;">{deadline}</td>
             </tr>
         """
 
+        # row_yellow_flag="""
+        #     <tr style="height: 28px;">
+        #         <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_yellow_flag}" alt="" width="15" height="18" /></td>
+        #         <td style="width: 43.0992%; height: 22px;">{name}</td>
+        #         <td style="width: 22.9669%; text-align: center; height: 22px;">{in_charge}</td>
+        #         <td style="width: 22%; text-align: center; height: 22px;">{deadline}</td>
+        #     </tr>
+        # """
+
         row_yellow_flag="""
             <tr style="height: 28px;">
-                <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_yellow_flag}" alt="" width="15" height="18" /></td>
-                <td style="width: 43.0992%; height: 22px;">{name}</td>
-                <td style="width: 22.9669%; text-align: center; height: 22px;">{in_charge}</td>
-                <td style="width: 22%; text-align: center; height: 22px;">{deadline}</td>
+            <td style="width: 11.9339%; height: 22px;"><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,{img_yellow_flag}" alt="" width="15" height="18" /></td>
+            <td style="width: 43.0992%; height: 22px; font-family: helvetica;">{name}</td>
+            <td style="width: 22.9669%; text-align: center; height: 22px; font-family: helvetica;">{in_charge}</td>
+            <td style="width: 22%; text-align: center; height: 22px; font-family: helvetica;">{deadline}</td>
             </tr>
         """
 
@@ -226,7 +275,8 @@ def main():
                                         'link':cfg.host,
                                         'mail_img':cfg.mail_img,
                                         'user_name':u['user_name'],
-                                        'company':company_name['name']
+                                        'company':company_name['name'],
+                                        'task_img':cfg.task_img
                                     }
                                     message=assignee_html_message.format(**message_dict)
                                     MF.sendMail(u['email'],'Tareas pendientes',message)
@@ -292,46 +342,83 @@ def main():
                                     sup_msg=""
                                     message_sup='<p>Estimado {user_name}:</p>'
                                     if has_tasks==True:
+                                        # sup_assignee_msg="""
+                                        #     <p>Le recordamos que tiene pendiente por resolver las siguientes tareas de la empresa {company}:</p>
+                                        #     <table style="width: 100%; border-collapse: collapse;" border="1">
+                                        #     <tbody>
+                                        #     <tr style="height: 15px;">
+                                        #     <td style="width: 11.9339%; text-align: center; height: 15px;"><strong>Prioridad</strong></td>
+                                        #     <td style="width: 43.0992%; text-align: center; height: 15px;"><strong>Nombre</strong></td>
+                                        #     <td style="width: 22.9669%; text-align: center; height: 15px;"><strong>Responsable</strong></td>
+                                        #     <td style="width: 22%; text-align: center; height: 15px;"><strong>Fecha de vencimiento</strong></td>
+                                        #     </tr>
+                                        #     {rows}
+                                        #     </tbody>
+                                        #     </table>
+                                        #     <p>&nbsp;</p>
+                                        # """
+
                                         sup_assignee_msg="""
-                                            <p>Le recordamos que tiene pendiente por resolver las siguientes tareas de la empresa {company}:</p>
-                                            <table style="width: 100%; border-collapse: collapse;" border="1">
+                                            <p style="text-align: left;"><span style="font-size: 12pt; font-family: helvetica;">Le recordamos que tiene pendiente por resolver las siguientes tareas de la empresa {company}:</span></p>
+                                            <table style="width: 100%; border-collapse: collapse; border-style: double; border-color: #7a7878;" border="1">
                                             <tbody>
                                             <tr style="height: 15px;">
-                                            <td style="width: 11.9339%; text-align: center; height: 15px;"><strong>Prioridad</strong></td>
-                                            <td style="width: 43.0992%; text-align: center; height: 15px;"><strong>Nombre</strong></td>
-                                            <td style="width: 22.9669%; text-align: center; height: 15px;"><strong>Responsable</strong></td>
-                                            <td style="width: 22%; text-align: center; height: 15px;"><strong>Fecha de vencimiento</strong></td>
+                                            <td style="width: 11.9339%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Prioridad</span></strong></td>
+                                            <td style="width: 43.0992%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Nombre</span></strong></td>
+                                            <td style="width: 22.9669%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Responsable</span></strong></td>
+                                            <td style="width: 22%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Fecha de vencimiento</span></strong></td>
                                             </tr>
                                             {rows}
                                             </tbody>
                                             </table>
                                             <p>&nbsp;</p>
                                         """
+
                                     if supervisor_has_tasks==True:
+                                        # sup_msg="""
+                                        #     <p>Le recordamos que las siguientes tareas no han sido resueltas de la empresa {company}:</p>
+                                        #     <table style="width: 100%; border-collapse: collapse;" border="1">
+                                        #     <tbody>
+                                        #     <tr style="height: 15px;">
+                                        #     <td style="width: 11.9339%; text-align: center; height: 15px;"><strong>Prioridad</strong></td>
+                                        #     <td style="width: 43.0992%; text-align: center; height: 15px;"><strong>Nombre</strong></td>
+                                        #     <td style="width: 22.9669%; text-align: center; height: 15px;"><strong>Responsable</strong></td>
+                                        #     <td style="width: 22%; text-align: center; height: 15px;"><strong>Fecha de vencimiento</strong></td>
+                                        #     </tr>
+                                        #     {sup_rows}
+                                        #     </tbody>
+                                        #     </table>
+                                        #     <p>&nbsp;</p>
+                                        #     <p>Para ingresar a la plataforma, dar click <a href="{link}">aqu&iacute;</a>.</p>
+                                        #     <p><img src="data:image/png;base64,{mail_img}" alt="" width="352" height="81" /></p>
+                                        # """
+
                                         sup_msg="""
-                                            <p>Le recordamos que las siguientes tareas no han sido resueltas de la empresa {company}:</p>
-                                            <table style="width: 100%; border-collapse: collapse;" border="1">
+                                            <p style="text-align: left;"><span style="font-size: 12pt; font-family: helvetica;">Le recordamos que las siguientes tareas no han sido resueltas de la empresa {company}:</span></p>
+                                            <table style="width: 100%; border-collapse: collapse; border-style: double; border-color: #7a7878;" border="1">
                                             <tbody>
                                             <tr style="height: 15px;">
-                                            <td style="width: 11.9339%; text-align: center; height: 15px;"><strong>Prioridad</strong></td>
-                                            <td style="width: 43.0992%; text-align: center; height: 15px;"><strong>Nombre</strong></td>
-                                            <td style="width: 22.9669%; text-align: center; height: 15px;"><strong>Responsable</strong></td>
-                                            <td style="width: 22%; text-align: center; height: 15px;"><strong>Fecha de vencimiento</strong></td>
+                                            <td style="width: 11.9339%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Prioridad</span></strong></td>
+                                            <td style="width: 43.0992%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Nombre</span></strong></td>
+                                            <td style="width: 22.9669%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Responsable</span></strong></td>
+                                            <td style="width: 22%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Fecha de vencimiento</span></strong></td>
                                             </tr>
                                             {sup_rows}
                                             </tbody>
                                             </table>
                                             <p>&nbsp;</p>
-                                            <p>Para ingresar a la plataforma, dar click <a href="{link}">aqu&iacute;</a>.</p>
-                                            <p><img src="data:image/png;base64,{mail_img}" alt="" width="352" height="81" /></p>
+                                            <p><span style="font-family: helvetica; font-size: 12pt;">Para ingresar a EasyTask, dar click <a href="{link}">aqu&iacute;</a>.</span></p>
+                                            <p><img src="data:image/png;base64,{mail_img}" alt="" width="135" height="30" /></p>
                                         """
+
                                     format_sup_msg={
                                         'rows':rows,
                                         'sup_rows':sup_rows,
                                         'mail_img':cfg.mail_img,
                                         'link':cfg.host,
                                         'user_name':u['user_name'],
-                                        'company':company_name['name']
+                                        'company':company_name['name'],
+                                        'task_img':cfg.task_img
                                     }
                                     message_sup+=sup_assignee_msg
                                     message_sup+=sup_msg
@@ -395,29 +482,51 @@ def main():
                                     new_row=row_yellow_flag.format(**x)
                                     rows+=new_row
                             if has_tasks==True:
+                                # admin_msg="""
+                                #     <p>Estimado {user_name}:</p>
+                                #         <p>Le recordamos que tiene pendientes las siguientes tareas de la empresa {company}:</p>
+                                #         <table style="width: 100%; border-collapse: collapse;" border="1">
+                                #         <tbody>
+                                #         <tr style="height: 15px;">
+                                #         <td style="width: 11.9339%; text-align: center; height: 15px;"><strong>Prioridad</strong></td>
+                                #         <td style="width: 43.0992%; text-align: center; height: 15px;"><strong>Nombre</strong></td>
+                                #         <td style="width: 22.9669%; text-align: center; height: 15px;"><strong>Responsable</strong></td>
+                                #         <td style="width: 22%; text-align: center; height: 15px;"><strong>Fecha de vencimiento</strong></td>
+                                #         </tr>
+                                #         {rows}
+                                #         </tbody>
+                                #         </table>
+                                #         <p>Para ingresar a la plataforma, dar click <a href="{link}">aqu&iacute;</a>.</p>
+                                #         <p><img src="data:image/png;base64,{mail_img}" alt="" width="352" height="81" /></p>
+                                # """
+
                                 admin_msg="""
-                                    <p>Estimado {user_name}:</p>
-                                        <p>Le recordamos que tiene pendientes las siguientes tareas de la empresa {company}:</p>
-                                        <table style="width: 100%; border-collapse: collapse;" border="1">
-                                        <tbody>
-                                        <tr style="height: 15px;">
-                                        <td style="width: 11.9339%; text-align: center; height: 15px;"><strong>Prioridad</strong></td>
-                                        <td style="width: 43.0992%; text-align: center; height: 15px;"><strong>Nombre</strong></td>
-                                        <td style="width: 22.9669%; text-align: center; height: 15px;"><strong>Responsable</strong></td>
-                                        <td style="width: 22%; text-align: center; height: 15px;"><strong>Fecha de vencimiento</strong></td>
-                                        </tr>
-                                        {rows}
-                                        </tbody>
-                                        </table>
-                                        <p>Para ingresar a la plataforma, dar click <a href="{link}">aqu&iacute;</a>.</p>
-                                        <p><img src="data:image/png;base64,{mail_img}" alt="" width="352" height="81" /></p>
+                                    <p style="text-align: center;"><img src="data:image/png;base64,{task_img}" alt="" width="90" height="90" /></p>
+                                    <p style="text-align: center;"><span style="font-family: helvetica; font-size: 16pt;"><strong>&iexcl;Tienes tareas pendientes!</strong></span></p>
+                                    <p style="text-align: left;"><span style="font-size: 12pt; font-family: helvetica;">Estimado {user_name}:</span></p>
+                                    <p style="text-align: left;"><span style="font-size: 12pt; font-family: helvetica;">Le recordamos que tiene pendientes las siguientes tareas de la empresa {company}:</span></p>
+                                    <table style="width: 100%; border-collapse: collapse; border-style: double; border-color: #7a7878;" border="1">
+                                    <tbody>
+                                    <tr style="height: 15px;">
+                                    <td style="width: 11.9339%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Prioridad</span></strong></td>
+                                    <td style="width: 43.0992%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Nombre</span></strong></td>
+                                    <td style="width: 22.9669%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Responsable</span></strong></td>
+                                    <td style="width: 22%; text-align: center; height: 15px;"><strong><span style="font-family: helvetica;">Fecha de vencimiento</span></strong></td>
+                                    </tr>
+                                    {rows}
+                                    </tbody>
+                                    </table>
+                                    <p>&nbsp;</p>
+                                    <p><span style="font-family: helvetica; font-size: 12pt;">Para ingresar a EasyTask, dar click <a href="{link}">aqu&iacute;</a>.</span></p>
+                                    <p><img src="data:image/png;base64,{mail_img}" alt="" width="135" height="30" /></p>
                                 """
                                 format_admin_msg={
                                     'rows':rows,
                                     'link':cfg.host,
                                     'mail_img':cfg.mail_img,
                                     'user_name':u['user_name'],
-                                    'company':company_name['name']
+                                    'company':company_name['name'],
+                                    'task_img':cfg.task_img
                                 }
                                 MF.sendMail(u['email'],'Tareas pendientes',admin_msg.format(**format_admin_msg))
 
